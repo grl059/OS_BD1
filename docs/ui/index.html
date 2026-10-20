@@ -2,45 +2,48 @@
 <html lang="mn">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kernel Data Structures – Kernel structure graph</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kernel өгөгдлийн бүтцүүд – үзэж, дараад, ойлго</title>
 <style>
-:root{--bg:#fff;--fg:#1f2328;--card:#f6f8fa;--bd:#d0d7de;--ok:#1a7f37;--err:#cf222e;--acc:#0969da;--node:#ddf4ff;--hot:#fff8c5}
-@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--card:#161b22;--bd:#30363d;--ok:#3fb950;--err:#f85149;--acc:#58a6ff;--node:#0c2d4a;--hot:#4d3b00}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px system-ui,sans-serif;padding:12px}
-h1{font-size:18px;margin:0 0 8px}h2{font-size:14px;margin:0 0 6px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:10px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:10px;min-width:0}
-svg{width:100%;height:auto;aspect-ratio:12/5;display:block;background:var(--bg);border-radius:6px}
-svg text{fill:var(--fg);font:12px monospace}.nd{fill:var(--node);stroke:var(--acc)}.nd.hot{fill:var(--hot)}.ed{stroke:var(--fg);fill:none}
-input,select,button{font:inherit;padding:4px 6px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--fg)}
-button{cursor:pointer;background:var(--acc);color:#fff;border-color:var(--acc)}button.sec{background:var(--bg);color:var(--fg);border-color:var(--bd)}
-.row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}#console{font:12px monospace;height:160px;overflow:auto;white-space:pre-wrap;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:6px}
-.ok{color:var(--ok)}.err{color:var(--err)}.legend span{margin-right:12px}textarea{width:100%;height:90px;font:12px monospace;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:6px}
+:root{--bg:#fffaf3;--fg:#2b2a33;--card:#fff;--bd:#eadfce;--acc:#ff7a3d;--acc2:#6c5ce7;--ok:#1a8f4c;--err:#d6336c;--soft:#fff1e0;--hot:#ffe066;--mut:#6b6a75}
+@media (prefers-color-scheme:dark){:root{--bg:#17161d;--fg:#f1eee8;--card:#22212b;--bd:#37354a;--acc:#ff8f5c;--acc2:#a29bfe;--ok:#4ade80;--err:#ff6b9a;--soft:#2c2a38;--hot:#7a6400;--mut:#a9a6b8}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif;padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(14px + env(safe-area-inset-bottom,0px))}
+main{max-width:900px;margin:auto}h1{font-size:24px;margin:0 0 4px}.sub{color:var(--mut);margin:0 0 12px}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.steps div{flex:1;min-width:200px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 10px;font-size:14px}.steps b{color:var(--acc)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tab{border:2px solid var(--bd);background:var(--card);color:var(--fg);border-radius:999px;padding:7px 14px;font:inherit;cursor:pointer}.tab.on{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:10px}
+.intro{display:grid;gap:6px}.intro p{margin:0}.chip{display:inline-block;background:var(--soft);border-radius:8px;padding:1px 8px;font:13px monospace;color:var(--acc2)}
+.stage{min-height:170px;background:var(--soft);border-radius:14px;padding:14px;display:flex;align-items:center;overflow-x:auto}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+label{font-size:13px;color:var(--mut);display:flex;flex-direction:column;gap:2px}input{font:inherit;width:84px;padding:7px;border:2px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--fg)}
+button.go{font:inherit;border:0;border-radius:10px;padding:9px 14px;background:var(--acc);color:#fff;cursor:pointer;font-weight:600}button.go.alt{background:var(--acc2)}button.go.ghost{background:transparent;color:var(--fg);border:2px solid var(--bd)}
+.wag{background:var(--card);border:2px solid var(--acc2);border-radius:12px;padding:8px 10px;text-align:center;min-width:92px;cursor:pointer;animation:pop .35s}.wag small{display:block;color:var(--mut);font-size:11px}
+.wag.hot,.pl.hot,.cell.hot{background:var(--hot)}.link{color:var(--acc2);font-size:20px;margin:0 2px}.train{display:flex;flex-wrap:wrap;gap:6px 0;align-items:center}
+.eng{background:var(--acc);color:#fff;border-radius:12px;padding:10px;font-weight:700;margin-right:8px}
+.person{text-align:center;animation:pop .35s;margin:0 4px}.person .face{font-size:38px;line-height:1}.person .n{background:var(--card);border:2px solid var(--acc);border-radius:8px;font-weight:700;padding:0 8px}.person.hot .n{background:var(--hot)}
+.tag{font-size:12px;font-weight:700;color:var(--acc);text-transform:uppercase}
+.stack{display:flex;flex-direction:column;gap:4px;width:100%;align-items:center}.pl{background:var(--card);border:2px solid var(--acc2);border-radius:50%/40%;padding:4px 0;width:150px;text-align:center;font-weight:700;animation:pop .35s}
+.bits{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px;width:100%}.cell{border:2px solid var(--bd);border-radius:10px;background:var(--card);padding:4px 0;text-align:center;cursor:pointer;font-size:12px;color:var(--mut)}.cell b{display:block;font-size:20px;color:var(--fg)}.cell.on{background:var(--ok);border-color:var(--ok);color:#fff}.cell.on b{color:#fff}.cell.hot{outline:3px solid var(--hot)}
+svg.tr{width:100%;height:auto;aspect-ratio:2/1}svg.tr text{fill:var(--fg);font:bold 14px system-ui}svg.tr line{stroke:var(--mut);stroke-width:2}svg.tr circle{fill:var(--card);stroke:var(--acc2);stroke-width:3}svg.tr circle.hot{fill:var(--hot)}
+.feed{max-height:200px;overflow:auto;display:grid;gap:4px}.feed div{padding:6px 10px;border-radius:10px;background:var(--soft);animation:pop .3s}.feed .e{border-left:5px solid var(--err)}.feed .o{border-left:5px solid var(--ok)}
+.empty{color:var(--mut);text-align:center;width:100%}details summary{cursor:pointer;font-weight:600}textarea{width:100%;height:100px;font:12px monospace;background:var(--bg);color:var(--fg);border:2px solid var(--bd);border-radius:10px}#raw{font:12px monospace;white-space:pre-wrap;max-height:140px;overflow:auto;background:var(--soft);border-radius:10px;padding:6px;margin-top:6px}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
-<body>
-<h1>Kernel structure graph — list_head · queue · stack · bitmap · BST</h1>
-<div class="card legend"><span><b>Цэнхэр хайрцаг</b> = node</span><span><b>Шар</b> = сүүлд өөрчлөгдсөн</span><span><b>→ / ←</b> = next / prev заагч</span><span class="ok">ногоон = OK</span><span class="err">улаан = ERR</span></div>
-<div class="grid" style="margin-top:10px">
- <div class="card"><h2>1. list_head (struct birthday, doubly-linked circular)</h2><svg id="g_list" viewBox="0 0 480 200"></svg>
-  <div class="row"><input id="ld" size="3" placeholder="өдөр"><input id="lm" size="3" placeholder="сар"><input id="ly" size="5" placeholder="жил">
-  <button onclick="run('list add_head '+v('ld','lm','ly'))">add_head</button><button onclick="run('list add_tail '+v('ld','lm','ly'))">add_tail</button><button class="sec" onclick="run('list del '+v('ld','lm','ly'))">del</button><button class="sec" onclick="run('list clear')">clear</button></div></div>
- <div class="card"><h2>2. Queue (FIFO, limit 8)</h2><svg id="g_queue" viewBox="0 0 480 200"></svg>
-  <div class="row"><input id="qv" size="6" placeholder="утга"><button onclick="run('queue push '+q('qv'))">push</button><button class="sec" onclick="run('queue pop')">pop</button></div></div>
- <div class="card"><h2>3. Stack (LIFO, limit 8)</h2><svg id="g_stack" viewBox="0 0 480 200"></svg>
-  <div class="row"><input id="sv" size="6" placeholder="утга"><button onclick="run('stack push '+q('sv'))">push</button><button class="sec" onclick="run('stack pop')">pop</button></div></div>
- <div class="card"><h2>4. Bitmap</h2><svg id="g_bitmap" viewBox="0 0 480 200"></svg>
-  <div class="row"><input id="bn" size="4" placeholder="n"><button class="sec" onclick="run('bitmap size '+q('bn'))">size</button><input id="bi" size="4" placeholder="индекс">
-  <button onclick="run('bitmap set '+q('bi'))">set</button><button class="sec" onclick="run('bitmap clear '+q('bi'))">clear</button><button class="sec" onclick="run('bitmap test '+q('bi'))">test</button></div></div>
- <div class="card"><h2>5. Binary search tree</h2><svg id="g_tree" viewBox="0 0 480 200"></svg>
-  <div class="row"><input id="tv" size="6" placeholder="утга"><button onclick="run('tree insert '+q('tv'))">insert</button><button class="sec" onclick="run('tree delete '+q('tv'))">delete</button><button class="sec" onclick="run('tree find '+q('tv'))">find</button></div></div>
- <div class="card"><h2>Командын мөр / script ачаалах</h2><div class="row"><input id="cmd" style="flex:1" placeholder="жишээ: list add_tail 2 8 1995" onkeydown="if(event.key==='Enter'){run(this.value);this.value=''}">
-  <button onclick="run(cmd.value);cmd.value=''">Run</button></div>
-  <textarea id="script" placeholder="C програмын examples/*.txt-тэй ижил формат"></textarea>
-  <div class="row"><button onclick="runScript()">Script ажиллуулах</button><input type="file" id="file" accept=".txt"><button class="sec" onclick="reset()">Reset</button></div>
-  <div id="console"></div></div>
-</div>
+<body><main>
+<h1> Компьютерийн «тархи» өгөгдлөө хэрхэн хадгалдаг вэ?</h1>
+<p class="sub">Үйлдлийн системийн цөм (kernel) таван энгийн «хайрцаг»-аар мэдээллээ зохион байгуулдаг. Танд хамгийн амарханаар ойлгуулъя. Товч дараад юу болохыг нь хар.</p>
+<div class="steps"><div><b>1.</b> Доороос нэг бүтцийг сонго</div><div><b>2.</b> ▶ «Жишээ үзүүл»-ийг дар, эсвэл өөрөө товчийг дар</div><div><b>3.</b> «Юу болов?» хэсгээс тайлбарыг унш</div></div>
+<div class="tabs" id="tabs"></div>
+<div class="card intro" id="intro"></div>
+<div class="card"><div class="stage" id="stage"></div><div class="row" id="ctl"></div><div class="row"><button class="go alt" onclick="demo()">▶ Жишээ үзүүл</button><button class="go ghost" onclick="resetAll()">🔄 Эхнээс нь</button></div></div>
+<div class="card"><b>Юу болов?</b><div class="feed" id="feed"><div>Одоохондоо юу ч болоогүй. Дээрх товчнуудыг дарж үз 🙂</div></div></div>
+<details class="card"><summary>🛠 Ахисан түвшин: командаар удирдах (C програмтай ижил)</summary>
+<div class="row"><input id="cmd" style="width:100%;max-width:340px" placeholder="жишээ: list add_tail 2 8 1995" onkeydown="if(event.key==='Enter'){adv(this.value);this.value=''}"><button class="go" onclick="adv(cmd.value);cmd.value=''">Ажиллуул</button></div>
+<textarea id="script" placeholder="Олон мөр команд буулгана уу (examples/*.txt)"></textarea><div class="row"><button class="go" onclick="advScript()">Script ажиллуулах</button><input type="file" id="file" accept=".txt" style="width:auto"></div><div id="raw"></div></details>
+</main>
 <script>
 /* ===== ENGINE: mirrors src/user/kds.c (same commands, same messages) ===== */
 let S;
@@ -88,34 +91,63 @@ function exec(line){
   if(op==='find'){let t=S.tree;while(t&&t.v!==v)t=v<t.v?t.l:t.r;if(t)S.hot=v;return`OK tree find ${v} = ${t?'yes':'no'}`;}
   return'ERR tree: unknown op';}
 }
-/* ===== UI ===== */
+
+/* ===== UI: хүнд ойлгомжтой дүрслэл (хөдөлгүүрийг өөрчлөөгүй) ===== */
 const $=id=>document.getElementById(id);
-const v=(...ids)=>ids.map(i=>$(i).value.trim()).join(' '),q=id=>$(id).value.trim();
-function log(t){const d=document.createElement('div');d.textContent=t;d.className=t.startsWith('ERR')?'err':t.startsWith('OK')?'ok':'';$('console').appendChild(d);$('console').scrollTop=1e9;}
-function run(l){S.hot=null;const r=exec(l);if(r!==null){log('> '+l.trim());log(r);}draw();}
-function runScript(){S.hot=null;const out=[];$('script').value.split('\n').forEach(l=>{const r=exec(l);if(r!==null){log('> '+l.replace(/#.*/,'').trim());log(r);}});draw();}
-$('file').onchange=e=>{const f=e.target.files[0];if(f)f.text().then(t=>{$('script').value=t});};
-const NS='http://www.w3.org/2000/svg';
-function el(p,tag,at,txt){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(txt!==undefined)e.textContent=txt;p.appendChild(e);return e;}
-function box(p,x,y,w,h,t,hot){el(p,'rect',{x,y,width:w,height:h,rx:4,class:'nd'+(hot?' hot':'')});el(p,'text',{x:x+w/2,y:y+h/2+4,'text-anchor':'middle'},t);}
-function arrow(p,x1,y1,x2,y2){el(p,'line',{x1,y1,x2,y2,class:'ed','marker-end':'url(#ar)'});}
-function clear(id){const s=$(id);s.innerHTML='<defs><marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8z" fill="currentColor"/></marker></defs>';return s;}
-function seq(id,A,label){const s=clear(id);const R=4,w=82,gap=20;
- box(s,4,14,50,34,label);
- A.forEach((t,i)=>{const r=Math.floor(i/R),c=i%R,x=60+c*(w+gap),y=14+r*56;
-  if(c>0){arrow(s,x-gap,y+10,x,y+10);arrow(s,x,y+26,x-gap,y+26);}else if(i>0)el(s,'text',{x:x-20,y:y+22},'..');
-  box(s,x,y,w,34,t,S.hot===i);});
- if(!A.length)el(s,'text',{x:64,y:36},'(empty: head.next == head)');}
-function draw(){
- seq('g_list',S.list.map(b=>b.join('/')),'head');
- seq('g_queue',S.queue.map(String),'front');seq('g_stack',S.stack.map(String),'top');
- let s=clear('g_bitmap');const n=S.nbits,per=Math.min(n,32),cw=Math.min(22,460/per);
- for(let i=0;i<n;i++){const x=10+(i%per)*cw,y=20+Math.floor(i/per)*34;el(s,'rect',{x,y,width:cw-2,height:22,class:'nd'+(S.bits[i]?' hot':''),style:S.bits[i]?'fill:var(--ok)':''});el(s,'text',{x:x+cw/2-1,y:y+15,'text-anchor':'middle'},S.bits[i]);if(i%4===0&&cw>=14)el(s,'text',{x:x+cw/2-1,y:y-3,'text-anchor':'middle',style:'font-size:8px'},i);}
- s=clear('g_tree');const h=th(S.tree);
- (function d(t,x,y,dx){if(!t)return;if(t.l){el(s,'line',{x1:x,y1:y,x2:x-dx,y2:y+34,class:'ed'});d(t.l,x-dx,y+34,dx/2);}if(t.r){el(s,'line',{x1:x,y1:y,x2:x+dx,y2:y+34,class:'ed'});d(t.r,x+dx,y+34,dx/2);}
-  el(s,'circle',{cx:x,cy:y,r:13,class:'nd'+(S.hot===t.v?' hot':'')});el(s,'text',{x,y:y+4,'text-anchor':'middle'},t.v);})(S.tree,240,22,110);
-}
+const INFO={
+ list:{ico:'🚂',name:'Галт тэрэг',tech:'list_head',what:'Вагонууд бие биенээ барьж залгагдсан галт тэрэг шиг. Вагон бүр өөрийн өмнөх ба хойдох вагоноо мэддэг. Шинэ вагоныг хаана ч (эхэнд, төгсгөлд) амархан залгаж, дундаас нь салгаж болно. Энд вагон бүр нэг төрсөн өдрийг агуулна.',why:'Kernel ажиллаж буй програмуудын жагсаалтыг яг ингэж хадгалдаг – програм эхлэх, дуусах бүрт вагон залгаж, салгана.',tip:'Вагон дээр дарвал хасагдана.'},
+ queue:{ico:'🛒',name:'Дэлгүүрийн дараалал',tech:'queue (FIFO)',what:'Хамгийн түрүүнд ирсэн хүн хамгийн түрүүнд үйлчлүүлнэ. Шинээр ирсэн хүн хойно нь зогсоно. Энд хамгийн ихдээ 8 хүн зогсоно.',why:'Kernel процессорыг хүлээж буй програмуудыг ийм дараалалд оруулж, хэнд эрхээ өгөхөө шийддэг.',tip:''},
+ stack:{ico:'🍽',name:'Тавагны овоолго',tech:'stack (LIFO)',what:'Тавгийг дээр нь овоолж тавина, авахдаа дээрээс нь авна. Хамгийн сүүлд тавьсан тавгийг хамгийн түрүүнд авна. Хамгийн ихдээ 8 таваг.',why:'Програм нэг функцээс нөгөөг дуудахдаа «хаанаас ирснээ» ингэж овоолж хадгалдаг, дуусахад хамгийн сүүлийнхээс нь буцна.',tip:''},
+ bitmap:{ico:'💡',name:'Гэрлийн самбар',tech:'bitmap',what:'Олон асаагуур бүхий самбар: асаалттай (1) эсвэл унтраастай (0). Нэг асаагуур = нэг эх үүсвэр «завгүй/чөлөөтэй» гэсэн мэдээлэл. Нүд дээр дарвал солигдоно.',why:'Kernel санах ойн хуудас, төхөөрөмжийн аль нь чөлөөтэй байгааг маш бага зайгаар, нэг bit-ээр тэмдэглэдэг.',tip:'Нүд дээр дарж асаа/унтраа.'},
+ tree:{ico:'🌳',name:'Хайлтын мод',tech:'binary search tree',what:'Шинэ тоо бүр үндсээс эхэлж «өмнөхөөс бага бол зүүн, их бол баруун» гэж доошилж өөрийн байраа олно. Тэгснээр тоог хурдан олж болно.',why:'Kernel (жинхэнэдээ тэнцвэржсэн мод ашигладаг) том жагсаалтаас хурдан хайхад мод ашигладаг.',tip:'Давхардсан тоо оруулахгүй.'}};
+const DEMO={list:['list add_tail 2 8 1995','list add_tail 17 3 1998','list add_head 29 2 2000','list del 17 3 1998','list add_tail 31 4 2000'],
+ queue:['queue push 10','queue push 20','queue push 30','queue pop','queue pop','queue pop','queue pop'],
+ stack:['stack push 1','stack push 2','stack push 3','stack pop','stack pop'],
+ bitmap:['bitmap size 12','bitmap set 0','bitmap set 5','bitmap set 11','bitmap clear 5','bitmap test 11','bitmap set 99'],
+ tree:['tree insert 50','tree insert 30','tree insert 70','tree insert 20','tree insert 40','tree find 40','tree delete 30','tree insert 50']};
+let cur='list';
+function friendly(l,r){
+ const w=l.replace(/#.*/,'').trim().split(/\s+/),c=w[0],o=w[1],a=w.slice(2);
+ if(r.startsWith('ERR')){const m=[['day out of range','Ийм өдөр тухайн сард байхгүй (жишээ нь 4-р сар 30 хоногтой, 2-р сар 29 өдөр нь зөвхөн дөрвөн жилд нэг)'],['year must','Жил 1900–2100-ын хооронд байх ёстой'],['month must','Сар 1–12 байх ёстой'],['not found','Ийм зүйл олдсонгүй, тиймээс юу ч хасагдсангүй'],['overflow','Дүүрсэн байна! 8-аас олныг багтаахгүй'],['underflow','Хоосон байна – авах зүйл алга'],['out of range','Тийм дугаартай нүд байхгүй'],['duplicate','Энэ тоо мод дотор аль хэдийн байна'],['usage','Талбаруудыг бүрэн, бүхэл тоогоор бөглөнө үү'],['size must','Хэмжээ 1–128 байх ёстой'],['unknown','Ойлгомжгүй команд']].find(x=>r.includes(x[0]));return['e','❌ '+(m?m[1]:r)];}
+ const T={'list add_head':`🚂 ${a.join('/')} вагоныг галт тэрэгний ЭХЭНД залгалаа`,'list add_tail':`🚂 ${a.join('/')} вагоныг ТӨГСГӨЛД залгалаа`,'list del':`✂️ ${a.join('/')} вагоныг салгалаа. Хөрш вагонууд бие биенээ шууд барьж авлаа`,'list clear':'Бүх вагоныг салгалаа',
+ 'queue push':`🧍 ${a[0]} дугаартай хүн дарааллын ХОЙД талд зогслоо`,'queue pop':`➡️ Дарааллын эхэнд байсан хүн (${r.match(/pop (-?\d+)/)?.[1]}) түрүүлж үйлчлүүлээд гарлаа`,
+ 'stack push':`🍽 ${a[0]} дугаартай тавгийг ДЭЭД талд тавилаа`,'stack pop':`⬆️ Дээд талын ${r.match(/pop (-?\d+)/)?.[1]} дугаартай тавгийг авлаа`,
+ 'bitmap size':`💡 ${a[0]} асаагууртай шинэ самбар (бүгд унтраалттай)`,'bitmap set':`💡 ${a[0]}-р асаагуурыг АСААЛАА`,'bitmap clear':`🌑 ${a[0]}-р асаагуурыг УНТРААЛАА`,'bitmap test':`🔍 ${a[0]}-р асаагуур ${r.endsWith('1')?'асаалттай':'унтраалттай'} байна`,
+ 'tree insert':`🌱 ${a[0]}-г модонд нэмлээ (үндсээс эхлээд бага бол зүүн, их бол баруун тийш)`,'tree delete':`🍂 ${a[0]}-г модноос хаслаа`,'tree find':`🔍 ${a[0]} мод дотор ${r.endsWith('yes')?'ОЛДЛОО':'байхгүй байна'}`};
+ return['o','✅ '+(T[c+' '+o]||r)];}
+function note(l,r,fromAdv){const f=friendly(l,r);const d=document.createElement('div');d.className=f[0];d.textContent=f[1];const F=$('feed');if(F.firstChild&&F.firstChild.className==='')F.innerHTML='';F.prepend(d);}
+function go(l){S.hot=null;const r=exec(l);if(r!==null){note(l,r);$('raw').textContent+=l.trim()+'\n  '+r+'\n';}draw();return r;}
+function adv(l){go(l);}function advScript(){$('script').value.split('\n').forEach(go);}
+$('file').onchange=e=>{const f=e.target.files[0];if(f)f.text().then(t=>$('script').value=t);};
+function resetAll(){dtok++;reset();$('feed').innerHTML='<div>Эхнээс нь эхэллээ 🙂</div>';$('raw').textContent='';draw();}
+let dtok=0;function demo(){const t=++dtok,L=DEMO[cur];let i=0;(function s(){if(t!==dtok||i>=L.length)return;go(L[i++]);setTimeout(s,1100);})();}
+function sel(k){dtok++;cur=k;draw();}
+const n=(...ids)=>ids.map(i=>$(i).value.trim()).join(' ');
+const inp=(id,l,ph)=>`<label>${l}<input id="${id}" inputmode="numeric" placeholder="${ph||''}"></label>`;
+const btn=(t,c,cls)=>`<button class="go ${cls||''}" onclick="go(${c})">${t}</button>`;
+function controls(){
+ if(cur==='list')return inp('ld','Өдөр','2')+inp('lm','Сар','8')+inp('ly','Жил','1995')+btn('➕ Эхэнд залга',"'list add_head '+n('ld','lm','ly')")+btn('➕ Төгсгөлд залга',"'list add_tail '+n('ld','lm','ly')",'alt')+btn('✂️ Хас',"'list del '+n('ld','lm','ly')",'ghost');
+ if(cur==='queue')return inp('v','Дугаар','7')+btn('🧍 Дараалалд зогс',"'queue push '+n('v')")+btn('➡️ Эхний хүн гарна',"'queue pop'",'alt');
+ if(cur==='stack')return inp('v','Дугаар','7')+btn('🍽 Тавь',"'stack push '+n('v')")+btn('⬆️ Дээрээс ав',"'stack pop'",'alt');
+ if(cur==='bitmap')return inp('bn','Хэдэн асаагуур? (1–128)','12')+btn('🔧 Самбар шинээр',"'bitmap size '+n('bn')",'ghost')+inp('bi','Дугаар','3')+btn('💡 Асаа',"'bitmap set '+n('bi')")+btn('🌑 Унтраа',"'bitmap clear '+n('bi')",'alt');
+ return inp('v','Тоо','42')+btn('🌱 Нэм',"'tree insert '+n('v')")+btn('🍂 Хас',"'tree delete '+n('v')",'alt')+btn('🔍 Хай',"'tree find '+n('v')",'ghost');}
+function stage(){
+ if(cur==='list'){const L=S.list;if(!L.length)return'<div class="empty">🚂 Зөвхөн зүтгүүр байна – вагон алга.<br>Дараах өдөр, сар, жилээ бичээд «Төгсгөлд залга» дар.</div>';
+  return'<div class="train"><div class="eng">🚂 Зүтгүүр</div>'+L.map((b,i)=>`<div class="wag ${S.hot===i?'hot':''}" title="Дарвал хасагдана" onclick="go('list del ${b.join(' ')}')">📅 ${b.join('/')}<small>${i===0?'эхний':i===L.length-1?'сүүлийн':'вагон '+(i+1)}</small></div>`+(i<L.length-1?'<span class="link">⇄</span>':'')).join('')+'</div>';}
+ if(cur==='queue'){const Q=S.queue;if(!Q.length)return'<div class="empty">🛒 Дараалал хоосон. «Дараалалд зогс» дар.</div>';
+  return'<div style="display:flex;align-items:flex-end"><div class="tag">🏪 Касс ←</div>'+Q.map((v,i)=>`<div class="person ${S.hot===i?'hot':''}"><div class="tag">${i===0?'эхний':''}</div><div class="face">🧍</div><div class="n">${v}</div></div>`).join('')+'</div>';}
+ if(cur==='stack'){const K=S.stack;if(!K.length)return'<div class="empty">🍽 Таваг алга. «Тавь» дар.</div>';
+  return'<div class="stack"><div class="tag">дээд ↓</div>'+K.map((v,i)=>`<div class="pl ${S.hot===i?'hot':''}">${v}</div>`).join('')+'<div class="tag">ширээ</div></div>';}
+ if(cur==='bitmap'){let h='<div class="bits">';for(let i=0;i<S.nbits;i++)h+=`<div class="cell ${S.bits[i]?'on':''} ${S.hot===i?'hot':''}" onclick="go('bitmap ${S.bits[i]?'clear':'set'} ${i}')">#${i}<b>${S.bits[i]?'💡':'○'}</b></div>`;return h+'</div>';}
+ if(!S.tree)return'<div class="empty">🌳 Мод хоосон. Тоо оруулж «Нэм» дар.</div>';
+ let s='<svg class="tr" viewBox="0 0 480 240">';const els=[];
+ (function d(t,x,y,dx){if(!t)return;if(t.l){s+=`<line x1="${x}" y1="${y}" x2="${x-dx}" y2="${y+50}"/>`;d(t.l,x-dx,y+50,dx/2);}if(t.r){s+=`<line x1="${x}" y1="${y}" x2="${x+dx}" y2="${y+50}"/>`;d(t.r,x+dx,y+50,dx/2);}els.push(`<circle class="${S.hot===t.v?'hot':''}" cx="${x}" cy="${y}" r="19"/><text x="${x}" y="${y+5}" text-anchor="middle">${t.v}</text>`);})(S.tree,240,28,110);
+ return s+els.join('')+'</svg>';}
+function draw(){if(!$('tabs'))return;
+ $('tabs').innerHTML=Object.keys(INFO).map(k=>`<button class="tab ${k===cur?'on':''}" onclick="sel('${k}')">${INFO[k].ico} ${INFO[k].name}</button>`).join('');
+ const I=INFO[cur];$('intro').innerHTML=`<p><b>${I.ico} ${I.name}</b> <span class="chip">техник нэр: ${I.tech}</span></p><p>${I.what}</p><p>🔧 <b>Kernel-д:</b> ${I.why}</p>${I.tip?`<p>👆 ${I.tip}</p>`:''}`;
+ $('stage').innerHTML=stage();
+ const a=document.activeElement,keep=a&&a.id,val=a&&a.value;const c=$('ctl'),old={};c.querySelectorAll('input').forEach(i=>old[i.id]=i.value);
+ if(c.dataset.k!==cur){c.innerHTML=controls();c.dataset.k=cur;}}
 reset();draw();
-</script>
-</body>
-</html>
+</script></body></html>
