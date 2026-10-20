@@ -1,0 +1,14 @@
+# Textbook example: five birthdays, traverse, remove all (add_tail keeps insertion order)
+list add_tail 2 8 1995
+list add_tail 17 3 1998
+list add_tail 29 2 2000
+list add_tail 5 11 2001
+list add_tail 30 12 2003
+list print
+list del 17 3 1998
+list print
+list del 2 8 1995
+list del 29 2 2000
+list del 5 11 2001
+list del 30 12 2003
+list print

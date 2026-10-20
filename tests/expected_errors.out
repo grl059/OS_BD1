@@ -1,0 +1,19 @@
+ERR list: day out of range for month
+ERR list: day out of range for month
+ERR list: month must be 1..12
+ERR list: year must be 1900..2100
+ERR list: usage <op> <day> <month> <year>
+ERR list: 1/1/2000 not found
+LIST size=0: (empty)
+ERR list: missing operation
+ERR unknown structure 'frob'
+ERR queue: underflow (empty)
+ERR stack: underflow (empty)
+ERR queue: usage push <int>
+ERR bitmap: size must be 1..128
+ERR bitmap: size must be 1..128
+ERR bitmap: index 99 out of range 0..31
+ERR bitmap: index -1 out of range 0..31
+OK tree insert 5 (size=1)
+ERR tree: duplicate 5
+ERR tree: 9 not found

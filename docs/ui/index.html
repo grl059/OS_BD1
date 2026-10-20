@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kernel Data Structures – Kernel structure graph</title>
+<style>
+:root{--bg:#fff;--fg:#1f2328;--card:#f6f8fa;--bd:#d0d7de;--ok:#1a7f37;--err:#cf222e;--acc:#0969da;--node:#ddf4ff;--hot:#fff8c5}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--card:#161b22;--bd:#30363d;--ok:#3fb950;--err:#f85149;--acc:#58a6ff;--node:#0c2d4a;--hot:#4d3b00}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px system-ui,sans-serif;padding:12px}
+h1{font-size:18px;margin:0 0 8px}h2{font-size:14px;margin:0 0 6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:10px;min-width:0}
+svg{width:100%;height:auto;aspect-ratio:12/5;display:block;background:var(--bg);border-radius:6px}
+svg text{fill:var(--fg);font:12px monospace}.nd{fill:var(--node);stroke:var(--acc)}.nd.hot{fill:var(--hot)}.ed{stroke:var(--fg);fill:none}
+input,select,button{font:inherit;padding:4px 6px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--fg)}
+button{cursor:pointer;background:var(--acc);color:#fff;border-color:var(--acc)}button.sec{background:var(--bg);color:var(--fg);border-color:var(--bd)}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}#console{font:12px monospace;height:160px;overflow:auto;white-space:pre-wrap;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:6px}
+.ok{color:var(--ok)}.err{color:var(--err)}.legend span{margin-right:12px}textarea{width:100%;height:90px;font:12px monospace;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:6px}
+</style>
+</head>
+<body>
+<h1>Kernel structure graph — list_head · queue · stack · bitmap · BST</h1>
+<div class="card legend"><span><b>Цэнхэр хайрцаг</b> = node</span><span><b>Шар</b> = сүүлд өөрчлөгдсөн</span><span><b>→ / ←</b> = next / prev заагч</span><span class="ok">ногоон = OK</span><span class="err">улаан = ERR</span></div>
+<div class="grid" style="margin-top:10px">
+ <div class="card"><h2>1. list_head (struct birthday, doubly-linked circular)</h2><svg id="g_list" viewBox="0 0 480 200"></svg>
+  <div class="row"><input id="ld" size="3" placeholder="өдөр"><input id="lm" size="3" placeholder="сар"><input id="ly" size="5" placeholder="жил">
+  <button onclick="run('list add_head '+v('ld','lm','ly'))">add_head</button><button onclick="run('list add_tail '+v('ld','lm','ly'))">add_tail</button><button class="sec" onclick="run('list del '+v('ld','lm','ly'))">del</button><button class="sec" onclick="run('list clear')">clear</button></div></div>
+ <div class="card"><h2>2. Queue (FIFO, limit 8)</h2><svg id="g_queue" viewBox="0 0 480 200"></svg>
+  <div class="row"><input id="qv" size="6" placeholder="утга"><button onclick="run('queue push '+q('qv'))">push</button><button class="sec" onclick="run('queue pop')">pop</button></div></div>
+ <div class="card"><h2>3. Stack (LIFO, limit 8)</h2><svg id="g_stack" viewBox="0 0 480 200"></svg>
+  <div class="row"><input id="sv" size="6" placeholder="утга"><button onclick="run('stack push '+q('sv'))">push</button><button class="sec" onclick="run('stack pop')">pop</button></div></div>
+ <div class="card"><h2>4. Bitmap</h2><svg id="g_bitmap" viewBox="0 0 480 200"></svg>
+  <div class="row"><input id="bn" size="4" placeholder="n"><button class="sec" onclick="run('bitmap size '+q('bn'))">size</button><input id="bi" size="4" placeholder="индекс">
+  <button onclick="run('bitmap set '+q('bi'))">set</button><button class="sec" onclick="run('bitmap clear '+q('bi'))">clear</button><button class="sec" onclick="run('bitmap test '+q('bi'))">test</button></div></div>
+ <div class="card"><h2>5. Binary search tree</h2><svg id="g_tree" viewBox="0 0 480 200"></svg>
+  <div class="row"><input id="tv" size="6" placeholder="утга"><button onclick="run('tree insert '+q('tv'))">insert</button><button class="sec" onclick="run('tree delete '+q('tv'))">delete</button><button class="sec" onclick="run('tree find '+q('tv'))">find</button></div></div>
+ <div class="card"><h2>Командын мөр / script ачаалах</h2><div class="row"><input id="cmd" style="flex:1" placeholder="жишээ: list add_tail 2 8 1995" onkeydown="if(event.key==='Enter'){run(this.value);this.value=''}">
+  <button onclick="run(cmd.value);cmd.value=''">Run</button></div>
+  <textarea id="script" placeholder="C програмын examples/*.txt-тэй ижил формат"></textarea>
+  <div class="row"><button onclick="runScript()">Script ажиллуулах</button><input type="file" id="file" accept=".txt"><button class="sec" onclick="reset()">Reset</button></div>
+  <div id="console"></div></div>
+</div>
+<script>
+/* ===== ENGINE: mirrors src/user/kds.c (same commands, same messages) ===== */
+let S;
+function reset(){S={list:[],queue:[],stack:[],nbits:32,bits:new Array(128).fill(0),tree:null,n:0,hot:null};document.getElementById&&draw&&draw();}
+const LIMIT=8;
+function vd(d,m,y){const dm=[31,28,31,30,31,30,31,31,30,31,30,31];if(y<1900||y>2100)return"year must be 1900..2100";if(m<1||m>12)return"month must be 1..12";
+ const lim=dm[m-1]+(m===2&&((y%4===0&&y%100!==0)||y%400===0)?1:0);if(d<1||d>lim)return"day out of range for month";return null;}
+const isInt=s=>/^[+-]?\d+$/.test(s);
+function tins(t,v,o){if(!t)return{v,l:null,r:null};if(v<t.v)t.l=tins(t.l,v,o);else if(v>t.v)t.r=tins(t.r,v,o);else o.dup=1;return t;}
+function tdel(t,v,o){if(!t)return null;if(v<t.v)t.l=tdel(t.l,v,o);else if(v>t.v)t.r=tdel(t.r,v,o);else{o.f=1;if(!t.l||!t.r)return t.l||t.r;let s=t.r;while(s.l)s=s.l;t.v=s.v;t.r=tdel(t.r,s.v,{});}return t;}
+const tin=(t,a=[])=>{if(t){tin(t.l,a);a.push(t.v);tin(t.r,a);}return a;};
+const th=t=>t?1+Math.max(th(t.l),th(t.r)):0;
+function exec(line){
+ line=line.replace(/#.*/,'').trim();if(!line)return null;
+ const w=line.split(/\s+/),cmd=w[0],op=w[1],a=w.slice(2);
+ if(!['list','queue','stack','bitmap','tree'].includes(cmd))return w.length<2&&false?null:(op===undefined&&['list','queue','stack','bitmap','tree'].includes(cmd)?`ERR ${cmd}: missing operation`:`ERR unknown structure '${cmd}'`);
+ if(op===undefined)return`ERR ${cmd}: missing operation`;
+ if(cmd==='list'){
+  if(op==='print')return`LIST size=${S.list.length}:`+(S.list.length?' '+S.list.map(b=>b.join('/')).join(' -> '):' (empty)');
+  if(op==='clear'){S.list=[];return'OK list clear (size=0)';}
+  if(!['add_head','add_tail','del'].includes(op))return'ERR list: unknown op';
+  if(a.length!==3||!a.every(isInt))return'ERR list: usage <op> <day> <month> <year>';
+  const [d,m,y]=a.map(Number),e=vd(d,m,y);if(e)return'ERR list: '+e;
+  if(op==='del'){const i=S.list.findIndex(b=>b[0]===d&&b[1]===m&&b[2]===y);if(i<0)return`ERR list: ${d}/${m}/${y} not found`;S.list.splice(i,1);return`OK list del ${d}/${m}/${y} (size=${S.list.length})`;}
+  op==='add_head'?S.list.unshift([d,m,y]):S.list.push([d,m,y]);S.hot=op==='add_head'?0:S.list.length-1;
+  return`OK list ${op} ${d}/${m}/${y} (size=${S.list.length})`;}
+ if(cmd==='queue'||cmd==='stack'){
+  const A=S[cmd],lifo=cmd==='stack';
+  if(op==='push'){if(a.length!==1||!isInt(a[0]))return`ERR ${cmd}: usage push <int>`;if(A.length>=LIMIT)return`ERR ${cmd}: overflow (limit ${LIMIT})`;
+   const v=Number(a[0]);lifo?A.unshift(v):A.push(v);S.hot=lifo?0:A.length-1;return`OK ${cmd} push ${v} (size=${A.length})`;}
+  if(op==='pop'){if(!A.length)return`ERR ${cmd}: underflow (empty)`;const v=A.shift();return`OK ${cmd} pop ${v} (size=${A.length})`;}
+  if(op==='print')return`${lifo?'STACK(top first)':'QUEUE(front first)'} size=${A.length}:`+(A.length?' '+A.join(', '):' (empty)');
+  return`ERR ${cmd}: unknown op`;}
+ if(cmd==='bitmap'){
+  if(op==='size'){if(a.length!==1||!isInt(a[0])||+a[0]<1||+a[0]>128)return'ERR bitmap: size must be 1..128';S.nbits=+a[0];S.bits.fill(0);return`OK bitmap size ${a[0]}`;}
+  if(op==='print'){const c=S.bits.slice(0,S.nbits).reduce((x,y)=>x+y,0);return`BITMAP n=${S.nbits}: ${S.bits.slice(0,S.nbits).join('')} (set=${c})`;}
+  if(['set','clear','test'].includes(op)){if(a.length!==1||!isInt(a[0]))return'ERR bitmap: usage <op> <index>';const i=+a[0];
+   if(i<0||i>=S.nbits)return`ERR bitmap: index ${i} out of range 0..${S.nbits-1}`;S.hot=i;if(op==='test')return`OK bitmap test ${i} = ${S.bits[i]}`;S.bits[i]=op==='set'?1:0;return`OK bitmap ${op} ${i}`;}
+  return'ERR bitmap: unknown op';}
+ if(cmd==='tree'){
+  if(op==='print'){const l=tin(S.tree);return`TREE size=${S.n} height=${th(S.tree)} inorder:`+(l.length?' '+l.join(', '):' (empty)');}
+  if(a.length!==1||!isInt(a[0]))return'ERR tree: usage <op> <int>';const v=+a[0],o={};
+  if(op==='insert'){S.tree=tins(S.tree,v,o);if(o.dup)return`ERR tree: duplicate ${v}`;S.n++;S.hot=v;return`OK tree insert ${v} (size=${S.n})`;}
+  if(op==='delete'){S.tree=tdel(S.tree,v,o);if(!o.f)return`ERR tree: ${v} not found`;S.n--;return`OK tree delete ${v} (size=${S.n})`;}
+  if(op==='find'){let t=S.tree;while(t&&t.v!==v)t=v<t.v?t.l:t.r;if(t)S.hot=v;return`OK tree find ${v} = ${t?'yes':'no'}`;}
+  return'ERR tree: unknown op';}
+}
+/* ===== UI ===== */
+const $=id=>document.getElementById(id);
+const v=(...ids)=>ids.map(i=>$(i).value.trim()).join(' '),q=id=>$(id).value.trim();
+function log(t){const d=document.createElement('div');d.textContent=t;d.className=t.startsWith('ERR')?'err':t.startsWith('OK')?'ok':'';$('console').appendChild(d);$('console').scrollTop=1e9;}
+function run(l){S.hot=null;const r=exec(l);if(r!==null){log('> '+l.trim());log(r);}draw();}
+function runScript(){S.hot=null;const out=[];$('script').value.split('\n').forEach(l=>{const r=exec(l);if(r!==null){log('> '+l.replace(/#.*/,'').trim());log(r);}});draw();}
+$('file').onchange=e=>{const f=e.target.files[0];if(f)f.text().then(t=>{$('script').value=t});};
+const NS='http://www.w3.org/2000/svg';
+function el(p,tag,at,txt){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(txt!==undefined)e.textContent=txt;p.appendChild(e);return e;}
+function box(p,x,y,w,h,t,hot){el(p,'rect',{x,y,width:w,height:h,rx:4,class:'nd'+(hot?' hot':'')});el(p,'text',{x:x+w/2,y:y+h/2+4,'text-anchor':'middle'},t);}
+function arrow(p,x1,y1,x2,y2){el(p,'line',{x1,y1,x2,y2,class:'ed','marker-end':'url(#ar)'});}
+function clear(id){const s=$(id);s.innerHTML='<defs><marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8z" fill="currentColor"/></marker></defs>';return s;}
+function seq(id,A,label){const s=clear(id);const R=4,w=82,gap=20;
+ box(s,4,14,50,34,label);
+ A.forEach((t,i)=>{const r=Math.floor(i/R),c=i%R,x=60+c*(w+gap),y=14+r*56;
+  if(c>0){arrow(s,x-gap,y+10,x,y+10);arrow(s,x,y+26,x-gap,y+26);}else if(i>0)el(s,'text',{x:x-20,y:y+22},'..');
+  box(s,x,y,w,34,t,S.hot===i);});
+ if(!A.length)el(s,'text',{x:64,y:36},'(empty: head.next == head)');}
+function draw(){
+ seq('g_list',S.list.map(b=>b.join('/')),'head');
+ seq('g_queue',S.queue.map(String),'front');seq('g_stack',S.stack.map(String),'top');
+ let s=clear('g_bitmap');const n=S.nbits,per=Math.min(n,32),cw=Math.min(22,460/per);
+ for(let i=0;i<n;i++){const x=10+(i%per)*cw,y=20+Math.floor(i/per)*34;el(s,'rect',{x,y,width:cw-2,height:22,class:'nd'+(S.bits[i]?' hot':''),style:S.bits[i]?'fill:var(--ok)':''});el(s,'text',{x:x+cw/2-1,y:y+15,'text-anchor':'middle'},S.bits[i]);if(i%4===0&&cw>=14)el(s,'text',{x:x+cw/2-1,y:y-3,'text-anchor':'middle',style:'font-size:8px'},i);}
+ s=clear('g_tree');const h=th(S.tree);
+ (function d(t,x,y,dx){if(!t)return;if(t.l){el(s,'line',{x1:x,y1:y,x2:x-dx,y2:y+34,class:'ed'});d(t.l,x-dx,y+34,dx/2);}if(t.r){el(s,'line',{x1:x,y1:y,x2:x+dx,y2:y+34,class:'ed'});d(t.r,x+dx,y+34,dx/2);}
+  el(s,'circle',{cx:x,cy:y,r:13,class:'nd'+(S.hot===t.v?' hot':'')});el(s,'text',{x,y:y+4,'text-anchor':'middle'},t.v);})(S.tree,240,22,110);
+}
+reset();draw();
+</script>
+</body>
+</html>

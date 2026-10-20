@@ -1,0 +1,20 @@
+# boundary and error inputs: every line must produce a clear ERR message
+list add_tail 31 4 2000
+list add_tail 29 2 1900
+list add_tail 1 13 2000
+list add_tail 1 1 1800
+list add_tail abc
+list del 1 1 2000
+list print
+list
+frob add
+queue pop
+stack pop
+queue push x
+bitmap size 0
+bitmap size 129
+bitmap set 99
+bitmap set -1
+tree insert 5
+tree insert 5
+tree delete 9

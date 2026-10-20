@@ -1,0 +1,13 @@
+OK list add_tail 2/8/1995 (size=1)
+OK list add_tail 17/3/1998 (size=2)
+OK list add_tail 29/2/2000 (size=3)
+OK list add_tail 5/11/2001 (size=4)
+OK list add_tail 30/12/2003 (size=5)
+LIST size=5: 2/8/1995 -> 17/3/1998 -> 29/2/2000 -> 5/11/2001 -> 30/12/2003
+OK list del 17/3/1998 (size=4)
+LIST size=4: 2/8/1995 -> 29/2/2000 -> 5/11/2001 -> 30/12/2003
+OK list del 2/8/1995 (size=3)
+OK list del 29/2/2000 (size=2)
+OK list del 5/11/2001 (size=1)
+OK list del 30/12/2003 (size=0)
+LIST size=0: (empty)

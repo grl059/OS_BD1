@@ -1,0 +1,25 @@
+queue push 10
+queue push 20
+queue push 30
+queue pop
+queue print
+stack push 1
+stack push 2
+stack push 3
+stack pop
+stack print
+bitmap size 16
+bitmap set 0
+bitmap set 5
+bitmap set 15
+bitmap clear 5
+bitmap test 15
+bitmap print
+tree insert 50
+tree insert 30
+tree insert 70
+tree insert 20
+tree insert 40
+tree find 40
+tree delete 30
+tree print
