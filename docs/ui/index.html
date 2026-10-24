@@ -28,13 +28,17 @@ button.go{font:inherit;border:0;border-radius:10px;padding:9px 14px;background:v
 svg.tr{width:100%;height:auto;aspect-ratio:2/1}svg.tr text{fill:var(--fg);font:bold 14px system-ui}svg.tr line{stroke:var(--mut);stroke-width:2}svg.tr circle{fill:var(--card);stroke:var(--acc2);stroke-width:3}svg.tr circle.hot{fill:var(--hot)}
 .feed{max-height:200px;overflow:auto;display:grid;gap:4px}.feed div{padding:6px 10px;border-radius:10px;background:var(--soft);animation:pop .3s}.feed .e{border-left:5px solid var(--err)}.feed .o{border-left:5px solid var(--ok)}
 .empty{color:var(--mut);text-align:center;width:100%}details summary{cursor:pointer;font-weight:600}textarea{width:100%;height:100px;font:12px monospace;background:var(--bg);color:var(--fg);border:2px solid var(--bd);border-radius:10px}#raw{font:12px monospace;white-space:pre-wrap;max-height:140px;overflow:auto;background:var(--soft);border-radius:10px;padding:6px;margin-top:6px}
+.cols{display:grid;grid-template-columns:1fr 150px;gap:12px;width:100%}.lane{background:var(--card);border:2px dashed var(--bd);border-radius:12px;padding:8px;min-height:92px}.lane h4{margin:0 0 6px;font-size:13px;color:var(--mut)}.rq{display:flex;gap:6px;flex-wrap:wrap}
+.pcb{background:var(--card);border:3px solid;border-radius:10px;padding:5px 8px;min-width:86px;animation:pop .35s;font-size:14px}.pcb small{display:block;font-size:11px;color:var(--mut)}.bar{height:6px;background:var(--bd);border-radius:4px;margin-top:3px}.bar i{display:block;height:100%;border-radius:4px}
+.cpu{text-align:center;border-color:var(--acc);border-style:solid}.cpu .big{font-size:30px}.gantt{display:flex;flex-wrap:wrap;gap:2px;margin-top:10px}.gt{min-width:30px;text-align:center;font-size:12px;font-weight:700;border-radius:5px;padding:3px 0;color:#fff;border:1px solid var(--bd)}.gt.idle{color:var(--mut)}
+table.res{border-collapse:collapse;margin-top:10px;font-size:13px;width:100%}table.res td,table.res th{border:1px solid var(--bd);padding:3px 8px;text-align:center}select{font:inherit;padding:7px;border:2px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--fg)}
 @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
 <body><main>
-<h1> Компьютерийн «тархи» өгөгдлөө хэрхэн хадгалдаг вэ?</h1>
-<p class="sub">Үйлдлийн системийн цөм (kernel) таван энгийн «хайрцаг»-аар мэдээллээ зохион байгуулдаг. Танд хамгийн амарханаар ойлгуулъя. Товч дараад юу болохыг нь хар.</p>
+<h1>🧠 Компьютерийн «тархи» өгөгдлөө хэрхэн хадгалдаг вэ?</h1>
+<p class="sub">Үйлдлийн системийн цөм (kernel) таван энгийн «хайрцаг»-аар мэдээллээ зохион байгуулдаг. Код мэдэх шаардлагагүй – товч дараад юу болохыг нь хар.</p>
 <div class="steps"><div><b>1.</b> Доороос нэг бүтцийг сонго</div><div><b>2.</b> ▶ «Жишээ үзүүл»-ийг дар, эсвэл өөрөө товчийг дар</div><div><b>3.</b> «Юу болов?» хэсгээс тайлбарыг унш</div></div>
 <div class="tabs" id="tabs"></div>
 <div class="card intro" id="intro"></div>
@@ -47,7 +51,8 @@ svg.tr{width:100%;height:auto;aspect-ratio:2/1}svg.tr text{fill:var(--fg);font:b
 <script>
 /* ===== ENGINE: mirrors src/user/kds.c (same commands, same messages) ===== */
 let S;
-function reset(){S={list:[],queue:[],stack:[],nbits:32,bits:new Array(128).fill(0),tree:null,n:0,hot:null};document.getElementById&&draw&&draw();}
+function newSc(){return{q:0,t:0,run:null,ready:[],done:0,pid:1,hist:[],info:{}};}
+function reset(){S={list:[],queue:[],stack:[],nbits:32,bits:new Array(128).fill(0),tree:null,n:0,hot:null,sc:newSc()};document.getElementById&&draw&&draw();}
 const LIMIT=8;
 function vd(d,m,y){const dm=[31,28,31,30,31,30,31,31,30,31,30,31];if(y<1900||y>2100)return"year must be 1900..2100";if(m<1||m>12)return"month must be 1..12";
  const lim=dm[m-1]+(m===2&&((y%4===0&&y%100!==0)||y%400===0)?1:0);if(d<1||d>lim)return"day out of range for month";return null;}
@@ -59,8 +64,8 @@ const th=t=>t?1+Math.max(th(t.l),th(t.r)):0;
 function exec(line){
  line=line.replace(/#.*/,'').trim();if(!line)return null;
  const w=line.split(/\s+/),cmd=w[0],op=w[1],a=w.slice(2);
- if(!['list','queue','stack','bitmap','tree'].includes(cmd))return w.length<2&&false?null:(op===undefined&&['list','queue','stack','bitmap','tree'].includes(cmd)?`ERR ${cmd}: missing operation`:`ERR unknown structure '${cmd}'`);
  if(op===undefined)return`ERR ${cmd}: missing operation`;
+ if(!['list','queue','stack','bitmap','tree','proc','sched'].includes(cmd))return`ERR unknown structure '${cmd}'`;
  if(cmd==='list'){
   if(op==='print')return`LIST size=${S.list.length}:`+(S.list.length?' '+S.list.map(b=>b.join('/')).join(' -> '):' (empty)');
   if(op==='clear'){S.list=[];return'OK list clear (size=0)';}
@@ -83,6 +88,30 @@ function exec(line){
   if(['set','clear','test'].includes(op)){if(a.length!==1||!isInt(a[0]))return'ERR bitmap: usage <op> <index>';const i=+a[0];
    if(i<0||i>=S.nbits)return`ERR bitmap: index ${i} out of range 0..${S.nbits-1}`;S.hot=i;if(op==='test')return`OK bitmap test ${i} = ${S.bits[i]}`;S.bits[i]=op==='set'?1:0;return`OK bitmap ${op} ${i}`;}
   return'ERR bitmap: unknown op';}
+ if(cmd==='proc'){
+  if(op!=='new')return'ERR proc: unknown op';
+  if(a.length!==2||!isInt(a[1]))return'ERR proc: usage new <name> <burst>';
+  const name=a[0],b=Number(a[1]),c=S.sc;
+  if(!/^\w{1,8}$/.test(name))return'ERR proc: name must be 1..8 letters, digits or _';
+  if(b<1||b>20)return'ERR proc: burst must be 1..20';
+  const alive=c.ready.length+(c.run?1:0);if(alive>=LIMIT)return`ERR proc: too many processes (limit ${LIMIT})`;
+  const p={pid:c.pid++,name,rem:b,burst:b,slice:0};c.ready.push(p);c.info[p.pid]={name,burst:b,arr:c.t,fin:null};
+  return`OK proc new P${p.pid} ${name} burst=${b} (alive=${alive+1})`;}
+ if(cmd==='sched'){const c=S.sc;
+  if(op==='policy'){if(a.length===1&&a[0]==='fcfs'){c.q=0;return'OK sched policy fcfs';}
+   if(a.length===2&&a[0]==='rr'&&isInt(a[1])&&+a[1]>=1&&+a[1]<=10){c.q=+a[1];return`OK sched policy rr q=${a[1]}`;}
+   return"ERR sched: policy must be 'fcfs' or 'rr <quantum 1..10>'";}
+  if(op==='tick'){
+   if(!c.run&&c.ready.length){c.run=c.ready.shift();c.run.slice=0;}
+   if(!c.run){c.hist.push(0);return`TICK t=${c.t++} idle`;}
+   const r=c.run;r.rem--;r.slice++;let tag='';c.hist.push(r.pid);
+   if(r.rem===0){tag=' finished';c.run=null;c.done++;c.info[r.pid].fin=c.t+1;}
+   else if(c.q&&r.slice>=c.q){tag=' preempted';c.run=null;c.ready.push(r);}
+   return`TICK t=${c.t++} P${r.pid}(${r.name}) remaining=${r.rem}${tag}`;}
+  if(op==='print'){const f=p=>`P${p.pid}(${p.name}:${p.rem})`;
+   return`SCHED policy=${c.q?`rr(q=${c.q})`:'fcfs'} time=${c.t} running=${c.run?f(c.run):'none'} ready=${c.ready.length?c.ready.map(f).join(', '):'(empty)'} done=${c.done}`;}
+  if(op==='clear'){S.sc=newSc();return'OK sched clear';}
+  return'ERR sched: unknown op';}
  if(cmd==='tree'){
   if(op==='print'){const l=tin(S.tree);return`TREE size=${S.n} height=${th(S.tree)} inorder:`+(l.length?' '+l.join(', '):' (empty)');}
   if(a.length!==1||!isInt(a[0]))return'ERR tree: usage <op> <int>';const v=+a[0],o={};
@@ -99,28 +128,33 @@ const INFO={
  queue:{ico:'🛒',name:'Дэлгүүрийн дараалал',tech:'queue (FIFO)',what:'Хамгийн түрүүнд ирсэн хүн хамгийн түрүүнд үйлчлүүлнэ. Шинээр ирсэн хүн хойно нь зогсоно. Энд хамгийн ихдээ 8 хүн зогсоно.',why:'Kernel процессорыг хүлээж буй програмуудыг ийм дараалалд оруулж, хэнд эрхээ өгөхөө шийддэг.',tip:''},
  stack:{ico:'🍽',name:'Тавагны овоолго',tech:'stack (LIFO)',what:'Тавгийг дээр нь овоолж тавина, авахдаа дээрээс нь авна. Хамгийн сүүлд тавьсан тавгийг хамгийн түрүүнд авна. Хамгийн ихдээ 8 таваг.',why:'Програм нэг функцээс нөгөөг дуудахдаа «хаанаас ирснээ» ингэж овоолж хадгалдаг, дуусахад хамгийн сүүлийнхээс нь буцна.',tip:''},
  bitmap:{ico:'💡',name:'Гэрлийн самбар',tech:'bitmap',what:'Олон асаагуур бүхий самбар: асаалттай (1) эсвэл унтраастай (0). Нэг асаагуур = нэг эх үүсвэр «завгүй/чөлөөтэй» гэсэн мэдээлэл. Нүд дээр дарвал солигдоно.',why:'Kernel санах ойн хуудас, төхөөрөмжийн аль нь чөлөөтэй байгааг маш бага зайгаар, нэг bit-ээр тэмдэглэдэг.',tip:'Нүд дээр дарж асаа/унтраа.'},
+ sched:{ico:'⚙️',name:'Процесс ба CPU',tech:'PCB + ready queue',what:'Компьютер олон програмыг «зэрэг» ажиллуулдаг мэт харагддаг ч CPU нэг удаад ганц процессыг ажиллуулна. Процесс бүр өөрийн «анкет» (PCB: дугаар, нэр, үлдсэн ажил) -тэй. Хүлээж буй процессууд бэлэн дараалалд (дэлгүүрийн дараалал шиг) зогсоно. Хэнийг CPU-д оруулахаа scheduler шийднэ. FCFS = ирсэн дарааллаар дуустал нь. Round Robin = хүн бүрт цаг хугацааны «квант» өгч, дуусаагүй бол дарааллын төгсгөлд буцаана.',why:'Linux-д процесс бүр task_struct (PCB)-тэй бөгөөд ийм жагсаалт, дараалал нь дээрх list_head дээр суурилдаг. Энэ нь сурах бичгийн Chapter 3-ын «Processes» сэдэв.',tip:'1 тик = 1 нэгж цаг. Эхлээд процесс нэм, дараа нь «1 тик» эсвэл «Автоматаар» дар.'},
  tree:{ico:'🌳',name:'Хайлтын мод',tech:'binary search tree',what:'Шинэ тоо бүр үндсээс эхэлж «өмнөхөөс бага бол зүүн, их бол баруун» гэж доошилж өөрийн байраа олно. Тэгснээр тоог хурдан олж болно.',why:'Kernel (жинхэнэдээ тэнцвэржсэн мод ашигладаг) том жагсаалтаас хурдан хайхад мод ашигладаг.',tip:'Давхардсан тоо оруулахгүй.'}};
 const DEMO={list:['list add_tail 2 8 1995','list add_tail 17 3 1998','list add_head 29 2 2000','list del 17 3 1998','list add_tail 31 4 2000'],
  queue:['queue push 10','queue push 20','queue push 30','queue pop','queue pop','queue pop','queue pop'],
  stack:['stack push 1','stack push 2','stack push 3','stack pop','stack pop'],
  bitmap:['bitmap size 12','bitmap set 0','bitmap set 5','bitmap set 11','bitmap clear 5','bitmap test 11','bitmap set 99'],
+ sched:['sched policy rr 2','proc new A 5','proc new B 3','proc new C 2','sched tick','sched tick','sched tick','sched tick','sched tick','sched tick','sched tick','sched tick','sched tick','sched tick'],
  tree:['tree insert 50','tree insert 30','tree insert 70','tree insert 20','tree insert 40','tree find 40','tree delete 30','tree insert 50']};
 let cur='list';
 function friendly(l,r){
  const w=l.replace(/#.*/,'').trim().split(/\s+/),c=w[0],o=w[1],a=w.slice(2);
- if(r.startsWith('ERR')){const m=[['day out of range','Ийм өдөр тухайн сард байхгүй (жишээ нь 4-р сар 30 хоногтой, 2-р сар 29 өдөр нь зөвхөн дөрвөн жилд нэг)'],['year must','Жил 1900–2100-ын хооронд байх ёстой'],['month must','Сар 1–12 байх ёстой'],['not found','Ийм зүйл олдсонгүй, тиймээс юу ч хасагдсангүй'],['overflow','Дүүрсэн байна! 8-аас олныг багтаахгүй'],['underflow','Хоосон байна – авах зүйл алга'],['out of range','Тийм дугаартай нүд байхгүй'],['duplicate','Энэ тоо мод дотор аль хэдийн байна'],['usage','Талбаруудыг бүрэн, бүхэл тоогоор бөглөнө үү'],['size must','Хэмжээ 1–128 байх ёстой'],['unknown','Ойлгомжгүй команд']].find(x=>r.includes(x[0]));return['e','❌ '+(m?m[1]:r)];}
+ if(r.startsWith('ERR')){const m=[['name must','Процессын нэр 1–8 тэмдэгт (үсэг, тоо, _) байх ёстой'],['burst must','Ажиллах хугацаа 1–20 тик байх ёстой'],['too many processes','Хэт олон процесс байна (8 хүртэл)'],['policy must','Бодлого нь fcfs эсвэл rr + квант (1–10) байх ёстой'],['day out of range','Ийм өдөр тухайн сард байхгүй (жишээ нь 4-р сар 30 хоногтой, 2-р сар 29 өдөр нь зөвхөн дөрвөн жилд нэг)'],['year must','Жил 1900–2100-ын хооронд байх ёстой'],['month must','Сар 1–12 байх ёстой'],['not found','Ийм зүйл олдсонгүй, тиймээс юу ч хасагдсангүй'],['overflow','Дүүрсэн байна! 8-аас олныг багтаахгүй'],['underflow','Хоосон байна – авах зүйл алга'],['out of range','Тийм дугаартай нүд байхгүй'],['duplicate','Энэ тоо мод дотор аль хэдийн байна'],['usage','Талбаруудыг бүрэн, бүхэл тоогоор бөглөнө үү'],['size must','Хэмжээ 1–128 байх ёстой'],['unknown','Ойлгомжгүй команд']].find(x=>r.includes(x[0]));return['e','❌ '+(m?m[1]:r)];}
  const T={'list add_head':`🚂 ${a.join('/')} вагоныг галт тэрэгний ЭХЭНД залгалаа`,'list add_tail':`🚂 ${a.join('/')} вагоныг ТӨГСГӨЛД залгалаа`,'list del':`✂️ ${a.join('/')} вагоныг салгалаа. Хөрш вагонууд бие биенээ шууд барьж авлаа`,'list clear':'Бүх вагоныг салгалаа',
  'queue push':`🧍 ${a[0]} дугаартай хүн дарааллын ХОЙД талд зогслоо`,'queue pop':`➡️ Дарааллын эхэнд байсан хүн (${r.match(/pop (-?\d+)/)?.[1]}) түрүүлж үйлчлүүлээд гарлаа`,
  'stack push':`🍽 ${a[0]} дугаартай тавгийг ДЭЭД талд тавилаа`,'stack pop':`⬆️ Дээд талын ${r.match(/pop (-?\d+)/)?.[1]} дугаартай тавгийг авлаа`,
  'bitmap size':`💡 ${a[0]} асаагууртай шинэ самбар (бүгд унтраалттай)`,'bitmap set':`💡 ${a[0]}-р асаагуурыг АСААЛАА`,'bitmap clear':`🌑 ${a[0]}-р асаагуурыг УНТРААЛАА`,'bitmap test':`🔍 ${a[0]}-р асаагуур ${r.endsWith('1')?'асаалттай':'унтраалттай'} байна`,
+ 'proc new':`📋 ${a[0]} процессын анкет (PCB) үүсч, бэлэн дарааллын төгсгөлд зогслоо (${(r.match(/P\d+/)||[''])[0]}, ажил ${a[1]} тик)`,'sched policy':r.includes('rr')?`🔁 Round Robin: хүн бүр ${a[1]} тик ажиллаад дуусаагүй бол дарааллын төгсгөлд очно`:'➡️ FCFS: ирсэн дарааллаараа, дуустал нь ажиллана','sched clear':'🧹 Бүх процесс, цагийг цэвэрлэлээ',
+ 'sched tick':()=>{const m=r.match(/t=(\d+) (idle|P\d+\(\w+\)) ?(remaining=(\d+))?( finished| preempted)?/);return m[2]==='idle'?`⏸ t=${m[1]}: CPU сул байна (ажиллах процесс алга)`:`⚙️ t=${m[1]}: CPU ${m[2]}-г 1 тик ажиллууллаа (үлдсэн ${m[4]})`+(m[5]===' finished'?' – 🎉 ДУУСЛАА':m[5]===' preempted'?' – ⏭ квант дууслаа, дарааллын ТӨГСГӨЛД очлоо':'');},
  'tree insert':`🌱 ${a[0]}-г модонд нэмлээ (үндсээс эхлээд бага бол зүүн, их бол баруун тийш)`,'tree delete':`🍂 ${a[0]}-г модноос хаслаа`,'tree find':`🔍 ${a[0]} мод дотор ${r.endsWith('yes')?'ОЛДЛОО':'байхгүй байна'}`};
- return['o','✅ '+(T[c+' '+o]||r)];}
+ const v=T[c+' '+o];return['o','✅ '+(typeof v==='function'?v():(v||r))];}
 function note(l,r,fromAdv){const f=friendly(l,r);const d=document.createElement('div');d.className=f[0];d.textContent=f[1];const F=$('feed');if(F.firstChild&&F.firstChild.className==='')F.innerHTML='';F.prepend(d);}
 function go(l){S.hot=null;const r=exec(l);if(r!==null){note(l,r);$('raw').textContent+=l.trim()+'\n  '+r+'\n';}draw();return r;}
 function adv(l){go(l);}function advScript(){$('script').value.split('\n').forEach(go);}
 $('file').onchange=e=>{const f=e.target.files[0];if(f)f.text().then(t=>$('script').value=t);};
 function resetAll(){dtok++;reset();$('feed').innerHTML='<div>Эхнээс нь эхэллээ 🙂</div>';$('raw').textContent='';draw();}
-let dtok=0;function demo(){const t=++dtok,L=DEMO[cur];let i=0;(function s(){if(t!==dtok||i>=L.length)return;go(L[i++]);setTimeout(s,1100);})();}
+let dtok=0;function demo(){const t=++dtok,L=DEMO[cur];let i=0;(function s(){if(t!==dtok||i>=L.length)return;go(L[i++]);setTimeout(s,cur==='sched'?650:1100);})();}
+function auto(){const t=++dtok;(function s(){const c=S.sc;if(t!==dtok||(!c.run&&!c.ready.length))return;go('sched tick');setTimeout(s,600);})();}
 function sel(k){dtok++;cur=k;draw();}
 const n=(...ids)=>ids.map(i=>$(i).value.trim()).join(' ');
 const inp=(id,l,ph)=>`<label>${l}<input id="${id}" inputmode="numeric" placeholder="${ph||''}"></label>`;
@@ -130,6 +164,7 @@ function controls(){
  if(cur==='queue')return inp('v','Дугаар','7')+btn('🧍 Дараалалд зогс',"'queue push '+n('v')")+btn('➡️ Эхний хүн гарна',"'queue pop'",'alt');
  if(cur==='stack')return inp('v','Дугаар','7')+btn('🍽 Тавь',"'stack push '+n('v')")+btn('⬆️ Дээрээс ав',"'stack pop'",'alt');
  if(cur==='bitmap')return inp('bn','Хэдэн асаагуур? (1–128)','12')+btn('🔧 Самбар шинээр',"'bitmap size '+n('bn')",'ghost')+inp('bi','Дугаар','3')+btn('💡 Асаа',"'bitmap set '+n('bi')")+btn('🌑 Унтраа',"'bitmap clear '+n('bi')",'alt');
+ if(cur==='sched')return '<label>Нэр<input id="pn" placeholder="A" style="width:70px"></label>'+inp('pb','Ажил (1–20 тик)','5')+btn('📋 Процесс нэм',"'proc new '+n('pn','pb')")+'<label>Бодлого<select id="pol"><option value="fcfs">FCFS</option><option value="rr">Round Robin</option></select></label>'+inp('pq','Квант','2')+btn('🔧 Тохируул',"'sched policy '+($('pol').value==='rr'?'rr '+n('pq'):'fcfs')",'ghost')+btn('⏱ 1 тик',"'sched tick'",'alt')+'<button class="go" onclick="auto()">⏩ Автоматаар</button>';
  return inp('v','Тоо','42')+btn('🌱 Нэм',"'tree insert '+n('v')")+btn('🍂 Хас',"'tree delete '+n('v')",'alt')+btn('🔍 Хай',"'tree find '+n('v')",'ghost');}
 function stage(){
  if(cur==='list'){const L=S.list;if(!L.length)return'<div class="empty">🚂 Зөвхөн зүтгүүр байна – вагон алга.<br>Дараах өдөр, сар, жилээ бичээд «Төгсгөлд залга» дар.</div>';
@@ -139,6 +174,13 @@ function stage(){
  if(cur==='stack'){const K=S.stack;if(!K.length)return'<div class="empty">🍽 Таваг алга. «Тавь» дар.</div>';
   return'<div class="stack"><div class="tag">дээд ↓</div>'+K.map((v,i)=>`<div class="pl ${S.hot===i?'hot':''}">${v}</div>`).join('')+'<div class="tag">ширээ</div></div>';}
  if(cur==='bitmap'){let h='<div class="bits">';for(let i=0;i<S.nbits;i++)h+=`<div class="cell ${S.bits[i]?'on':''} ${S.hot===i?'hot':''}" onclick="go('bitmap ${S.bits[i]?'clear':'set'} ${i}')">#${i}<b>${S.bits[i]?'💡':'○'}</b></div>`;return h+'</div>';}
+ if(cur==='sched'){const c=S.sc,col=q=>`hsl(${(q*67)%360} 65% 48%)`;
+  const card=q=>`<div class="pcb" style="border-color:${col(q.pid)}"><b>P${q.pid}</b> ${q.name}<small>үлдсэн ${q.rem}/${q.burst}</small><div class="bar"><i style="width:${100*(q.burst-q.rem)/q.burst}%;background:${col(q.pid)}"></i></div></div>`;
+  let h=`<div style="width:100%"><div class="cols"><div class="lane"><h4>🧍 Бэлэн дараалал (ready queue) – CPU-г хүлээж байна · ${c.q?'Round Robin, квант '+c.q:'FCFS'}</h4><div class="rq">${c.ready.length?c.ready.map(card).join('<span class="link">→</span>'):'<span class="empty">хоосон</span>'}</div></div><div class="lane cpu"><h4>🖥 CPU · t=${c.t}</h4>${c.run?card(c.run):'<div class="big">💤</div>'}<small>дууссан: ${c.done}</small></div></div>`;
+  h+=`<div class="gantt">${c.hist.map(x=>x?`<span class="gt" style="background:${col(x)}">P${x}</span>`:'<span class="gt idle">—</span>').join('')}</div>`;
+  const fin=Object.entries(c.info).filter(e=>e[1].fin!==null);
+  if(fin.length){const rows=fin.map(([id,i])=>{const ta=i.fin-i.arr;return`<tr><td>P${id} ${i.name}</td><td>${i.burst}</td><td>${ta}</td><td>${ta-i.burst}</td></tr>`}).join('');const aw=(fin.reduce((x,[id,i])=>x+i.fin-i.arr-i.burst,0)/fin.length).toFixed(2);h+=`<table class="res"><tr><th>Процесс</th><th>Ажил</th><th>Нийт үргэлжилсэн</th><th>Хүлээсэн</th></tr>${rows}<tr><td colspan="3"><b>Дундаж хүлээсэн хугацаа</b></td><td><b>${aw}</b></td></tr></table>`;}
+  return h+'</div>';}
  if(!S.tree)return'<div class="empty">🌳 Мод хоосон. Тоо оруулж «Нэм» дар.</div>';
  let s='<svg class="tr" viewBox="0 0 480 240">';const els=[];
  (function d(t,x,y,dx){if(!t)return;if(t.l){s+=`<line x1="${x}" y1="${y}" x2="${x-dx}" y2="${y+50}"/>`;d(t.l,x-dx,y+50,dx/2);}if(t.r){s+=`<line x1="${x}" y1="${y}" x2="${x+dx}" y2="${y+50}"/>`;d(t.r,x+dx,y+50,dx/2);}els.push(`<circle class="${S.hot===t.v?'hot':''}" cx="${x}" cy="${y}" r="19"/><text x="${x}" y="${y+5}" text-anchor="middle">${t.v}</text>`);})(S.tree,240,28,110);
