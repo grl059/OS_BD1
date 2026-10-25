@@ -1,0 +1,58 @@
+OK list add_tail 2/8/1995 (size=1)
+OK list add_tail 17/3/1998 (size=2)
+OK list add_tail 29/2/2000 (size=3)
+OK list find 17/3/1998 = index 1
+OK list find 1/1/2001 = not found
+OK queue push 10 (size=1)
+OK queue push 20 (size=2)
+OK queue push 30 (size=3)
+OK queue find 20 = position 1
+OK queue find 99 = not found
+OK stack push 1 (size=1)
+OK stack push 2 (size=2)
+OK stack push 3 (size=3)
+OK stack find 1 = position 2
+OK stack find 7 = not found
+OK hash size 4
+OK hash put alice -> 1234 (bucket=2, size=1)
+OK hash put bob -> 5678 (bucket=3, size=2)
+OK hash put carol -> 9 (bucket=1, size=3)
+OK hash put dave -> 11 (bucket=0, size=4)
+OK hash put ab -> 7 (bucket=3, size=5, collision)
+OK hash put ba -> 8 (bucket=3, size=6, collision)
+HASH buckets=4 size=6 collisions=2: b0=[dave:11] b1=[carol:9] b2=[alice:1234] b3=[bob:5678 -> ab:7 -> ba:8]
+OK hash get ba = 8 (bucket=3, steps=3)
+OK hash get bob = 5678 (bucket=3, steps=1)
+OK hash get zed = not found (bucket=3)
+OK hash put bob = 0 (updated, bucket=3)
+OK hash del alice (size=5)
+ERR hash: key not found
+HASH buckets=4 size=5 collisions=2: b0=[dave:11] b1=[carol:9] b3=[bob:0 -> ab:7 -> ba:8]
+ERR hash: key and value must be 1..12 letters, digits or _
+ERR hash: key must be 1..12 letters, digits or _
+OK tree insert 1 (size=1)
+OK tree insert 2 (size=2)
+OK tree insert 3 (size=3)
+OK tree insert 4 (size=4)
+OK tree insert 5 (size=5)
+TREE size=5 height=5 inorder: 1, 2, 3, 4, 5
+OK tree find 5 = yes
+ERR tree: mode can only be changed when the tree is empty
+OK tree delete 1 (size=4)
+OK tree delete 2 (size=3)
+OK tree delete 3 (size=2)
+OK tree delete 4 (size=1)
+OK tree delete 5 (size=0)
+OK tree mode avl
+OK tree insert 1 (size=1)
+OK tree insert 2 (size=2)
+OK tree insert 3 (size=3)
+OK tree insert 4 (size=4)
+OK tree insert 5 (size=5)
+OK tree insert 6 (size=6)
+OK tree insert 7 (size=7)
+TREE(avl) size=7 height=3 inorder: 1, 2, 3, 4, 5, 6, 7
+OK tree find 5 = yes
+OK tree find 8 = no
+OK tree delete 4 (size=6)
+TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7

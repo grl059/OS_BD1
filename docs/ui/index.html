@@ -42,7 +42,7 @@ table.res{border-collapse:collapse;margin-top:12px;font-size:13px;width:100%;bac
 </head>
 <body><main>
 <h1>Компьютерийн «тархи» өгөгдлөө хэрхэн хадгалдаг вэ?</h1>
-<p class="sub">Үйлдлийн системийн цөм (kernel) таван энгийн «хайрцаг»-аар мэдээллээ зохион байгуулдаг. Код мэдэх шаардлагагүй – товч дараад юу болохыг нь хар.</p>
+<p class="sub">Үйлдлийн системийн цөм (kernel) долоон энгийн «хайрцаг»-аар мэдээллээ зохион байгуулдаг. Код мэдэх шаардлагагүй – товч дараад юу болохыг нь хар.</p>
 <div class="steps"><div><b>1.</b>Доороос нэг бүтцийг сонго</div><div><b>2.</b>  «Жишээ үзүүл»-ийг дар, эсвэл өөрөө товчийг дар</div><div><b>3.</b> «Юу болов?» хэсгээс тайлбарыг унш</div></div>
 <div class="tabs" id="tabs"></div>
 <div class="card intro" id="intro"></div>
@@ -62,7 +62,7 @@ const LIMIT=8;
 function vd(d,m,y){const dm=[31,28,31,30,31,30,31,31,30,31,30,31];if(y<1900||y>2100)return"year must be 1900..2100";if(m<1||m>12)return"month must be 1..12";
  const lim=dm[m-1]+(m===2&&((y%4===0&&y%100!==0)||y%400===0)?1:0);if(d<1||d>lim)return"day out of range for month";return null;}
 const hf=k=>{let s=0;for(const c of k)s+=c.charCodeAt(0);return s%S.hs.n;};
-const isInt=s=>/^[+-]?\d+$/.test(s);
+const isInt=s=>/^[+-]?\d+$/.test(s)&&Math.abs(+s)<=2147483647;
 const ht=t=>t?t.h:0,upd=t=>{t.h=1+Math.max(ht(t.l),ht(t.r));};
 function rotr(y){const x=y.l;y.l=x.r;x.r=y;upd(y);upd(x);return x;}
 function rotl(x){const y=x.r;x.r=y.l;y.l=x;upd(x);upd(y);return y;}
@@ -110,7 +110,7 @@ function exec(line){
    const b=hf(k),ch=H.b[b],had=ch.length>0,e=ch.find(x=>x[0]===k);S.hot=k;
    if(e){e[1]=v;return`OK hash put ${k} = ${v} (updated, bucket=${b})`;}
    if(H.size>=24)return'ERR hash: full (limit 24)';ch.push([k,v]);H.size++;return`OK hash put ${k} -> ${v} (bucket=${b}, size=${H.size}${had?', collision':''})`;}
-  if(op==='get'||op==='del'){if(a.length!==1)return`ERR hash: usage ${op} <key>`;const k=a[0],b=hf(k),ch=H.b[b],i=ch.findIndex(x=>x[0]===k);
+  if(op==='get'||op==='del'){if(a.length!==1)return`ERR hash: usage ${op} <key>`;if(!/^\w{1,12}$/.test(a[0]))return'ERR hash: key must be 1..12 letters, digits or _';const k=a[0],b=hf(k),ch=H.b[b],i=ch.findIndex(x=>x[0]===k);
    if(op==='get'){if(i<0)return`OK hash get ${k} = not found (bucket=${b})`;S.hot=k;return`OK hash get ${k} = ${ch[i][1]} (bucket=${b}, steps=${i+1})`;}
    if(i<0)return'ERR hash: key not found';ch.splice(i,1);H.size--;return`OK hash del ${k} (size=${H.size})`;}
   return'ERR hash: unknown op';}
@@ -167,14 +167,14 @@ const DEMO={hash:['hash size 4','hash put alice 1234','hash put bob 5678','hash 
 let cur='list';
 function friendly(l,r){
  const w=l.replace(/#.*/,'').trim().split(/\s+/),c=w[0],o=w[1],a=w.slice(2);
- if(r.startsWith('ERR')){const m=[['key and value must','Түлхүүр, утга 1–12 тэмдэгт (үсэг, тоо, _) байх ёстой'],['hash: full','Хүснэгт дүүрсэн (24 хүртэл)'],['key not found','Ийм түлхүүр байхгүй'],['mode can only','Төрлийг солихын өмнө модыг хоослоно уу («Эхнээс нь»)'],['mode must','Төрөл нь bst эсвэл avl байх ёстой'],['buckets must','Нүдний тоо 1–16 байх ёстой'],['name must','Процессын нэр 1–8 тэмдэгт (үсэг, тоо, _) байх ёстой'],['burst must','Ажиллах хугацаа 1–20 тик байх ёстой'],['too many processes','Хэт олон процесс байна (8 хүртэл)'],['policy must','Бодлого нь fcfs эсвэл rr + квант (1–10) байх ёстой'],['day out of range','Ийм өдөр тухайн сард байхгүй (жишээ нь 4-р сар 30 хоногтой, 2-р сар 29 өдөр нь зөвхөн дөрвөн жилд нэг)'],['year must','Жил 1900–2100-ын хооронд байх ёстой'],['month must','Сар 1–12 байх ёстой'],['not found','Ийм зүйл олдсонгүй, тиймээс юу ч хасагдсангүй'],['overflow','Дүүрсэн байна! 8-аас олныг багтаахгүй'],['underflow','Хоосон байна – авах зүйл алга'],['out of range','Тийм дугаартай нүд байхгүй'],['duplicate','Энэ тоо мод дотор аль хэдийн байна'],['usage','Талбаруудыг бүрэн, бүхэл тоогоор бөглөнө үү'],['size must','Хэмжээ 1–128 байх ёстой'],['unknown','Ойлгомжгүй команд']].find(x=>r.includes(x[0]));return['e',' '+(m?m[1]:r)];}
+ if(r.startsWith('ERR')){const m=[['key must be','Түлхүүр 1–12 тэмдэгт (үсэг, тоо, _) байх ёстой'],['key and value must','Түлхүүр, утга 1–12 тэмдэгт (үсэг, тоо, _) байх ёстой'],['hash: full','Хүснэгт дүүрсэн (24 хүртэл)'],['key not found','Ийм түлхүүр байхгүй'],['mode can only','Төрлийг солихын өмнө модыг хоослоно уу («Эхнээс нь»)'],['mode must','Төрөл нь bst эсвэл avl байх ёстой'],['buckets must','Нүдний тоо 1–16 байх ёстой'],['name must','Процессын нэр 1–8 тэмдэгт (үсэг, тоо, _) байх ёстой'],['burst must','Ажиллах хугацаа 1–20 тик байх ёстой'],['too many processes','Хэт олон процесс байна (8 хүртэл)'],['policy must','Бодлого нь fcfs эсвэл rr + квант (1–10) байх ёстой'],['day out of range','Ийм өдөр тухайн сард байхгүй (жишээ нь 4-р сар 30 хоногтой, 2-р сар 29 өдөр нь зөвхөн дөрвөн жилд нэг)'],['year must','Жил 1900–2100-ын хооронд байх ёстой'],['month must','Сар 1–12 байх ёстой'],['not found','Ийм зүйл олдсонгүй, тиймээс юу ч хасагдсангүй'],['overflow','Дүүрсэн байна! 8-аас олныг багтаахгүй'],['underflow','Хоосон байна – авах зүйл алга'],['out of range','Тийм дугаартай нүд байхгүй'],['duplicate','Энэ тоо мод дотор аль хэдийн байна'],['usage','Талбаруудыг бүрэн, бүхэл тоогоор бөглөнө үү'],['size must','Хэмжээ 1–128 байх ёстой'],['unknown','Ойлгомжгүй команд']].find(x=>r.includes(x[0]));return['e',' '+(m?m[1]:r)];}
  const T={'list add_head':` ${a.join('/')} вагоныг галт тэрэгний ЭХЭНД залгалаа`,'list add_tail':` ${a.join('/')} вагоныг ТӨГСГӨЛД залгалаа`,'list del':` ${a.join('/')} вагоныг салгалаа. Хөрш вагонууд бие биенээ шууд барьж авлаа`,'list clear':'Бүх вагоныг салгалаа',
  'queue push':` ${a[0]} дугаартай хүн дарааллын ХОЙД талд зогслоо`,'queue pop':`Дарааллын эхэнд байсан хүн (${r.match(/pop (-?\d+)/)?.[1]}) түрүүлж үйлчлүүлээд гарлаа`,
  'stack push':` ${a[0]} дугаартай тавгийг ДЭЭД талд тавилаа`,'stack pop':`Дээд талын ${r.match(/pop (-?\d+)/)?.[1]} дугаартай тавгийг авлаа`,
  'bitmap size':` ${a[0]} асаагууртай шинэ самбар (бүгд унтраалттай)`,'bitmap set':` ${a[0]}-р асаагуурыг АСААЛАА`,'bitmap clear':` ${a[0]}-р асаагуурыг УНТРААЛАА`,'bitmap test':` ${a[0]}-р асаагуур ${r.endsWith('1')?'асаалттай':'унтраалттай'} байна`,
  'proc new':` ${a[0]} процессын анкет (PCB) үүсч, бэлэн дарааллын төгсгөлд зогслоо (${(r.match(/P\d+/)||[''])[0]}, ажил ${a[1]} тик)`,'sched policy':r.includes('rr')?` Round Robin: хүн бүр ${a[1]} тик ажиллаад дуусаагүй бол дарааллын төгсгөлд очно`:' FCFS: ирсэн дарааллаараа, дуустал нь ажиллана','sched clear':'Бүх процесс, цагийг цэвэрлэлээ',
  'sched tick':()=>{const m=r.match(/t=(\d+) (idle|P\d+\(\w+\)) ?(remaining=(\d+))?( finished| preempted)?/);return m[2]==='idle'?` t=${m[1]}: CPU сул байна (ажиллах процесс алга)`:` t=${m[1]}: CPU ${m[2]}-г 1 тик ажиллууллаа (үлдсэн ${m[4]})`+(m[5]===' finished'?' –  ДУУСЛАА':m[5]===' preempted'?' –  квант дууслаа, дарааллын ТӨГСГӨЛД очлоо':'');},
- 'list find':()=>r.includes('not found')?`${a.join('/')} жагсаалтад олдсонгүй (бүх вагоныг шалгасан)`:`${a.join('/')} вагон ${r.match(/index (\d+)/)[1]}-р байрт олдлоо (зүтгүүрээс нэг нэгээр нь шалгасан тул O(n))`,
+ 'list find':()=>r.includes('not found')?`${a.join('/')} жагсаалтад олдсонгүй (бүх вагоныг шалгасан)`:`${a.join('/')} вагон ${r.match(/index (\d+)/)[1]}-р байрт олдлоо (0 = эхний вагон; зүтгүүрээс нэг нэгээр нь шалгасан тул O(n))`,
  'queue find':()=>r.includes('not found')?`${a[0]} дараалалд байхгүй`:`${a[0]} дарааллын ${r.match(/position (\d+)/)[1]}-р байрт байна (0 = эхний)`,
  'stack find':()=>r.includes('not found')?`${a[0]} овоолгод байхгүй`:`${a[0]} дээрээс ${r.match(/position (\d+)/)[1]}-р байрт байна (0 = хамгийн дээд)`,
  'hash put':()=>{const b=r.match(/bucket=(\d+)/)[1];return r.includes('updated')?`${a[0]} түлхүүрийн утгыг ${a[1]} болгон шинэчиллээ (нүд ${b})`:`${a[0]}-г хэш функцээр ${b}-р нүдэнд оруулав`+(r.includes('collision')?' – энэ нүдэнд өөр түлхүүр аль хэдийн байсан (collision) тул жагсаалтын төгсгөлд залгалаа':'');},

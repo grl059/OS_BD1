@@ -1,0 +1,15 @@
+# build outputs
+/kds
+*.o
+*.ko
+*.mod
+*.mod.c
+*.cmd
+.*.cmd
+modules.order
+Module.symvers
+.tmp_versions/
+__pycache__/
+# signing keys must never be committed
+*.priv
+*.der

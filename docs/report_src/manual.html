@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<title>4_Manual – Kernel Data Structures</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .head { border-bottom: 2px solid #1d3f7a; padding-bottom: 6pt; margin-bottom: 10pt; }
+  .head .t { font-size: 20pt; font-weight: bold; }
+  .head .s { font-size: 11.5pt; color: #333; }
+  h1 { font-size: 16pt; color: #1d3f7a; }
+  h2 { font-size: 13pt; }
+</style>
+</head>
+<body>
+<div class="head">
+  <div class="t">Manual – Kernel Data Structures</div>
+  <div class="s">Хуваарилалтын код: 4 · F.CSM302 Үйлдлийн систем · БД1 · Repository: github.com/grl059/OS_BD1</div>
+</div>
+
+<h1>1. Хэрэглэгчийн заавар</h1>
+
+<h2>1.1 Програмын зорилго</h2>
+<p>Linux kernel-ийн өгөгдлийн бүтцүүдийг загварчилж, элемент нэмэх, устгах, хайх үйлдэл бүрийн дараах бүтцийг график дээр харуулна. Бүтцүүд: холбоост жагсаалт (<code>list_head</code>, struct birthday), queue (FIFO), stack (LIFO), bitmap, hash map (collision-той), хайлтын мод (энгийн BST ба тэнцвэржсэн AVL), процесс ба CPU (PCB, ready queue, FCFS ба Round Robin). Kernel module нь <code>struct color</code> жагсаалт болон <code>start</code> параметртэй Collatz жагсаалтыг kernel дотор үүсгэнэ. Хэрэглэгч өөрийн огноо, тоо, түлхүүр, процессоо оруулж туршина.</p>
+
+<h2>1.2 Дэмжих орчин</h2>
+<table>
+  <tr><th>Хэсэг</th><th>Орчин</th></tr>
+  <tr><td>UI (docs/ui/index.html)</td><td>Орчин үеийн browser (Chrome, Edge, Firefox, Safari), суулгалт шаардлагагүй, интернэт хэрэггүй. Утсан дээр ч нээгдэнэ.</td></tr>
+  <tr><td>CLI (./kds)</td><td>Linux, macOS эсвэл Windows-ийн WSL; gcc ≥ 9 (эсвэл clang), GNU make</td></tr>
+  <tr><td>Нэмэлт тест</td><td>python3 ≥ 3.8, Node.js ≥ 18</td></tr>
+  <tr><td>Kernel module</td><td>Жинхэнэ Linux (VM эсвэл үндсэн машин; WSL/Docker биш), <code>linux-headers-$(uname -r)</code>, sudo эрх</td></tr>
+</table>
+
+<h2>1.3 Суулгах эсвэл нээх алхам</h2>
+<ol>
+  <li>Repository-г татна: <code>git clone https://github.com/grl059/OS_BD1.git</code> эсвэл GitHub-ийн «Code → Download ZIP»-ээр татаж задлана.</li>
+  <li><b>UI:</b> <code>docs/ui/index.html</code> файлыг browser-т давхар товшиж нээнэ.</li>
+  <li><b>CLI:</b> терминалд repository-ийн хавтсанд <code>make</code> ажиллуулна. Ингэснээр <code>./kds</code> үүснэ.</li>
+</ol>
+
+<h2>1.4 Оролт ба тохиргоо</h2>
+<table>
+  <tr><th style="width:30%">Команд</th><th>Оролт</th><th style="width:34%">Хязгаар</th></tr>
+  <tr><td><code>list add_head|add_tail|del|find &lt;д&gt; &lt;с&gt; &lt;ж&gt;</code></td><td>өдөр, сар, жил</td><td>жил 1900–2100, хүчинтэй огноо (2-р сарын 29-г өндөр жилээр шалгана)</td></tr>
+  <tr><td><code>queue|stack push|find &lt;тоо&gt;</code>, <code>pop</code></td><td>бүхэл тоо</td><td>багтаамж 8 (overflow/underflow мэдээлнэ)</td></tr>
+  <tr><td><code>bitmap size &lt;n&gt;</code>, <code>set|clear|test &lt;i&gt;</code></td><td>хэмжээ, индекс</td><td>n = 1..128, индекс 0..n−1</td></tr>
+  <tr><td><code>hash size &lt;n&gt;</code>, <code>put &lt;key&gt; &lt;value&gt;</code>, <code>get|del &lt;key&gt;</code></td><td>bucket-ийн тоо, түлхүүр, утга</td><td>n = 1..16 (анхдагч 8); түлхүүр/утга 1–12 тэмдэгт (үсэг, тоо, _); нийт ≤ 24</td></tr>
+  <tr><td><code>tree mode bst|avl</code>, <code>insert|delete|find &lt;тоо&gt;</code></td><td>төрөл, бүхэл тоо</td><td>төрлийг зөвхөн хоосон модонд солино; давхардсан утга татгалзана</td></tr>
+  <tr><td><code>proc new &lt;нэр&gt; &lt;ажил&gt;</code></td><td>нэр, ажлын тик</td><td>нэр 1–8 тэмдэгт, ажил 1–20 тик, амьд процесс ≤ 8</td></tr>
+  <tr><td><code>sched policy fcfs | rr &lt;квант&gt;</code>, <code>tick|print|clear</code></td><td>бодлого, квант</td><td>квант 1–10; 1 tick = 1 нэгж цаг</td></tr>
+  <tr><td><code>... print</code>, <code>... clear</code></td><td>—</td><td>бүтцийн төлөвийг хэвлэх / цэвэрлэх</td></tr>
+  <tr><td><code>insmod kds_module.ko start=N</code></td><td>Collatz-ийн эхний гишүүн</td><td>1..1 000 000 (анхдагч 25)</td></tr>
+</table>
+<p><code>#</code>-ээс хойших хэсэг коммент. Тоог <code>+5</code>, <code>-3</code>, <code>007</code> хэлбэрээр бичиж болно. <code>3x</code>, <code>1.5</code> хэлбэрийн утга эсвэл int-ийн мужаас хэтэрсэн тоо буруу оролтод тооцогдоно.</p>
+
+<h2>1.5 Ажиллуулах, зогсоох, reset хийх</h2>
+<ul>
+  <li><b>UI:</b> дээд хэсгийн tab-аас бүтцээ сонгоно. Утгаа бичээд товч (жишээ нь «Төгсгөлд залга», «Хай», «Хас») дарна. «Жишээ үзүүл» нь тухайн бүтцийн үйлдлүүдийг автоматаар үзүүлнэ. «Ахисан түвшин» хэсэгт команд бичиж Enter дарах, эсвэл <code>examples/*.txt</code>-г ачаалж «Script ажиллуулах» дарах боломжтой. <b>«Эхнээс нь»</b> товч бүх бүтцийг reset хийнэ (хуудсыг дахин ачаалах нь мөн адил). «Процесс ба CPU» tab-ын «Автоматаар» товчийг дахин «Эхнээс нь» дарж зогсооно.</li>
+  <li><b>CLI:</b> <code>./kds файл.txt</code> нь script ажиллуулна. <code>./kds</code> гэж ажиллуулаад команд бичиж болно. <b>Ctrl+D</b> дарж зогсооно (Ctrl+C мөн зогсооно). Програмыг дахин ажиллуулахад бүх бүтэц хоосон эхэлнэ (reset). Бүтэц тус бүрийг <code>list clear</code>, <code>hash clear</code>, <code>sched clear</code>-ээр цэвэрлэнэ.</li>
+  <li><b>Kernel module:</b> <code>sudo insmod</code> ачаална, <code>sudo rmmod kds_module</code> буулгана (2.6).</li>
+</ul>
+
+<h2>1.6 Дүрслэлийн тэмдэг, өнгө, төлөв</h2>
+<table>
+  <tr><th style="width:38%">Тэмдэг</th><th>Утга</th></tr>
+  <tr><td>Цагаан хайрцаг, цэнхэр хүрээтэй</td><td>node (struct birthday, queue/stack-ийн элемент, hash-ийн түлхүүр, PCB)</td></tr>
+  <tr><td>Цайвар цэнхэрээр дүүргэсэн хайрцаг / тойрог</td><td>сүүлийн үйлдэлд нэмэгдсэн эсвэл олдсон элемент</td></tr>
+  <tr><td>⇄ сум (галт тэрэг)</td><td>next ба prev заагч (давхар холбоос)</td></tr>
+  <tr><td>→ сум (hash bucket, ready queue)</td><td>жагсаалтын дараагийн элемент; bucket-д 2 ба түүнээс олон элемент байвал collision</td></tr>
+  <tr><td>Цэнхэрээр дүүргэсэн нүд (1) / цагаан нүд (0)</td><td>bitmap-ийн асаалттай / унтраалттай бит</td></tr>
+  <tr><td>Хар цэнхэр дөрвөлжин дугаар (0, 1, …)</td><td>hash-ийн bucket-ийн индекс</td></tr>
+  <tr><td>Өнгөт PCB карт, доорх зурвас</td><td>процесс ба ажлын явц; Gantt дээр тик бүрд ажилласан процесс, саарал «idle» нь CPU сул</td></tr>
+  <tr><td>Модны доорх «өндөр» бичиг</td><td>модны түвшний тоо = хамгийн муу хайлтын алхам</td></tr>
+  <tr><td>«Юу болов?»: цэнхэр / улаан зураас + «Алдаа:»</td><td>OK / ERR мессеж, Монгол тайлбартай</td></tr>
+</table>
+
+<h2>1.7 Жишээ</h2>
+<p><b>Жишээ 1 (сурах бичгийн жишээ).</b> «Ахисан түвшин» → script талбарт <code>examples/textbook.txt</code>-г ачаалж «Script ажиллуулах» дарна (CLI: <code>./kds examples/textbook.txt</code>). Хүлээгдэх үр дүн: 5 огноо дарааллаараа жагсаж, устгасны дараа жагсаалт хоосон болно.</p>
+<pre>OK list add_tail 2/8/1995 (size=1)
+OK list add_tail 17/3/1998 (size=2)
+OK list add_tail 29/2/2000 (size=3)
+OK list add_tail 5/11/2001 (size=4)
+OK list add_tail 30/12/2003 (size=5)
+LIST size=5: 2/8/1995 -> 17/3/1998 -> 29/2/2000 -> 5/11/2001 -> 30/12/2003
+OK list del 17/3/1998 (size=4)
+LIST size=4: 2/8/1995 -> 29/2/2000 -> 5/11/2001 -> 30/12/2003
+OK list del 2/8/1995 (size=3)
+OK list del 29/2/2000 (size=2)
+OK list del 5/11/2001 (size=1)
+OK list del 30/12/2003 (size=0)
+LIST size=0: (empty)</pre>
+
+<p><b>Жишээ 2 (өөрийн оролт – bitmap).</b> «Гэрлийн самбар» tab дээр эсвэл командаар <code>bitmap size 16</code>, <code>bitmap set 3</code>, <code>bitmap set 9</code> гэж оруулна. 16 нүдний 3 ба 9-р нүд цэнхэр (1) болно. <code>bitmap print</code> командын гаралт: <code>BITMAP n=16: 0001000001000000 (set=2)</code>. <code>bitmap set 16</code> гэвэл <code>ERR bitmap: index 16 out of range 0..15</code> гарна.</p>
+
+<p><b>Жишээ 3 (процесс ба CPU).</b> «Процесс ба CPU» tab дээр «Жишээ үзүүл» товчийг дарна. Квант 2-той Round Robin-оор A (5 тик), B (3), C (2) ээлжилж ажиллана. C нь t=5, B нь t=8, A нь t=9 тик дээр дуусна, өөрөөр хэлбэл дуусах хугацаа 6, 9, 10 болно. Дундаж хүлээлт 5.00 гарна. Дараа нь «Эхнээс нь» дарж бодлогыг FCFS болгоод ижил процессуудыг дахин оруулж хүлээлтийг харьцуулна (FCFS: 4.33). Командаар: <code>./kds examples/scheduler.txt</code></p>
+<pre>OK sched policy rr q=2
+OK proc new P1 A burst=5 (alive=1)
+OK proc new P2 B burst=3 (alive=2)
+OK proc new P3 C burst=2 (alive=3)
+SCHED policy=rr(q=2) time=0 running=none ready=P1(A:5), P2(B:3), P3(C:2) done=0
+TICK t=0 P1(A) remaining=4
+TICK t=1 P1(A) remaining=3 preempted
+TICK t=2 P2(B) remaining=2
+TICK t=3 P2(B) remaining=1 preempted
+TICK t=4 P3(C) remaining=1
+TICK t=5 P3(C) remaining=0 finished
+TICK t=6 P1(A) remaining=2
+TICK t=7 P1(A) remaining=1 preempted
+TICK t=8 P2(B) remaining=0 finished
+TICK t=9 P1(A) remaining=0 finished
+TICK t=10 idle
+SCHED policy=rr(q=2) time=11 running=none ready=(empty) done=3</pre>
+
+<p><b>Жишээ 4 (хэш хүснэгт ба мод).</b> «Хэш хүснэгт» tab дээр «Жишээ үзүүл» дарахад «ab», «ba» нь «bob»-той нэг bucket-д орж collision үүсэхийг харна. «Хайлтын мод» tab дээр эхлээд энгийн төрлөөр «1–7 дараалуулж оруул» товчийг дарна (өндөр 7). Дараа нь «Эхнээс нь» → төрөл «Тэнцвэржсэн (AVL)» → «Төрөл сонгох» → «1–7 дараалуулж оруул» дарж харьцуулна (өндөр 3). Командаар: <code>./kds examples/search.txt</code></p>
+<pre>OK hash put ab -> 7 (bucket=3, size=5, collision)
+OK hash put ba -> 8 (bucket=3, size=6, collision)
+HASH buckets=4 size=6 collisions=2: b0=[dave:11] b1=[carol:9] b2=[alice:1234] b3=[bob:5678 -> ab:7 -> ba:8]
+OK hash get ba = 8 (bucket=3, steps=3)
+OK hash get zed = not found (bucket=3)
+TREE size=5 height=5 inorder: 1, 2, 3, 4, 5
+TREE(avl) size=7 height=3 inorder: 1, 2, 3, 4, 5, 6, 7
+OK tree find 5 = yes
+TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7</pre>
+
+<h2>1.8 Түгээмэл алдаа ба шийдэл</h2>
+<table>
+  <tr><th style="width:36%">Мессеж</th><th>Шалтгаан</th><th style="width:28%">Шийдэл</th></tr>
+  <tr><td><code>ERR list: day out of range for month</code></td><td>Байхгүй огноо (31/4, 29/2/1900)</td><td>Зөв огноо оруулах</td></tr>
+  <tr><td><code>ERR list: usage &lt;op&gt; &lt;day&gt; &lt;month&gt; &lt;year&gt;</code></td><td>3 тоо биш (дутуу, үсэг, «2/8/1995» гэж налуу зураастай)</td><td><code>list add_tail 2 8 1995</code></td></tr>
+  <tr><td><code>ERR queue: overflow (limit 8)</code></td><td>8-аас олон push</td><td>pop хийх</td></tr>
+  <tr><td><code>ERR queue: underflow (empty)</code></td><td>Хоосон дээр pop</td><td>Эхлээд push</td></tr>
+  <tr><td><code>ERR bitmap: index N out of range</code></td><td>Индекс хэтэрсэн</td><td>0..n−1 дотор оруулах</td></tr>
+  <tr><td><code>ERR tree: duplicate N</code></td><td>Ижил утга</td><td>Өөр утга</td></tr>
+  <tr><td><code>ERR tree: mode can only be changed …</code></td><td>Мод хоосон биш</td><td>«Эхнээс нь» / бүх тоог хасах</td></tr>
+  <tr><td><code>ERR hash: key and value must be …</code>, <code>key must be …</code></td><td>12-оос урт эсвэл «-» гэх мэт тэмдэгттэй</td><td>Ж: alice, key_1</td></tr>
+  <tr><td><code>ERR hash: full (limit 24)</code></td><td>24 элемент</td><td><code>hash del</code> эсвэл <code>hash clear</code></td></tr>
+  <tr><td><code>ERR proc: name must be …</code></td><td>Нэр урт эсвэл тусгай тэмдэгттэй</td><td>Ж: A, job1</td></tr>
+  <tr><td><code>ERR proc: too many processes</code></td><td>8-аас олон амьд процесс</td><td>Зарим нь дуустал tick хийх</td></tr>
+  <tr><td><code>ERR unknown structure 'x'</code></td><td>Бүтцийн нэр буруу</td><td>list, queue, stack, bitmap, hash, tree, proc, sched</td></tr>
+  <tr><td><code>insmod: Key was rejected by service</code></td><td>Secure Boot, гарын үсэггүй модуль</td><td>MOK-оор гарын үсэг зурах (2.6)</td></tr>
+  <tr><td><code>insmod: Invalid parameters</code></td><td><code>start</code> 1..1 000 000-аас гадуур</td><td>Ж: <code>start=27</code></td></tr>
+  <tr><td><code>make: *** /lib/modules/…/build: No such file</code></td><td>Kernel header суугаагүй</td><td><code>sudo apt install linux-headers-$(uname -r)</code></td></tr>
+</table>
+
+<h1 class="pb">2. Operational заавар</h1>
+
+<h2>2.1 Repository clone хийх</h2>
+<pre>git clone https://github.com/grl059/OS_BD1.git kernel-data-structures
+cd kernel-data-structures
+git checkout v1.0          # 9-р долоо хоногт нийтэлсэн хувилбар</pre>
+
+<h2>2.2 OS, compiler/runtime, version</h2>
+<table>
+  <tr><th>Хэрэгсэл</th><th>Туршсан хувилбар</th><th>Шаардлага</th></tr>
+  <tr><td>OS</td><td>Ubuntu 24.04 LTS</td><td>Linux / macOS / WSL (CLI); жинхэнэ Linux (module)</td></tr>
+  <tr><td>gcc</td><td>13.3</td><td>≥ 9 (ASan/UBSan дэмжлэгтэй); clang мөн болно</td></tr>
+  <tr><td>GNU make</td><td>4.3</td><td>—</td></tr>
+  <tr><td>Python</td><td>3.13</td><td>≥ 3.8 (fuzz, AVL тест)</td></tr>
+  <tr><td>Node.js</td><td>22</td><td>≥ 18 (UI==C тест)</td></tr>
+  <tr><td>Linux kernel</td><td>6.11.0-17-generic</td><td>headers нь ажиллаж буй kernel-тэй ижил хувилбартай байх</td></tr>
+</table>
+
+<h2>2.3 Dependency суулгах</h2>
+<pre>sudo apt update
+sudo apt install build-essential python3 nodejs     # CLI ба тест
+sudo apt install linux-headers-$(uname -r)          # зөвхөн kernel module-д</pre>
+<p>Гадны сан (library) ашиглаагүй тул өөр dependency шаардлагагүй. UI-д юу ч суулгах шаардлагагүй.</p>
+
+<h2>2.4 Build ба Run команд</h2>
+<pre>make                                   # ./kds (-Wall -Wextra -fsanitize=address,undefined)
+./kds examples/textbook.txt            # script
+echo "queue push 5" | ./kds            # stdin-ээс
+./kds                                  # интерактив, Ctrl+D-ээр гарна
+make clean                             # build-ийн гаралтыг устгах</pre>
+
+<h2>2.5 Үндсэн тестийн өгөгдөл</h2>
+<pre>make test
+#   PASS textbook / all_structures / errors / scheduler / scheduler_full / search
+#   PASS stress (5000 x 8 commands, ERR 0, no sanitizer report)
+make check                             # make test + доорх гурав
+sh tests/test_ui_matches_c.sh          # UI-ийн ENGINE == C, 6 скрипт: PASS ui==c x6
+python3 tests/fuzz_compare.py 8 5000   # 8 seed x 5000 санамсаргүй команд (тэгш seed-д AVL): PASS x8
+python3 tests/avl_check.py             # AVL: inorder ба өндөр <= 1.44*log2(n+2), 30 гүйлт: PASS</pre>
+<p>Хүлээгдэх гаралт <code>tests/expected_*.out</code>-д байна. Шинэ тест нэмэхдээ <code>examples/нэр.txt</code> үүсгээд <code>./kds examples/нэр.txt &gt; tests/expected_нэр.out</code> гэж хадгалж, гаралтыг гараар шалгаад <code>tests/run_tests.sh</code>-ийн жагсаалтад нэрийг нэмнэ.</p>
+
+<h2>2.6 Нэмэлт boundary/error test</h2>
+<p><code>examples/errors.txt</code>: буруу огноо (31/4, 29/2/1900), сар 13, жил 1800, үсэг бүхий аргумент, хоосон бүтцээс pop, bitmap size 0 ба 129, индекс −1 ба 99, давхардсан tree утга, байхгүй утга устгах. <code>examples/scheduler.txt</code>-ийн төгсгөл: урт нэр, ажил 0 ба 21, квант 0 ба 11, мэдэгдэхгүй бодлого. <code>examples/scheduler_full.txt</code>: 9 дэх процесс татгалзагдана. <code>examples/search.txt</code>: 13 тэмдэгттэй түлхүүр, «-» тэмдэгттэй түлхүүр, хоосон биш модны төрлийг солих. Эдгээрийн мөр бүр ойлгомжтой <code>ERR</code> мессеж өгч, програм үргэлжлэн ажиллах ёстой.</p>
+
+<h2>2.7 Kernel module</h2>
+<pre>sh src/kernel/run_module_test.sh
+#   make -> docs/kernel_build_log.txt
+#   PASS insmod  (start=25, 24 гишүүн)
+#   PASS insmod start=15 (18 гишүүн)
+#   PASS insmod start=0 (fail: Invalid parameters)
+#   -> docs/kernel_dmesg.txt
+
+# Гараар:
+cd src/kernel && make
+sudo insmod kds_module.ko start=15 && sudo dmesg | grep kds:
+sudo rmmod kds_module && sudo dmesg | grep kds: | tail -30</pre>
+<p><b>Хүлээгдэх dmesg</b> (<code>start=15</code>): «loading module (start=15)», 4 «color red=… blue=… green=…» мөр, 18 «collatz» мөр (15 46 23 70 35 106 53 160 80 40 20 10 5 16 8 4 2 1), «collatz start=15 terms=18», 5 «birthday d/m/y», «fifo out» 10, 20, 30, «bitmap weight=2, bit15=1». rmmod үед «removing color/collatz/birthday» мөрүүд болон «module unloaded» гарна. <code>start=0</code> үед «start must be 1..1000000 (got 0)» гарч, insmod амжилтгүй болно.</p>
+<p><b>Secure Boot идэвхтэй үед</b> (<code>insmod: Key was rejected by service</code>) дараах тохиргоог нэг удаа хийнэ:</p>
+<pre>mkdir -p ~/mok &amp;&amp; cd ~/mok
+openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der \
+        -nodes -days 3650 -subj "/CN=KDS module signing/"
+sudo mokutil --import MOK.der       # reboot хийж, MOK дэлгэц дээр Enroll MOK
+# build бүрийн дараа:
+sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv ~/mok/MOK.der kds_module.ko</pre>
+<p><code>MOK.priv</code> түлхүүрийг repository-д хэзээ ч commit хийхгүй (<code>.gitignore</code>-д хассан).</p>
+
+<h2>2.8 Хүлээгдсэн үр дүн</h2>
+<table>
+  <tr><th>Команд</th><th>Хүлээгдэх</th></tr>
+  <tr><td><code>make</code></td><td>Анхааруулгагүй compile хийгдэж <code>./kds</code> үүснэ</td></tr>
+  <tr><td><code>make test</code></td><td>7 PASS (6 скрипт + stress), exit 0</td></tr>
+  <tr><td><code>make check</code></td><td>Нийт 53 PASS (7 + 6 UI==C + 8 fuzz + 32 AVL), FAIL 0</td></tr>
+  <tr><td>UI</td><td>Browser-ийн console-д алдаа гарахгүй; script-ийн гаралт CLI-тай ижил</td></tr>
+  <tr><td><code>run_module_test.sh</code></td><td>3 PASS, build log ба dmesg файл үүснэ</td></tr>
+</table>
+
+<h2>2.9 Known issues</h2>
+<ul>
+  <li>Kernel module WSL, Docker-т ачаалагдахгүй (kernel header ба insmod эрх байхгүй). Linux VM эсвэл үндсэн Linux ашиглана.</li>
+  <li>Өөр kernel хувилбар дээр API өөрчлөгдсөн бол module-ийг дахин build хийнэ.</li>
+  <li>CLI-д нэг мөр 1023 тэмдэгтээс урт бол «ERR line too long» гарна (UI-д энэ хязгаар байхгүй).</li>
+  <li>Hash bucket-ийн тоо тогтмол; queue, stack, процесс 8, hash 24 элементээр хязгаарлагдсан (дүрслэлд багтаах зорилгоор).</li>
+  <li>macOS-ийн clang-д <code>-fsanitize=address</code> ажиллахгүй бол <code>make CFLAGS="-Wall -Wextra -O1 -g"</code> гэж build хийнэ.</li>
+</ul>
+</body>
+</html>

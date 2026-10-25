@@ -1,0 +1,15 @@
+# At most 8 alive processes (ready + running); a slot frees up when one finishes.
+sched policy fcfs
+proc new a 1
+proc new b 2
+proc new c 2
+proc new d 2
+proc new e 2
+proc new f 2
+proc new g 2
+proc new h 2
+proc new i 2
+sched print
+sched tick
+proc new i 2
+sched print
