@@ -26,8 +26,8 @@
 <h2>1.2 Дэмжих орчин</h2>
 <table>
   <tr><th>Хэсэг</th><th>Орчин</th></tr>
-  <tr><td>UI (docs/ui/index.html)</td><td>Орчин үеийн browser (Chrome, Edge, Firefox, Safari), суулгалт шаардлагагүй, интернэт хэрэггүй. Утсан дээр ч нээгдэнэ.</td></tr>
-  <tr><td>CLI (./kds)</td><td>Linux, macOS эсвэл Windows-ийн WSL; gcc ≥ 9 (эсвэл clang), GNU make</td></tr>
+  <tr><td>Веб апп (web/, Next.js)</td><td>Node.js ≥ 18 (<code>npm install</code>, <code>npm run dev</code>), орчин үеийн browser (Chrome, Edge, Firefox, Safari). Веб апп дэвсгэр дээр <code>./kds --json</code>-г дуудаж ажилладаг тул эхлээд C цөмийг build хийсэн байх шаардлагатай (1.3-г үз).</td></tr>
+  <tr><td>CLI (./kds)</td><td>Linux, macOS эсвэл Windows (MSYS2/MinGW эсвэл WSL); gcc ≥ 9 (эсвэл clang), GNU make</td></tr>
   <tr><td>Нэмэлт тест</td><td>python3 ≥ 3.8, Node.js ≥ 18</td></tr>
   <tr><td>Kernel module</td><td>Жинхэнэ Linux (VM эсвэл үндсэн машин; WSL/Docker биш), <code>linux-headers-$(uname -r)</code>, sudo эрх</td></tr>
 </table>
@@ -35,8 +35,8 @@
 <h2>1.3 Суулгах эсвэл нээх алхам</h2>
 <ol>
   <li>Repository-г татна: <code>git clone https://github.com/grl059/OS_BD1.git</code> эсвэл GitHub-ийн «Code → Download ZIP»-ээр татаж задлана.</li>
-  <li><b>UI:</b> <code>docs/ui/index.html</code> файлыг browser-т давхар товшиж нээнэ.</li>
-  <li><b>CLI:</b> терминалд repository-ийн хавтсанд <code>make</code> ажиллуулна. Ингэснээр <code>./kds</code> үүснэ.</li>
+  <li><b>CLI (C цөм):</b> терминалд repository-ийн хавтсанд <code>make</code> ажиллуулна. Ингэснээр <code>./kds</code> (Windows дээр <code>kds.exe</code>) үүснэ. Веб аппд энэ алхам заавал хэрэгтэй.</li>
+  <li><b>Веб апп:</b> <code>cd web</code> → <code>npm install</code> (нэг удаа) → <code>npm run dev</code>. Терминал дээр гарсан хаягийг (жишээ нь <code>http://localhost:3000</code>) browser-т нээнэ.</li>
 </ol>
 
 <h2>1.4 Оролт ба тохиргоо</h2>
@@ -56,27 +56,29 @@
 
 <h2>1.5 Ажиллуулах, зогсоох, reset хийх</h2>
 <ul>
-  <li><b>UI:</b> дээд хэсгийн tab-аас бүтцээ сонгоно. Утгаа бичээд товч (жишээ нь «Төгсгөлд залга», «Хай», «Хас») дарна. «Жишээ үзүүл» нь тухайн бүтцийн үйлдлүүдийг автоматаар үзүүлнэ. «Ахисан түвшин» хэсэгт команд бичиж Enter дарах, эсвэл <code>examples/*.txt</code>-г ачаалж «Script ажиллуулах» дарах боломжтой. <b>«Эхнээс нь»</b> товч бүх бүтцийг reset хийнэ (хуудсыг дахин ачаалах нь мөн адил). «Процесс ба CPU» tab-ын «Автоматаар» товчийг дахин «Эхнээс нь» дарж зогсооно.</li>
-  <li><b>CLI:</b> <code>./kds файл.txt</code> нь script ажиллуулна. <code>./kds</code> гэж ажиллуулаад команд бичиж болно. <b>Ctrl+D</b> дарж зогсооно (Ctrl+C мөн зогсооно). Програмыг дахин ажиллуулахад бүх бүтэц хоосон эхэлнэ (reset). Бүтэц тус бүрийг <code>list clear</code>, <code>hash clear</code>, <code>sched clear</code>-ээр цэвэрлэнэ.</li>
+  <li><b>Веб апп:</b> «Тоглох» хуудас дээр зүүн талаас бүтцээ сонгоно. Команд бичих талбарт команд (жишээ нь <code>list add_tail 2 8 1995</code>) бичиж Enter дарна, эсвэл жишээ скриптийг сонгож ажиллуулна. <b>«Эхнээс нь»</b> товч тухайн бүтцийг reset хийнэ (хуудсыг дахин ачаалах нь бүгдийг reset хийнэ, учир нь бүтцийн төлөв зөвхөн C программ дотор, дэвсгэр process бүрт шинээр эхэлдэг).</li>
+  <li><b>CLI:</b> <code>./kds файл.txt</code> нь script ажиллуулна. <code>./kds</code> гэж ажиллуулаад команд бичиж болно. <b>Ctrl+D</b> дарж зогсооно (Ctrl+C мөн зогсооно). Програмыг дахин ажиллуулахад бүх бүтэц хоосон эхэлнэ (reset). Бүтэц тус бүрийг <code>list clear</code>, <code>hash clear</code>, <code>sched clear</code>-ээр цэвэрлэнэ. JSON горимоор ажиллуулахад <code>./kds --json</code> гэж нэмж бичнэ.</li>
   <li><b>Kernel module:</b> <code>sudo insmod</code> ачаална, <code>sudo rmmod kds_module</code> буулгана (2.6).</li>
 </ul>
 
 <h2>1.6 Дүрслэлийн тэмдэг, өнгө, төлөв</h2>
+<p>Веб апп нь тийл-ногоон (teal/green) өнгөний загвартай. Дараах зарчмуудаар бүтцийг зурдаг:</p>
 <table>
   <tr><th style="width:38%">Тэмдэг</th><th>Утга</th></tr>
-  <tr><td>Цагаан хайрцаг, цэнхэр хүрээтэй</td><td>node (struct birthday, queue/stack-ийн элемент, hash-ийн түлхүүр, PCB)</td></tr>
-  <tr><td>Цайвар цэнхэрээр дүүргэсэн хайрцаг / тойрог</td><td>сүүлийн үйлдэлд нэмэгдсэн эсвэл олдсон элемент</td></tr>
-  <tr><td>⇄ сум (галт тэрэг)</td><td>next ба prev заагч (давхар холбоос)</td></tr>
-  <tr><td>→ сум (hash bucket, ready queue)</td><td>жагсаалтын дараагийн элемент; bucket-д 2 ба түүнээс олон элемент байвал collision</td></tr>
-  <tr><td>Цэнхэрээр дүүргэсэн нүд (1) / цагаан нүд (0)</td><td>bitmap-ийн асаалттай / унтраалттай бит</td></tr>
-  <tr><td>Хар цэнхэр дөрвөлжин дугаар (0, 1, …)</td><td>hash-ийн bucket-ийн индекс</td></tr>
-  <tr><td>Өнгөт PCB карт, доорх зурвас</td><td>процесс ба ажлын явц; Gantt дээр тик бүрд ажилласан процесс, саарал «idle» нь CPU сул</td></tr>
+  <tr><td>Хайрцаг/дугуйлсан элемент</td><td>node (struct birthday, queue/stack-ийн элемент, hash-ийн түлхүүр, PCB)</td></tr>
+  <tr><td>Өөр өнгөөр тодотгосон элемент</td><td>сүүлийн үйлдэлд нэмэгдсэн эсвэл олдсон элемент</td></tr>
+  <tr><td>Сум (next/prev)</td><td>жагсаалтын холбоос (давхар холбоост)</td></tr>
+  <tr><td>Сум (hash bucket, ready queue)</td><td>жагсаалтын дараагийн элемент; bucket-д 2 ба түүнээс олон элемент байвал collision</td></tr>
+  <tr><td>Дүүргэсэн нүд (1) / хоосон нүд (0)</td><td>bitmap-ийн асаалттай / унтраалттай бит</td></tr>
+  <tr><td>Дугаарлагдсан багана</td><td>hash-ийн bucket-ийн индекс</td></tr>
+  <tr><td>PCB карт, доорх ажлын түүх</td><td>процесс ба ажлын явц; тик бүрд ажилласан процесс, «idle» нь CPU сул</td></tr>
   <tr><td>Модны доорх «өндөр» бичиг</td><td>модны түвшний тоо = хамгийн муу хайлтын алхам</td></tr>
-  <tr><td>«Юу болов?»: цэнхэр / улаан зураас + «Алдаа:»</td><td>OK / ERR мессеж, Монгол тайлбартай</td></tr>
+  <tr><td>Ажлын түүхэн дэх OK / ERR мөр</td><td>OK / ERR мессеж, Монгол тайлбартай</td></tr>
 </table>
+<p>Эдгээр бүх дүрслэл нь веб апп дотор зураг зурж гаргадаг дүрс биш, C программын <code>--json</code> горимоос ирсэн төлөвөөс шууд зурагддаг.</p>
 
 <h2>1.7 Жишээ</h2>
-<p><b>Жишээ 1 (сурах бичгийн жишээ).</b> «Ахисан түвшин» → script талбарт <code>examples/textbook.txt</code>-г ачаалж «Script ажиллуулах» дарна (CLI: <code>./kds examples/textbook.txt</code>). Хүлээгдэх үр дүн: 5 огноо дарааллаараа жагсаж, устгасны дараа жагсаалт хоосон болно.</p>
+<p><b>Жишээ 1 (сурах бичгийн жишээ).</b> «Тоглох» хуудас дээр «list» бүтцийг сонгоод доорх командуудыг нэг нэгээр бичиж Enter дарна, эсвэл «Шатлал» хуудсанд байгаа ижил жишээг сонгоно (CLI: <code>./kds examples/textbook.txt</code>). Хүлээгдэх үр дүн: 5 огноо дарааллаараа жагсаж, устгасны дараа жагсаалт хоосон болно.</p>
 <pre>OK list add_tail 2/8/1995 (size=1)
 OK list add_tail 17/3/1998 (size=2)
 OK list add_tail 29/2/2000 (size=3)
@@ -91,9 +93,9 @@ OK list del 5/11/2001 (size=1)
 OK list del 30/12/2003 (size=0)
 LIST size=0: (empty)</pre>
 
-<p><b>Жишээ 2 (өөрийн оролт – bitmap).</b> «Гэрлийн самбар» tab дээр эсвэл командаар <code>bitmap size 16</code>, <code>bitmap set 3</code>, <code>bitmap set 9</code> гэж оруулна. 16 нүдний 3 ба 9-р нүд цэнхэр (1) болно. <code>bitmap print</code> командын гаралт: <code>BITMAP n=16: 0001000001000000 (set=2)</code>. <code>bitmap set 16</code> гэвэл <code>ERR bitmap: index 16 out of range 0..15</code> гарна.</p>
+<p><b>Жишээ 2 (өөрийн оролт – bitmap).</b> «Тоглох» хуудсанд «bitmap» бүтцийг сонгоод командаар <code>bitmap size 16</code>, <code>bitmap set 3</code>, <code>bitmap set 9</code> гэж оруулна. 16 нүдний 3 ба 9-р нүд тодотгогддог болно. <code>bitmap print</code> командын гаралт: <code>BITMAP n=16: 0001000001000000 (set=2)</code>. <code>bitmap set 16</code> гэвэл <code>ERR bitmap: index 16 out of range 0..15</code> гарна.</p>
 
-<p><b>Жишээ 3 (процесс ба CPU).</b> «Процесс ба CPU» tab дээр «Жишээ үзүүл» товчийг дарна. Квант 2-той Round Robin-оор A (5 тик), B (3), C (2) ээлжилж ажиллана. C нь t=5, B нь t=8, A нь t=9 тик дээр дуусна, өөрөөр хэлбэл дуусах хугацаа 6, 9, 10 болно. Дундаж хүлээлт 5.00 гарна. Дараа нь «Эхнээс нь» дарж бодлогыг FCFS болгоод ижил процессуудыг дахин оруулж хүлээлтийг харьцуулна (FCFS: 4.33). Командаар: <code>./kds examples/scheduler.txt</code></p>
+<p><b>Жишээ 3 (процесс ба CPU).</b> «Тоглох» хуудсанд «sched»/«proc» бүтцийг сонгоод доорх командуудыг оруулна. Квант 2-той Round Robin-оор A (5 тик), B (3), C (2) ээлжилж ажиллана. C нь t=5, B нь t=8, A нь t=9 тик дээр дуусна, өөрөөр хэлбэл дуусах хугацаа 6, 9, 10 болно. Дундаж хүлээлт 5.00 гарна. Дараа нь «Эхнээс нь» дарж бодлогыг FCFS болгоод ижил процессуудыг дахин оруулж хүлээлтийг харьцуулна (FCFS: 4.33). Командаар: <code>./kds examples/scheduler.txt</code></p>
 <pre>OK sched policy rr q=2
 OK proc new P1 A burst=5 (alive=1)
 OK proc new P2 B burst=3 (alive=2)
@@ -112,7 +114,7 @@ TICK t=9 P1(A) remaining=0 finished
 TICK t=10 idle
 SCHED policy=rr(q=2) time=11 running=none ready=(empty) done=3</pre>
 
-<p><b>Жишээ 4 (хэш хүснэгт ба мод).</b> «Хэш хүснэгт» tab дээр «Жишээ үзүүл» дарахад «ab», «ba» нь «bob»-той нэг bucket-д орж collision үүсэхийг харна. «Хайлтын мод» tab дээр эхлээд энгийн төрлөөр «1–7 дараалуулж оруул» товчийг дарна (өндөр 7). Дараа нь «Эхнээс нь» → төрөл «Тэнцвэржсэн (AVL)» → «Төрөл сонгох» → «1–7 дараалуулж оруул» дарж харьцуулна (өндөр 3). Командаар: <code>./kds examples/search.txt</code></p>
+<p><b>Жишээ 4 (хэш хүснэгт ба мод).</b> «Тоглох» хуудсанд «hash» бүтцийг сонгоод «ab», «ba» зэрэг түлхүүр нэмэхэд тэд «bob»-той нэг bucket-д орж collision үүсэхийг харна. «tree» бүтцийг сонгоод эхлээд энгийн төрлөөр 1–7-г дараалуулан оруулна (өндөр 7). Дараа нь «Эхнээс нь» → төрөл «avl» болгож дахин 1–7-г оруулж харьцуулна (өндөр 3). Командаар: <code>./kds examples/search.txt</code></p>
 <pre>OK hash put ab -> 7 (bucket=3, size=5, collision)
 OK hash put ba -> 8 (bucket=3, size=6, collision)
 HASH buckets=4 size=6 collisions=2: b0=[dave:11] b1=[carol:9] b2=[alice:1234] b3=[bob:5678 -> ab:7 -> ba:8]
@@ -157,7 +159,7 @@ git checkout v1.0          # 9-р долоо хоногт нийтэлсэн х�
   <tr><td>gcc</td><td>13.3</td><td>≥ 9 (ASan/UBSan дэмжлэгтэй); clang мөн болно</td></tr>
   <tr><td>GNU make</td><td>4.3</td><td>—</td></tr>
   <tr><td>Python</td><td>3.13</td><td>≥ 3.8 (fuzz, AVL тест)</td></tr>
-  <tr><td>Node.js</td><td>22</td><td>≥ 18 (UI==C тест)</td></tr>
+  <tr><td>Node.js</td><td>22</td><td>≥ 18 (веб апп, text==json тест, CI)</td></tr>
   <tr><td>Linux kernel</td><td>6.11.0-17-generic</td><td>headers нь ажиллаж буй kernel-тэй ижил хувилбартай байх</td></tr>
 </table>
 
@@ -165,22 +167,26 @@ git checkout v1.0          # 9-р долоо хоногт нийтэлсэн х�
 <pre>sudo apt update
 sudo apt install build-essential python3 nodejs     # CLI ба тест
 sudo apt install linux-headers-$(uname -r)          # зөвхөн kernel module-д</pre>
-<p>Гадны сан (library) ашиглаагүй тул өөр dependency шаардлагагүй. UI-д юу ч суулгах шаардлагагүй.</p>
+<p>C цөм гадны сан (library) ашиглаагүй тул өөр dependency шаардлагагүй. Веб апп <code>web/package.json</code>-д заасан сангуудыг <code>npm install</code>-оор татна (интернэт шаардлагатай зөвхөн энэ алхамд).</p>
 
 <h2>2.4 Build ба Run команд</h2>
 <pre>make                                   # ./kds (-Wall -Wextra -fsanitize=address,undefined)
 ./kds examples/textbook.txt            # script
 echo "queue push 5" | ./kds            # stdin-ээс
+./kds --json examples/textbook.txt     # JSON горим (веб аппын хэрэглэдэг горим)
 ./kds                                  # интерактив, Ctrl+D-ээр гарна
-make clean                             # build-ийн гаралтыг устгах</pre>
+make clean                             # build-ийн гаралтыг устгах
+
+# Веб апп (эхлээд дээрх make-ээр ./kds-г build хийсэн байх ёстой):
+cd web && npm install && npm run dev   # http://localhost:3000 дээр нээнэ</pre>
 
 <h2>2.5 Үндсэн тестийн өгөгдөл</h2>
 <pre>make test
 #   PASS textbook / all_structures / errors / scheduler / scheduler_full / search
 #   PASS stress (5000 x 8 commands, ERR 0, no sanitizer report)
 make check                             # make test + доорх гурав
-sh tests/test_ui_matches_c.sh          # UI-ийн ENGINE == C, 6 скрипт: PASS ui==c x6
-python3 tests/fuzz_compare.py 8 5000   # 8 seed x 5000 санамсаргүй команд (тэгш seed-д AVL): PASS x8
+python3 tests/json_check.py            # текст горим == --json горим, 6 скрипт: PASS x6
+python3 tests/fuzz_json.py 8 5000      # 8 seed x 5000 санамсаргүй команд (тэгш seed-д AVL): PASS x8
 python3 tests/avl_check.py             # AVL: inorder ба өндөр <= 1.44*log2(n+2), 30 гүйлт: PASS</pre>
 <p>Хүлээгдэх гаралт <code>tests/expected_*.out</code>-д байна. Шинэ тест нэмэхдээ <code>examples/нэр.txt</code> үүсгээд <code>./kds examples/нэр.txt &gt; tests/expected_нэр.out</code> гэж хадгалж, гаралтыг гараар шалгаад <code>tests/run_tests.sh</code>-ийн жагсаалтад нэрийг нэмнэ.</p>
 
@@ -214,8 +220,8 @@ sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv 
   <tr><th>Команд</th><th>Хүлээгдэх</th></tr>
   <tr><td><code>make</code></td><td>Анхааруулгагүй compile хийгдэж <code>./kds</code> үүснэ</td></tr>
   <tr><td><code>make test</code></td><td>7 PASS (6 скрипт + stress), exit 0</td></tr>
-  <tr><td><code>make check</code></td><td>Нийт 53 PASS (7 + 6 UI==C + 8 fuzz + 32 AVL), FAIL 0</td></tr>
-  <tr><td>UI</td><td>Browser-ийн console-д алдаа гарахгүй; script-ийн гаралт CLI-тай ижил</td></tr>
+  <tr><td><code>make check</code></td><td>Нийт 53 PASS (7 + 6 text==json + 8 fuzz + 32 AVL), FAIL 0</td></tr>
+  <tr><td>Веб апп (npm run dev)</td><td>Browser-ийн console-д алдаа гарахгүй; «Тоглох» хуудасны гаралт CLI-тай ижил (хоёулаа нэг C программ ашигладаг)</td></tr>
   <tr><td><code>run_module_test.sh</code></td><td>3 PASS, build log ба dmesg файл үүснэ</td></tr>
 </table>
 
@@ -223,7 +229,8 @@ sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv 
 <ul>
   <li>Kernel module WSL, Docker-т ачаалагдахгүй (kernel header ба insmod эрх байхгүй). Linux VM эсвэл үндсэн Linux ашиглана.</li>
   <li>Өөр kernel хувилбар дээр API өөрчлөгдсөн бол module-ийг дахин build хийнэ.</li>
-  <li>CLI-д нэг мөр 1023 тэмдэгтээс урт бол «ERR line too long» гарна (UI-д энэ хязгаар байхгүй).</li>
+  <li>CLI-д нэг мөр 1023 тэмдэгтээс урт бол «ERR line too long» гарна.</li>
+  <li>Веб апп серверийн хажуу (<code>web/src/app/api/run/route.ts</code>) C цөмийг дэвсгэр дээр дуудаж ажиллуулдаг тул веб аппыг нээхийн өмнө <code>make</code>-аар <code>./kds</code> (эсвэл Windows дээр <code>kds.exe</code>) build хийсэн байх ёстой; эс бөгөөс «C core not built» алдаа гарна.</li>
   <li>Hash bucket-ийн тоо тогтмол; queue, stack, процесс 8, hash 24 элементээр хязгаарлагдсан (дүрслэлд багтаах зорилгоор).</li>
   <li>macOS-ийн clang-д <code>-fsanitize=address</code> ажиллахгүй бол <code>make CFLAGS="-Wall -Wextra -O1 -g"</code> гэж build хийнэ.</li>
 </ul>
