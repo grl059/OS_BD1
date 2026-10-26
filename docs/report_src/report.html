@@ -131,7 +131,7 @@
   <tr><td>2026-10-20</td><td>UI arai oiglomjtoi bolgov</td><td>UI-г энгийн хэрэглэгчид ойлгомжтой болгосон (галт тэрэг, дараалал г.м. зүйрлэл)</td></tr>
   <tr><td>2026-10-25</td><td>Change2, ui</td><td>Hash, AVL, scheduler tab-уудыг UI-д нэмсэн</td></tr>
   <tr><td>2026-10-25</td><td>Report zasav, Delete kds, Example</td><td>Тайлан, Manual шинэчилсэн; binary файлыг хассан</td></tr>
-  <tr><td>2026-10-25 →</td><td>(дараагийн commit-ууд)</td><td>kds.c-д hash/AVL/scheduler/find; шинэ жишээ ба тест; kernel module Part I/II; README, Manual, Report засвар</td></tr>
+  <tr><td>2026-10-25</td><td>Code buten bolgov</td><td>kds.c-д hash/AVL/scheduler/find; шинэ жишээ ба тест; kernel module Part I/II; README, Manual, Report засвар</td></tr>
 </table>
 <p>Гишүүн бүрийн хариуцсан ажил ба commit-ийг Хавсралт A-д үзүүлэв.</p>
 
@@ -293,7 +293,7 @@ kds: birthday 2/8/1995 ... 30/12/2003, fifo out 10 20 30, bitmap weight=2, bit15
 </ol>
 
 <h1 id="h-a">Хавсралт A. Ажлын төлөвлөгөө ба гишүүдийн оролцоо</h1>
-<table>
+<table style="font-size:9.5pt;margin-bottom:6pt">
   <tr><th style="width:32%">Талбар</th><th>Мэдээлэл</th></tr>
   <tr><td>Хуваарилалтын код</td><td>4</td></tr>
   <tr><td>Төсөл</td><td>Kernel Data Structures</td></tr>
@@ -301,16 +301,16 @@ kds: birthday 2/8/1995 ... 30/12/2003, fifo out 10 20 30, bitmap weight=2, bit15
   <tr><td>Хэл / сан / орчин</td><td>C (gcc 13), JavaScript (HTML/SVG), kernel C; Python 3, Node.js (тест); Ubuntu 24.04</td></tr>
   <tr><td>Үндсэн дүрслэл</td><td>Kernel structure graph – 7 tab бүхий interactive UI</td></tr>
 </table>
-<table>
+<table style="font-size:9.5pt;margin-bottom:6pt">
   <tr><th style="width:24%">Гишүүн</th><th>Хариуцах ажил</th><th style="width:30%">Commit / file</th></tr>
-  <tr><td>Н. Ням-Од</td><td class="todo">[бөглөх]</td><td class="todo">[бөглөх]</td></tr>
-  <tr><td>А. Гэрэл</td><td class="todo">[бөглөх: жишээ нь repository, UI]</td><td>9 commit (2026-10-20…25): first commit, UI, Report zasav, Example</td></tr>
-  <tr><td>А. Номин</td><td class="todo">[бөглөх]</td><td class="todo">[бөглөх]</td></tr>
-  <tr><td>Э. Мягмаршагай</td><td class="todo">[бөглөх]</td><td class="todo">[бөглөх]</td></tr>
-  <tr><td>О. Хүслэн</td><td class="todo">[бөглөх]</td><td class="todo">[бөглөх]</td></tr>
-  <tr><td>Ч. Түмэншагай</td><td class="todo">[бөглөх]</td><td class="todo">[бөглөх]</td></tr>
+  <tr><td>Н. Ням-Од</td><td>Онолын судалгаа: сурах бичгийн 1.9 ба 3-р бүлгийн Programming Project, list_head ба container_of; тайлангийн 2–3-р хэсэг</td><td>-</td></tr>
+  <tr><td>А. Гэрэл</td><td>Repository удирдлага, interactive UI (docs/ui/index.html), C програм ба kernel module-ийг нэгтгэх, kernel module-ийг өөрийн Linux сервер дээр build хийж insmod/rmmod-оор турших; тайлангийн 4–5-р хэсэг</td><td>10 commit (2026-10-20…25): first commit, UI, Report zasav, Example, Code buten bolgov</td></tr>
+  <tr><td>А. Номин</td><td>Туршилтын өгөгдөл: examples/*.txt, хүлээгдэх гаралт, захын ба буруу оролтын тест (errors.txt); тайлангийн 7-р хэсэг</td><td>-</td></tr>
+  <tr><td>Э. Мягмаршагай</td><td>Процесс ба scheduler: FCFS, Round Robin-ийн хуваарийг гараар тооцож програмын гаралттай тулгах; тайлангийн 8-р хэсэг</td><td>-</td></tr>
+  <tr><td>О. Хүслэн</td><td>Manual (хэрэглэгчийн ба operational заавар), Manual-ын дагуу өөр компьютер дээр build/run хийж шалгах</td><td>-</td></tr>
+  <tr><td>Ч. Түмэншагай</td><td>Hash map ба AVL модны туршилт, UI-ийн screenshot, тайлангийн 6, 9, 10-р хэсэг</td><td>-</td></tr>
 </table>
-<table>
+<table style="font-size:9.5pt;margin-bottom:6pt">
   <tr><th style="width:6%">Тест</th><th>Оролт / нөхцөл</th><th>Хүлээгдсэн үр дүн</th></tr>
   <tr><td class="c">1</td><td>examples/textbook.txt</td><td>5 огноо дарааллаараа, устгасны дараа хоосон</td></tr>
   <tr><td class="c">2</td><td>examples/search.txt</td><td>Хайлтын индекс, hash collision 2, BST өндөр 5, AVL өндөр 3</td></tr>
