@@ -66,7 +66,7 @@ sched  policy fcfs|rr <квант 1..10>  ·  sched tick|print|clear
 | `examples/` | textbook, all_structures, errors, search, scheduler, scheduler_full |
 | `tests/` | хүлээгдэх гаралт, `run_tests.sh`, `json_check.py`, `fuzz_compare.py`, `avl_check.py` |
 | `.github/workflows/` | `ci.yml` (C цөм + веб апп build/тест, ubuntu+macos), `release.yml` (CI амжилттай болсон тутамд conventional-commit дүрмээр хувилбар нэмэгдүүлж release гаргадаг) |
-| `docs/` | `4_BD1_Report.pdf`, `4_Manual.pdf`, `screenshots/`, `ui_screenshot.png` |
+| `docs/` | `4_BD1_Report.pdf`, `4_Manual.pdf`, `screenshots/`|
 
 ## Known issues
 - Kernel module-ийг жинхэнэ Linux дээр build хийнэ (WSL, Docker дээр ачаалагдахгүй). Secure Boot идэвхтэй бол MOK түлхүүрээр гарын үсэг зурна (Manual 2.6).
