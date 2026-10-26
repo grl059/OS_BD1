@@ -1,0 +1,48 @@
+# Processes: PCBs in a list_head ready queue.
+# Round Robin, quantum 2: A=5, B=3, C=2 ticks, all arrive at t=0.
+sched policy rr 2
+proc new A 5
+proc new B 3
+proc new C 2
+sched print
+sched tick
+sched tick
+sched tick
+sched tick
+sched tick
+sched tick
+sched tick
+sched tick
+sched tick
+sched tick
+sched tick
+sched print
+# Same jobs under FCFS
+sched clear
+sched policy fcfs
+proc new A 5
+proc new B 3
+proc new C 2
+sched tick
+sched tick
+sched tick
+sched tick
+sched tick
+sched print
+sched tick
+sched tick
+sched tick
+sched tick
+sched tick
+sched tick
+sched print
+# error handling
+proc new name_too_long 3
+proc new X 0
+proc new X 21
+proc new X
+proc kill 1
+sched policy rr 0
+sched policy rr 11
+sched policy lottery
+sched jump

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<title>4_BD1_Report – Kernel Data Structures</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section class="cover">
+  <div class="uni">ШИНЖЛЭХ УХААН ТЕХНОЛОГИЙН ИХ СУРГУУЛЬ<br>МЭДЭЭЛЭЛ, ХОЛБООНЫ ТЕХНОЛОГИЙН СУРГУУЛЬ</div>
+  <img src="img/logo.png" alt="ШУТИС">
+  <div class="meta">F.CSM302 Үйлдлийн систем · Бие даалт 1</div>
+  <div class="title">Судалгаа, хэрэгжилт, туршилтын тайлан</div>
+  <div class="proj">Kernel Data Structures</div>
+  <div class="meta">Хуваарилалтын код: <b>4</b> · Үзүүлэлт: Kernel structure graph · Бүлэг 3 – Processes</div>
+  <div class="meta">GitHub: github.com/grl059/OS_BD1</div>
+  <table class="people">
+    <tr><td>Хичээл заасан багш:</td><td>Г. Ганбат (F.CS10)</td></tr>
+    <tr><td>Гүйцэтгэсэн баг:</td><td>Н. Ням-Од (B222270805)</td></tr>
+    <tr><td></td><td>А. Гэрэл (B241940001)</td></tr>
+    <tr><td></td><td>А. Номин (B242270088)</td></tr>
+    <tr><td></td><td>Э. Мягмаршагай (B241910001)</td></tr>
+    <tr><td></td><td>О. Хүслэн (B241910020)</td></tr>
+    <tr><td></td><td>Ч. Түмэншагай (B160910830)</td></tr>
+  </table>
+  <div class="bottom">2026–2027 оны хичээлийн жилийн намар · Семинарын цаг: 5-1 пар<br>Улаанбаатар</div>
+</section>
+
+<section class="toc">
+  <h1>Агуулга</h1>
+  <div><span>Хураангуй</span><span data-toc="h-sum"></span></div>
+  <div><span>1. Удиртгал</span><span data-toc="h-1"></span></div>
+  <div><span>2. Сурах бичгийн шаардлага</span><span data-toc="h-2"></span></div>
+  <div><span>3. Онолын үндэс</span><span data-toc="h-3"></span></div>
+  <div><span>4. Системийн зохиомж</span><span data-toc="h-4"></span></div>
+  <div><span>5. Хэрэгжилт</span><span data-toc="h-5"></span></div>
+  <div><span>6. Туршилт ба UI дүрслэл</span><span data-toc="h-6"></span></div>
+  <div><span>7. Туршилтын арга</span><span data-toc="h-7"></span></div>
+  <div><span>8. Үр дүн</span><span data-toc="h-8"></span></div>
+  <div><span>9. Хэлэлцүүлэг</span><span data-toc="h-9"></span></div>
+  <div><span>10. Дүгнэлт</span><span data-toc="h-10"></span></div>
+  <div><span>Ашигласан материал</span><span data-toc="h-ref"></span></div>
+  <div><span>Хавсралт A. Ажлын төлөвлөгөө ба гишүүдийн оролцоо</span><span data-toc="h-a"></span></div>
+</section>
+
+<h1 id="h-sum">Хураангуй</h1>
+<p><b>Асуудал.</b> Kernel процесс, нөөц, файлуудаа холбоост жагсаалт, дараалал, стек, bitmap, хэш хүснэгт, мод зэрэг өгөгдлийн бүтцээр удирддаг. Эдгээрт элемент нэмэх, устгах, хайх үед бүтэц хэрхэн өөрчлөгддөгийг нүдээр харуулж, хэрэгжилтийг нь нотлох шаардлагатай.</p>
+<p><b>Шийдэл.</b> Linux-ийн <code>list_head</code>-ийн next/prev семантикийг C-ээр дахин бичиж, долоон бүтэц (жагсаалт, queue, stack, bitmap, hash map, BST/AVL мод, PCB бүхий ready queue ба FCFS/Round Robin scheduler) бүхий командын интерпретатор (<code>kds</code>) бүтээв. Түүнтэй яг ижил дүрэмтэй хөдөлгүүр бүхий interactive UI (Kernel structure graph) нь үйлдэл бүрийн дараах бүтцийг граф хэлбэрээр шууд зурна. Сурах бичгийн 3-р бүлгийн Programming Project-ийн дагуу kernel module нь <code>struct color</code> жагсаалт болон <code>start</code> параметртэй Collatz дарааллын жагсаалтыг kernel орчинд үүсгэж, устгана.</p>
+<p><b>Туршилт.</b> 6 жишээ скрипт ба 5000×8 командын stress тест ASan/UBSan-тай давсан. C ба UI-ийн хөдөлгүүр 6 скрипт болон 40 000 санамсаргүй командад (8 seed × 5000, тэр дотор AVL) мөр мөрөөрөө ижил гаралт өгсөн. AVL-ийн өндрийн хязгаарыг 30 санамсаргүй гүйлтээр шалгасан. Kernel module-ийн өмнөх хувилбар Ubuntu 24.04 (kernel 6.11.0-17) дээр insmod/rmmod хийгдсэн.</p>
+<p><b>Гол үр дүн.</b> Оролт, огноо, хязгаарыг шалгадаг, хэрэглэгч өөр өгөгдлөөр дахин туршиж болох, CLI ба график UI хоёулаа ижил гаралт өгдөг хэрэгсэл бүтээгдсэн.</p>
+
+<h1 id="h-1">1. Удиртгал</h1>
+<p>Үйлдлийн системийн kernel нь процессын жагсаалт, ready queue, bitmap (нөөц чөлөөтэй эсэх), хэш хүснэгт (хурдан хайлт), модон бүтэц (scheduler, санах ой) зэргийг өгөгдлийн бүтцээр удирддаг. Төслийн <b>зорилго</b> нь эдгээрийн үндсэн үйлдлийг хэрэгжүүлж, үйлдэл бүрийн дараах төлөвийг нүдэнд харагдахуйц болгох явдал юм.</p>
+<p><b>Ач холбогдол.</b> <code>list_head</code> бол Linux kernel-ийн хамгийн их хэрэглэгддэг бүтэц бөгөөд <code>task_struct</code> (PCB), ready queue зэрэг нь түүн дээр суурилдаг. Үүнийг ойлгох нь 3-р бүлгийн «Processes» сэдвийн суурь болно.</p>
+<p><b>Хамрах хүрээ.</b> Хэрэглэгчийн орчны загвар (C, CLI), түүнтэй ижил хөдөлгүүртэй интерактив UI, мөн нэг kernel module. Бодит Linux scheduler-т холбогдохгүй.</p>
+
+<h1 id="h-2">2. Сурах бичгийн шаардлага</h1>
+<p><b>Хуваарилалт:</b> код 4, «Kernel Data Structures», үзүүлэлт «Kernel structure graph», бүлэг 3 – Processes. <b>Хүрэх үр дүн:</b> «Сурах бичигт заасан kernel data structure-ийн хэрэглээг хэрэгжүүлж, элемент нэмэх, устгах, хайх үйлдлийн дараах бүтцийг графаар харуулна.»</p>
+<p>Operating System Concepts-ийн 3-р бүлгийн Programming Project «Kernel Data Structures» нь 1.9-д тайлбарласан бүтцүүд дээр тулгуурласан хоёр хэсэгтэй:</p>
+<ul>
+  <li><b>Part I:</b> <code>struct color {red, blue, green; struct list_head list;}</code> төрлийн элементүүдийг kernel module дотор жагсаалтад нэмж, <code>list_for_each_entry</code>-ээр гүйлгэн хэвлэх, module-ийг буулгахад <code>list_for_each_entry_safe</code>-ээр устгаж санах ойг чөлөөлөх.</li>
+  <li><b>Part II:</b> module-д <code>start</code> параметр дамжуулж (<code>module_param</code>), Collatz дарааллыг (тэгш бол n/2, сондгой бол 3n+1, 1 хүртэл) холбоост жагсаалтад хадгалан хэвлэх, буулгахад устгах.</li>
+</ul>
+<p>Доорх хүснэгт нь шаардлага бүрийг хэрэгжилт ба баталгаажуулалттай холбосон.</p>
+<table>
+  <tr><th>Шаардлага</th><th>Хэрэгжилт</th><th>Нэмэх / устгах / хайх</th><th>Баталгаа</th></tr>
+  <tr><td>Ch.3 Part I: struct color жагсаалт</td><td>kds_module.c, <code>color_list</code></td><td>list_add_tail / list_del / list_for_each_entry</td><td>run_module_test.sh, dmesg</td></tr>
+  <tr><td>Ch.3 Part II: Collatz, <code>start</code> параметр</td><td>kds_module.c, <code>module_param(start)</code>, 1..1 000 000</td><td>list_add_tail / list_del</td><td>start=25, 15, 0 (татгалзана)</td></tr>
+  <tr><td>1.9.1 Холбоост жагсаалт (list_head)</td><td>Давхар холбоост дугуй жагсаалт (struct birthday)</td><td>add_head, add_tail / del / find</td><td>textbook, search, UI «Галт тэрэг»</td></tr>
+  <tr><td>1.9.1 Stack (LIFO)</td><td>list_head, дээд талаас нэмж авна</td><td>push / pop / find</td><td>all_structures, search</td></tr>
+  <tr><td>1.9.1 Queue (FIFO)</td><td>list_head, төгсгөлд нэмж эхнээс авна</td><td>push / pop / find</td><td>all_structures, search</td></tr>
+  <tr><td>1.9.2 Binary search tree</td><td>Энгийн BST (хамгийн муу O(n))</td><td>insert / delete / find</td><td>search: 1–5 → өндөр 5</td></tr>
+  <tr><td>1.9.2 Тэнцвэржсэн мод (O(lg n))</td><td>AVL (<code>tree mode avl</code>)</td><td>insert / delete / find</td><td>search, avl_check: 1–7 → өндөр 3</td></tr>
+  <tr><td>1.9.3 Хэш функц ба hash map</td><td>Кодын нийлбэр mod n; collision-д bucket доторх list_head</td><td>put / del / get</td><td>search: bob, ab, ba нэг bucket</td></tr>
+  <tr><td>1.9.4 Bitmap</td><td>n = 1..128 бит</td><td>set / clear / test</td><td>all_structures, errors</td></tr>
+  <tr><td>«Processes» холбоос</td><td>PCB + list_head ready queue, FCFS, Round Robin</td><td>proc new / дуусах / sched print</td><td>scheduler, scheduler_full</td></tr>
+</table>
+<p><b>Харуулах шаардлага:</b> UI нь бүтэц бүрийн нэмэх, устгах, хайх үйлдлийн дараах төлөвийг граф (вагон, дараалал, овоолго, нүд, bucket, мод, ready queue) хэлбэрээр шууд зурдаг (6-р хэсэг).</p>
+
+<h1 id="h-3">3. Онолын үндэс</h1>
+<p><b>list_head</b> нь intrusive, давхар холбоост, дугуй жагсаалт юм. Node нь өгөгдлийн struct дотор <code>list_head</code> талбар агуулж, <code>container_of</code> макро нь талбарын хаягаас эзэн struct-ийг сэргээнэ. Нэмэх, устгах үйлдэл O(1), хайх нь O(n).</p>
+<p><b>Queue (FIFO)</b> нь tail-д нэмж head-ээс авдаг. Kernel-ийн ready queue ийм зарчмаар ажилладаг. <b>Stack (LIFO)</b> нь head-д нэмж head-ээс авдаг.</p>
+<p><b>Bitmap</b>-д 1 бит нь 1 нөөцийг илэрхийлнэ. set/clear/test нь O(1) бөгөөд Boolean массиваас 8 дахин бага зай эзэлнэ.</p>
+<p><b>Binary search tree</b>-д зүүн &lt; үндэс &lt; баруун байна. Дундаж хайлт O(lg n), харин эрэмбэлсэн оролтод мод нэг шугам болж хамгийн муу тохиолдол O(n) болно. Тэнцвэржсэн мод n элементэд ойролцоогоор lg n түвшинтэй байдаг. Linux red-black мод ашигладаг бол бид ижил зорилготой AVL модоор (өндрийн зөрүү ≤ 1, эргүүлэлт) загварчилсан.</p>
+<p><b>Hash map</b>-д хэш функц түлхүүрийг хүснэгтийн индекс болгож, ихэнх тохиолдолд O(1) хайлт өгнө. Хоёр түлхүүр нэг индекст таарвал (collision) тухайн bucket-д жагсаалт залгана. Collision олшрох тусам хайлт O(n) руу ойртоно.</p>
+<p><b>Процесс ба scheduler.</b> Процесс бүр PCB-тэй байдаг (Linux-д <code>task_struct</code>). Бэлэн процессууд ready queue-д зогсоно. FCFS нь процессыг дуустал нь ажиллуулна. Round Robin нь процесс бүрд квант хугацаа өгч, дуусаагүй бол дарааллын төгсгөлд буцаана. Хүлээлтийн хугацааг нийт үргэлжилсэн хугацаанаас ажлын хугацааг хасаж олно.</p>
+<p><b>Kernel module ба параметр.</b> <code>module_param(name, type, perm)</code> нь <code>insmod kds_module.ko start=15</code> хэлбэрээр утга дамжуулах боломж олгоно. Init амжилтгүй болбол <code>module_exit</code> дуудагдахгүй тул init өөрөө нөөцөө чөлөөлөх ёстой. Нийтлэг алдаанууд: <code>list_del</code>-ийн дараа pointer ашиглах, node чөлөөлөхгүй үлдээх (leak), гүйлгэж байхдаа устгах (энэ үед <code>_safe</code> хувилбар хэрэгтэй).</p>
+
+<h1 id="h-4">4. Системийн зохиомж</h1>
+<p><b>Компонентууд:</b></p>
+<ul>
+  <li><b>(a) src/user/kds.c</b> – командын интерпретатор ба 7 бүтэц. Жагсаалт, queue, stack, hash-ийн bucket, ready queue бүгд нэг <code>list_head</code> хэрэгжилтийг ашиглана.</li>
+  <li><b>(b) docs/ui/index.html</b> – ижил команд, мессеж бүхий JavaScript хөдөлгүүр (ENGINE), түүнээс граф зурдаг UI хэсэг (HTML/SVG).</li>
+  <li><b>(c) src/kernel/kds_module.c</b> – kernel орчинд ажиллах хувилбар: color, Collatz, birthday жагсаалт, kfifo, bitmap.</li>
+  <li><b>(d) tests/</b> – C ба UI-г хооронд нь, мөн хүлээгдэх гаралттай харьцуулдаг тестүүд.</li>
+</ul>
+<p><b>Өгөгдлийн урсгал:</b> хэрэглэгчийн команд (товч, командын мөр эсвэл script) → интерпретатор → бүтцийн төлөв шинэчлэгдэнэ → мессеж (OK/ERR) → (UI дээр) төлөвөөс график зурагдана. График нь тусдаа өгөгдөл биш, бүтцийн төлөвөөс шууд зурагддаг тул бодит ажиллагаатай үргэлж нийцнэ.</p>
+<pre>  товч / команд / examples/*.txt
+            │
+            ▼
+   ┌───────────────────┐   OK / ERR   ┌──────────────────────┐
+   │ интерпретатор     │ ───────────▶ │ «Юу болов?» / stdout │
+   │ (kds.c ≡ ENGINE)  │              └──────────────────────┘
+   └─────────┬─────────┘
+             │ төлөв: list_head жагсаалт, bitmap, bucket, мод, ready queue
+             ▼
+   ┌───────────────────┐
+   │ draw(): SVG/HTML  │  → Kernel structure graph (7 tab)
+   └───────────────────┘</pre>
+
+<h1 id="h-5">5. Хэрэгжилт</h1>
+<p><b>Хэл ба хэрэгсэл:</b> C (gcc, <code>-Wall -Wextra -fsanitize=address,undefined</code>), JavaScript (HTML/SVG, сан ашиглаагүй), kernel C (Kbuild), туршилтад Python 3 ба Node.js.</p>
+<p><b>Гол шийдлүүд:</b></p>
+<ol>
+  <li><code>list.h</code>-ийн <code>__list_add</code>, <code>list_add</code>, <code>list_add_tail</code>, <code>list_del</code>, <code>list_for_each(_safe)</code>, <code>container_of</code>-ийг өөрсдөө бичсэн.</li>
+  <li>Queue ба stack нь ижил list_head-ийг хуваалцах бөгөөд зөвхөн нэмэх талаараа ялгарна. Багтаамж нь 8.</li>
+  <li>Огноо шалгахдаа өндөр жилийг тооцно: 4-т хуваагддаг ба 100-д хуваагддаггүй, эсвэл 400-д хуваагддаг.</li>
+  <li>Модноос хоёр хүүтэй node устгахдаа баруун дэд модны хамгийн бага утгаар орлуулна. AVL горимд буцах замдаа <code>bal()</code> нь rotl/rotr эргүүлэлтээр тэнцвэржүүлнэ. Модны төрлийг зөвхөн хоосон үед солино.</li>
+  <li>Hash map нь 1–16 bucket-тэй. Хэш функц нь тэмдэгтүүдийн кодын нийлбэр mod n. Collision-ийг bucket доторх list_head жагсаалтаар шийднэ (chaining). Нийт 24 элементээр хязгаарласан. <code>get</code> үйлдэл хайлтын алхмын тоог мэдээлнэ.</li>
+  <li>PCB нь <code>struct pcb {pid, name, rem, slice, list_head}</code> бүтэцтэй. Ready queue-д <code>list_add_tail</code>-аар нэмж, эхний элементийг <code>list_del</code>-ээр авч CPU-д өгнө. <code>sched tick</code> бүрд CPU 1 тик ажиллана. FCFS нь процессыг дуустал ажиллуулна. RR-д квант дуусвал процесс дарааллын төгсгөлд буцна (preempt). Амьд процессын тоо 8 хүртэл.</li>
+  <li>Хайх үйлдэл бүх бүтцэд байна: list find (индекс), queue/stack find (байрлал), tree find, bitmap test, hash get.</li>
+  <li><b>Kernel module:</b> init дотор color (4 элемент), Collatz (start-аас 1 хүртэл, хамгаалалтын хязгаар 1000 гишүүн), birthday, kfifo, bitmap-ийг үүсгэнэ. <code>start</code> нь 1..1 000 000 мужаас гадуур бол <code>-EINVAL</code> буцааж module ачаалагдахгүй. <code>kmalloc</code> алдаа гарвал <code>goto fail</code>-аар бүх жагсаалтыг цэвэрлэнэ. Exit дотор <code>list_for_each_entry_safe</code>-ээр элемент бүрийг хэвлэж устгана.</li>
+  <li>C ба UI хоёр тусдаа бичигдсэн боловч бүх команд, мессеж, хязгаар нь ижил. Тоон аргументыг хоёулаа <code>[+-]?цифр</code> хэлбэртэй, int мужид багтах ёстой гэж шалгадаг тул гаралт нь яг таарна.</li>
+</ol>
+<h3>5.1 GitHub дээрх ажиллагаа</h3>
+<p>Repository: <code>github.com/grl059/OS_BD1</code> (салбар <code>main</code>). Бүтэц нь удирдамжийн 6-р хэсгийн дагуу: <code>README.md</code> (нэр, код, зорилго, Quick Start, AI тэмдэглэл), <code>src/</code>, <code>tests/</code>, <code>examples/</code>, <code>docs/</code> (Manual, Report, screenshot, тайлангийн эх HTML). Build-ийн гаралт болон гарын үсгийн түлхүүрийг <code>.gitignore</code>-оор хассан. 9-р долоо хоногт нийтлэх хувилбарыг <code>v1.0</code> tag ба GitHub Release болгоно.</p>
+<table>
+  <tr><th>Огноо</th><th>Commit</th><th>Агуулга</th></tr>
+  <tr><td>2026-10-20</td><td>first commit (×2), Change1</td><td>Repository үүсгэв; эх код, жишээ, тест, анхны UI, README</td></tr>
+  <tr><td>2026-10-20</td><td>UI arai oiglomjtoi bolgov</td><td>UI-г энгийн хэрэглэгчид ойлгомжтой болгосон (галт тэрэг, дараалал г.м. зүйрлэл)</td></tr>
+  <tr><td>2026-10-25</td><td>Change2, ui</td><td>Hash, AVL, scheduler tab-уудыг UI-д нэмсэн</td></tr>
+  <tr><td>2026-10-25</td><td>Report zasav, Delete kds, Example</td><td>Тайлан, Manual шинэчилсэн; binary файлыг хассан</td></tr>
+  <tr><td>2026-10-25</td><td>Code buten bolgov</td><td>kds.c-д hash/AVL/scheduler/find; шинэ жишээ ба тест; kernel module Part I/II; README, Manual, Report засвар</td></tr>
+</table>
+<p>Гишүүн бүрийн хариуцсан ажил ба commit-ийг Хавсралт A-д үзүүлэв.</p>
+
+<h1 id="h-6">6. Туршилт ба UI дүрслэл</h1>
+<p>UI-д 7 tab бий: <b>Галт тэрэг</b> (list_head, ⇄ сум нь next/prev заагч), <b>Дэлгүүрийн дараалал</b> (queue), <b>Тавагны овоолго</b> (stack), <b>Гэрлийн самбар</b> (bitmap, бит бүр нэг нүд), <b>Хэш хүснэгт</b> (bucket бүрийн жагсаалт, collision), <b>Процесс ба CPU</b> (ready queue, CPU, Gantt, хүлээлтийн хүснэгт), <b>Хайлтын мод</b> (BST ба AVL, өндрийн заалттай). Бүтэц бүр дээр нэмэх, устгах, хайх товч байна.</p>
+<p><b>Юуг өөрчилж турших вэ:</b> огноо, тоо, bitmap-ийн хэмжээ (1–128), bucket-ийн тоо (1–16), түлхүүр/утга, модны төрөл (BST/AVL), процессын нэр, ажлын хугацаа (1–20), scheduler-ийн бодлого ба квант (1–10). Өгөгдлийг товч, командын мөр эсвэл script файлаар (<code>examples/*.txt</code>) оруулна. «Эхнээс нь» товч бүх бүтцийг reset хийнэ.</p>
+<p><b>Юуг ажиглах вэ:</b> цайвар цэнхэр дүүргэлт нь сүүлийн үйлдэлд өөрчлөгдсөн эсвэл олдсон элементийг тэмдэглэнэ. «Юу болов?» хэсэгт OK үр дүн цэнхэр зураастай, алдаа улаан зураастай «Алдаа:» гэсэн тайлбартай гарна. Хэш хүснэгтэд collision-ийн тоо болон хайлтын алхам, модонд өндөр, scheduler-т Gantt диаграм ба дундаж хүлээлтийг ажиглана.</p>
+<figure><img src="img/list.png"><figcaption>Зураг 1 – «Галт тэрэг» (list_head): 17/3/1998 вагоныг салгаж, 30/12/2003-ыг эхэнд залгасан, 5/11/2001-ийг хайж олсон; буруу огноо (31/4/2000) тайлбартай татгалзагдсан.</figcaption></figure>
+<figure><img src="img/sched.png"><figcaption>Зураг 2 – «Процесс ба CPU»: Round Robin (квант 2), A=5, B=3, C=2 тик; Gantt диаграм ба процесс бүрийн хүлээсэн хугацаа (дундаж 5.00).</figcaption></figure>
+<figure><img src="img/hash.png"><figcaption>Зураг 3 – Хэш хүснэгт (4 bucket): «bob», «ab», «ba» 3-р bucket-д орж 2 collision үүссэн; «ba»-г хайхад 3 алхам шаардлаа.</figcaption></figure>
+<figure><img src="img/tree_compare.png"><figcaption>Зураг 4 – Эрэмбэлсэн 1–7-г оруулсны дараа: зүүн талд энгийн BST (өндөр 7, нэг шугам), баруун талд тэнцвэржсэн AVL (өндөр 3).</figcaption></figure>
+<div class="two">
+<figure><img src="img/queue.png"><figcaption>Зураг 5 – Queue: 10, 20, 30, 40 нэмээд pop хийсэн, 30-г хайсан.</figcaption></figure>
+<figure><img src="img/bitmap.png"><figcaption>Зураг 6 – Bitmap (24 бит): 0, 11, 17 асаалттай, 99 индекс татгалзагдсан.</figcaption></figure>
+</div>
+
+<h1 id="h-7">7. Туршилтын арга</h1>
+<p><b>Орчин:</b> Ubuntu 24.04, gcc 13, GNU make, Node.js 22, Python 3.13, Chromium (Playwright, screenshot-д). Kernel module-д Ubuntu 24.04, kernel 6.11.0-17-generic, linux-headers.</p>
+<p><b>Өгөгдөл ба хүлээгдэх үр дүн</b> (хүлээгдэх гаралт <code>tests/expected_*.out</code>-д хадгалагдсан):</p>
+<table>
+  <tr><th>Тест</th><th>Оролт / нөхцөл</th><th>Хүлээгдэх үр дүн</th></tr>
+  <tr><td>textbook</td><td>examples/textbook.txt – сурах бичгийн 5 төрсөн өдөр, гүйлгэх, бүгдийг устгах</td><td>Оруулсан дарааллаар жагсаж, эцэст нь хоосон</td></tr>
+  <tr><td>all_structures</td><td>queue, stack, bitmap, tree</td><td>FIFO/LIFO дараалал, bitmap 1000000000000001, inorder 20, 40, 50, 70</td></tr>
+  <tr><td>errors</td><td>31/4, 29/2/1900, сар 13, жил 1800, хоосноос pop, size 0/129, индекс −1/99, давхардсан утга</td><td>Мөр бүр ойлгомжтой ERR, програм унахгүй</td></tr>
+  <tr><td>search</td><td>Бүх бүтцэд хайлт, hash collision, BST 1–5, AVL 1–7</td><td>index/position/steps, BST өндөр 5, AVL өндөр 3</td></tr>
+  <tr><td>scheduler</td><td>RR q=2 ба FCFS: A=5, B=3, C=2; буруу нэр, ажил, бодлого</td><td>Гараар тооцсон хуваарьтай таарна (8-р хэсэг)</td></tr>
+  <tr><td>scheduler_full</td><td>9 процесс үүсгэх</td><td>9 дэх нь татгалзагдана, нэг нь дууссаны дараа зөвшөөрөгдөнө</td></tr>
+  <tr><td>stress</td><td>5000 × (queue/stack push+pop, hash put+del, proc new+tick)</td><td>ERR 0, ASan/UBSan мэдээлэлгүй</td></tr>
+  <tr><td>UI == C</td><td>6 скриптийг UI-ийн ENGINE-ээр (node) ажиллуулах</td><td>Хүлээгдэх гаралттай мөр мөрөөрөө ижил</td></tr>
+  <tr><td>fuzz</td><td>tests/fuzz_compare.py: 8 seed × 5000 санамсаргүй команд (буруу огноо, том индекс, 8-аас олон процесс, урт түлхүүр г.м.)</td><td>C ба UI-ийн гаралт ижил</td></tr>
+  <tr><td>avl_check</td><td>tests/avl_check.py: 30 санамсаргүй гүйлт (50–400 insert/delete)</td><td>Inorder = эрэмбэлсэн олонлог, өндөр ≤ 1.44·log₂(n+2)</td></tr>
+  <tr><td>kernel module</td><td>src/kernel/run_module_test.sh: start=25, start=15, start=0</td><td>24 ба 18 гишүүнтэй Collatz, start=0 үед −EINVAL</td></tr>
+</table>
+<p>Fuzz тест алдааг илрүүлж чадаж байгаа эсэхийг шалгахын тулд C-ийн AVL-ийн давхар эргүүлэлтийг зориуд устгаж туршсан. Ингэхэд seed 2 ба 4 нь модны өндрийн зөрүүг шууд илрүүлсэн тул тест үр дүнтэй болох нь батлагдсан.</p>
+
+<h1 id="h-8">8. Үр дүн</h1>
+<table>
+  <tr><th>Тест</th><th>Үр дүн</th></tr>
+  <tr><td>textbook, all_structures, errors</td><td class="pass">PASS ×3</td></tr>
+  <tr><td>search (хайлт, hash, BST/AVL)</td><td class="pass">PASS</td></tr>
+  <tr><td>scheduler (RR, FCFS, алдаа), scheduler_full (8 процесс)</td><td class="pass">PASS ×2</td></tr>
+  <tr><td>stress (5000 × 8 команд)</td><td class="pass">PASS, ERR 0, sanitizer мэдээлэлгүй</td></tr>
+  <tr><td>UI == C (6 скрипт)</td><td class="pass">PASS ×6</td></tr>
+  <tr><td>fuzz C == UI (8 seed × 5000 команд, тэгш seed-д AVL)</td><td class="pass">PASS ×8 (seed бүрд ≈4 700 гаралтын мөр)</td></tr>
+  <tr><td>avl_check (30 гүйлт + эрэмбэлсэн 1..15)</td><td class="pass">PASS ×32 (BST өндөр 15, AVL өндөр 4)</td></tr>
+  <tr><td>Kernel module, өмнөх хувилбар (birthday, kfifo, bitmap)</td><td class="pass">PASS: Ubuntu 24.04, kernel 6.11.0-17, insmod/rmmod (Зураг 7)</td></tr>
+  <tr><td>Kernel module, Part I/II (color, Collatz)</td><td>Хэрэгжсэн; <code>run_module_test.sh</code>-ээр баталгаажуулна. Хүлээгдэх гаралтыг доор үзүүлэв.</td></tr>
+</table>
+
+<h3>Сурах бичгийн жишээний бодит гаралт (examples/textbook.txt)</h3>
+<pre>OK list add_tail 2/8/1995 (size=1)
+OK list add_tail 17/3/1998 (size=2)
+OK list add_tail 29/2/2000 (size=3)
+OK list add_tail 5/11/2001 (size=4)
+OK list add_tail 30/12/2003 (size=5)
+LIST size=5: 2/8/1995 -> 17/3/1998 -> 29/2/2000 -> 5/11/2001 -> 30/12/2003
+OK list del 17/3/1998 (size=4)
+LIST size=4: 2/8/1995 -> 29/2/2000 -> 5/11/2001 -> 30/12/2003
+OK list del 2/8/1995 (size=3)   ...   OK list del 30/12/2003 (size=0)
+LIST size=0: (empty)</pre>
+
+<h3>Хайлт, хэш хүснэгт, мод (examples/search.txt, холбогдох мөрүүд)</h3>
+<pre>OK list find 17/3/1998 = index 1
+OK list find 1/1/2001 = not found
+OK queue find 20 = position 1
+OK stack find 1 = position 2
+OK hash put ab -> 7 (bucket=3, size=5, collision)
+OK hash put ba -> 8 (bucket=3, size=6, collision)
+HASH buckets=4 size=6 collisions=2: b0=[dave:11] b1=[carol:9] b2=[alice:1234] b3=[bob:5678 -> ab:7 -> ba:8]
+OK hash get ba = 8 (bucket=3, steps=3)
+OK hash get bob = 5678 (bucket=3, steps=1)
+OK hash get zed = not found (bucket=3)
+OK hash put bob = 0 (updated, bucket=3)
+ERR hash: key and value must be 1..12 letters, digits or _
+TREE size=5 height=5 inorder: 1, 2, 3, 4, 5
+ERR tree: mode can only be changed when the tree is empty
+TREE(avl) size=7 height=3 inorder: 1, 2, 3, 4, 5, 6, 7
+TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7</pre>
+
+<h3>Scheduler: гараар тооцоо ба програмын гаралт</h3>
+<p>Round Robin, квант 2; A=5, B=3, C=2 тик, бүгд t=0-д ирсэн. Тик t нь [t, t+1) хугацааны завсар тул t=5 дээр дууссан процессын дуусах хугацаа 6 болно.</p>
+<table>
+  <tr><th>Процесс</th><th class="c">Сүүлийн тик</th><th class="c">Дуусах хугацаа</th><th class="c">Нийт үргэлжилсэн</th><th class="c">Ажил</th><th class="c">Хүлээсэн</th></tr>
+  <tr><td>C (P3)</td><td class="c">5</td><td class="c">6</td><td class="c">6</td><td class="c">2</td><td class="c">4</td></tr>
+  <tr><td>B (P2)</td><td class="c">8</td><td class="c">9</td><td class="c">9</td><td class="c">3</td><td class="c">6</td></tr>
+  <tr><td>A (P1)</td><td class="c">9</td><td class="c">10</td><td class="c">10</td><td class="c">5</td><td class="c">5</td></tr>
+  <tr><td colspan="5"><b>Дундаж хүлээлт</b></td><td class="c"><b>5.00</b></td></tr>
+</table>
+<p>Ижил ажлыг FCFS-ээр ажиллуулахад A 0, B 5, C 8 тик хүлээж, дундаж хүлээлт 4.33 болно. Round Robin богино процесст түргэн хариу өгдөг ч энэ жишээнд дундаж хүлээлт FCFS-ээс их гарсан нь квант ба шилжилтийн өртөг юм.</p>
+<pre>OK sched policy rr q=2
+SCHED policy=rr(q=2) time=0 running=none ready=P1(A:5), P2(B:3), P3(C:2) done=0
+TICK t=0 P1(A) remaining=4
+TICK t=1 P1(A) remaining=3 preempted
+TICK t=2 P2(B) remaining=2
+TICK t=3 P2(B) remaining=1 preempted
+TICK t=4 P3(C) remaining=1
+TICK t=5 P3(C) remaining=0 finished
+TICK t=6 P1(A) remaining=2
+TICK t=7 P1(A) remaining=1 preempted
+TICK t=8 P2(B) remaining=0 finished
+TICK t=9 P1(A) remaining=0 finished
+TICK t=10 idle
+SCHED policy=rr(q=2) time=11 running=none ready=(empty) done=3</pre>
+
+<h3>Буруу оролтын бодит гаралт (examples/errors.txt)</h3>
+<pre>ERR list: day out of range for month          (31/4/2000)
+ERR list: day out of range for month          (29/2/1900 – өндөр жил биш)
+ERR list: month must be 1..12
+ERR list: year must be 1900..2100
+ERR list: usage &lt;op&gt; &lt;day&gt; &lt;month&gt; &lt;year&gt;
+ERR list: 1/1/2000 not found
+ERR list: missing operation
+ERR unknown structure 'frob'
+ERR queue: underflow (empty)
+ERR stack: underflow (empty)
+ERR bitmap: size must be 1..128               (0 ба 129)
+ERR bitmap: index 99 out of range 0..31
+ERR tree: duplicate 5
+ERR tree: 9 not found</pre>
+
+<h3>Kernel module</h3>
+<figure><img src="img/dmesg_v1.png"><figcaption>Зураг 7 – Kernel module-ийн өмнөх хувилбарын (birthday, kfifo, bitmap) бодит ачаалалт: Ubuntu 24.04, kernel 6.11.0-17-generic, MOK гарын үсэгтэй.</figcaption></figure>
+<p>Part I/II нэмэгдсэн хувилбарын хүлээгдэх dmesg гаралт (<code>insmod kds_module.ko start=15</code>). Collatz гишүүдийг хэрэглэгчийн орчинд тооцоолж шалгасан: start=25 үед 24 гишүүн, start=15 үед 18 гишүүн.</p>
+<pre>kds: loading module (start=15)
+kds: color red=255 blue=0 green=0
+kds: color red=0 blue=255 green=0
+kds: color red=0 blue=0 green=255
+kds: color red=128 blue=64 green=32
+kds: collatz 15
+kds: collatz 46   23   70   35   106   53   160   80   40   20   10   5   16   8   4   2
+kds: collatz 1
+kds: collatz start=15 terms=18
+kds: birthday 2/8/1995 ... 30/12/2003, fifo out 10 20 30, bitmap weight=2, bit15=1
+(rmmod) kds: removing color ... / removing collatz 15 ... 1 / removing birthday ... / module unloaded
+(insmod start=0) kds: start must be 1..1000000 (got 0)   → insmod: Invalid parameters</pre>
+
+<h1 id="h-9">9. Хэлэлцүүлэг</h1>
+<p>Бүх буруу оролт тодорхой мессеж өгч, програм нэг ч удаа унасангүй. ASan/UBSan санах ойн алдаа, leak мэдээлээгүй. Хоёр тусдаа хэрэгжилт (C ба JavaScript) 40 000 санамсаргүй командад ижил гаралт өгсөн нь график нь бодит ажиллагааг үнэн зөв харуулж байгааг баталж байна. Эрэмбэлсэн оролтод BST-ийн өндөр n-тэй тэнцүү болж, AVL-ийнх lg n орчим байсан нь онолтой таарч байна. Хэш хүснэгтэд collision нэмэгдэх тусам хайлтын алхам өссөн нь мөн онолтой нийцнэ.</p>
+<p><b>Хязгаарлалт:</b></p>
+<ol>
+  <li>Kernel module-ийн өмнөх хувилбарыг нэг машин дээр (kernel 6.11.0-17) ачаалж туршсан. Өөр kernel хувилбарт дахин build хийх шаардлагатай. Secure Boot идэвхтэй үед гарын үсэггүй модуль ачаалагдахгүй тул MOK түлхүүрээр гарын үсэг зурсан.</li>
+  <li>1.9-д дурдсан red-black мод (<code>rbtree.h</code>) болон тусдаа singly жагсаалтыг хэрэгжүүлээгүй. Жагсаалт нь kernel-ийн list_head шиг давхар холбоост дугуй, тэнцвэржсэн модыг AVL-аар загварчилсан.</li>
+  <li>Hash map-ийн bucket-ийн тоо тогтмол (динамик resize байхгүй). Хэш функц нь энгийн нийлбэр тул «ab», «ba» шиг үсгийн байр солигдсон түлхүүрүүд үргэлж collision үүсгэнэ.</li>
+  <li>Scheduler-т бүх процесс үүсгэсэн мөчдөө ирнэ гэж үзсэн. I/O хүлээлт ба тэргүүлэх эрэмбэ байхгүй.</li>
+  <li>UI ба C нь тусдаа хэрэгжилт тул нэг эх кодоос үүсээгүй. Ижил байдлыг тест, fuzz-аар баталсан.</li>
+  <li>Queue, stack ба амьд процессын тоо 8, hash-ийн элемент 24-өөр хязгаарлагдсан. Энэ нь дүрслэлд багтаах зорилготой.</li>
+</ol>
+
+<h1 id="h-10">10. Дүгнэлт</h1>
+<p>Сурах бичгийн 3-р бүлгийн «Kernel Data Structures» төслийн хоёр хэсэг (color жагсаалт, <code>start</code> параметртэй Collatz жагсаалт) болон 1.9-ийн бүтэц бүрийг хэрэгжүүлсэн: холбоост жагсаалт, дараалал, стек, BST ба тэнцвэржсэн мод, хэш хүснэгт, bitmap. Нэмэх, устгах, хайх үйлдлийн дараах төлөвийг ижил командын хэлээр CLI болон график UI хоёуланд харуулж чадсан. UI дээр дараах зүйлсийг нүдээр харуулсан: энгийн мод эрэмбэлсэн оролтод нэг шугам болдог (өндөр 7) бол тэнцвэржсэн мод өндрөө 3 хэвээр хадгалдаг, хэш хүснэгтэд collision үүсэхэд хайлтын алхам нэмэгддэг. Зөв ажиллагааг 6 скрипт, stress тест, AVL-ийн инвариант шалгалт, UI==C харьцуулалт (40 000 санамсаргүй команд) болон жинхэнэ Linux дээр ачаалсан kernel module-аар нотолсон. Нэмэлтээр «Processes» сэдвийн PCB ба ready queue ашиглан FCFS ба Round Robin-ийг хүлээлтийн хугацаагаар хэмжиж харьцуулсан.</p>
+
+<h1 id="h-ref">Ашигласан материал</h1>
+<ol>
+  <li>A. Silberschatz, P. B. Galvin, G. Gagne. <i>Operating System Concepts</i>, 10th ed. Wiley, 2018 – 1.9 Kernel Data Structures, 3-р бүлэг Processes ба Programming Projects.</li>
+  <li>Linux kernel эх код ба баримт: <code>include/linux/list.h</code>, <code>include/linux/kfifo.h</code>, <code>include/linux/bitmap.h</code>, <code>include/linux/moduleparam.h</code>; Documentation/core-api/kernel-api.rst.</li>
+  <li>The Linux Kernel Module Programming Guide (module_param, insmod/rmmod).</li>
+  <li>F.CSM302 «Бие даалт 1» удирдамж.</li>
+  <li>AI хэрэгсэл: Claude (Anthropic) – тайлангийн ноорог, C програмыг UI-ийн хөдөлгүүртэй нийцүүлэх, тест скрипт, баримт бичгийн засварт ашигласан. Бүх кодыг баг ажиллуулж, тестээр шалгасан.</li>
+</ol>
+
+<h1 id="h-a">Хавсралт A. Ажлын төлөвлөгөө ба гишүүдийн оролцоо</h1>
+<table style="font-size:9.5pt;margin-bottom:6pt">
+  <tr><th style="width:32%">Талбар</th><th>Мэдээлэл</th></tr>
+  <tr><td>Хуваарилалтын код</td><td>4</td></tr>
+  <tr><td>Төсөл</td><td>Kernel Data Structures</td></tr>
+  <tr><td>Repository</td><td>github.com/grl059/OS_BD1</td></tr>
+  <tr><td>Хэл / сан / орчин</td><td>C (gcc 13), JavaScript (HTML/SVG), kernel C; Python 3, Node.js (тест); Ubuntu 24.04</td></tr>
+  <tr><td>Үндсэн дүрслэл</td><td>Kernel structure graph – 7 tab бүхий interactive UI</td></tr>
+</table>
+<table style="font-size:9.5pt;margin-bottom:6pt">
+  <tr><th style="width:24%">Гишүүн</th><th>Хариуцах ажил</th><th style="width:30%">Commit / file</th></tr>
+  <tr><td>Н. Ням-Од</td><td>Онолын судалгаа: сурах бичгийн 1.9 ба 3-р бүлгийн Programming Project, list_head ба container_of; тайлангийн 2–3-р хэсэг</td><td>-</td></tr>
+  <tr><td>А. Гэрэл</td><td>Repository удирдлага, interactive UI (docs/ui/index.html), C програм ба kernel module-ийг нэгтгэх, kernel module-ийг өөрийн Linux сервер дээр build хийж insmod/rmmod-оор турших; тайлангийн 4–5-р хэсэг</td><td>10 commit (2026-10-20…25): first commit, UI, Report zasav, Example, Code buten bolgov</td></tr>
+  <tr><td>А. Номин</td><td>Туршилтын өгөгдөл: examples/*.txt, хүлээгдэх гаралт, захын ба буруу оролтын тест (errors.txt); тайлангийн 7-р хэсэг</td><td>-</td></tr>
+  <tr><td>Э. Мягмаршагай</td><td>Процесс ба scheduler: FCFS, Round Robin-ийн хуваарийг гараар тооцож програмын гаралттай тулгах; тайлангийн 8-р хэсэг</td><td>-</td></tr>
+  <tr><td>О. Хүслэн</td><td>Manual (хэрэглэгчийн ба operational заавар), Manual-ын дагуу өөр компьютер дээр build/run хийж шалгах</td><td>-</td></tr>
+  <tr><td>Ч. Түмэншагай</td><td>Hash map ба AVL модны туршилт, UI-ийн screenshot, тайлангийн 6, 9, 10-р хэсэг</td><td>-</td></tr>
+</table>
+<table style="font-size:9.5pt;margin-bottom:6pt">
+  <tr><th style="width:6%">Тест</th><th>Оролт / нөхцөл</th><th>Хүлээгдсэн үр дүн</th></tr>
+  <tr><td class="c">1</td><td>examples/textbook.txt</td><td>5 огноо дарааллаараа, устгасны дараа хоосон</td></tr>
+  <tr><td class="c">2</td><td>examples/search.txt</td><td>Хайлтын индекс, hash collision 2, BST өндөр 5, AVL өндөр 3</td></tr>
+  <tr><td class="c">3</td><td>examples/scheduler.txt</td><td>RR дундаж хүлээлт 5.00, FCFS 4.33</td></tr>
+  <tr><td class="c">4</td><td>examples/errors.txt</td><td>Мөр бүр ERR, програм унахгүй</td></tr>
+  <tr><td class="c">5</td><td>insmod kds_module.ko start=15</td><td>4 color, 18 гишүүнтэй Collatz; start=0 → татгалзана</td></tr>
+</table>
+</body>
+</html>

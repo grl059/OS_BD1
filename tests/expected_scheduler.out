@@ -1,0 +1,44 @@
+OK sched policy rr q=2
+OK proc new P1 A burst=5 (alive=1)
+OK proc new P2 B burst=3 (alive=2)
+OK proc new P3 C burst=2 (alive=3)
+SCHED policy=rr(q=2) time=0 running=none ready=P1(A:5), P2(B:3), P3(C:2) done=0
+TICK t=0 P1(A) remaining=4
+TICK t=1 P1(A) remaining=3 preempted
+TICK t=2 P2(B) remaining=2
+TICK t=3 P2(B) remaining=1 preempted
+TICK t=4 P3(C) remaining=1
+TICK t=5 P3(C) remaining=0 finished
+TICK t=6 P1(A) remaining=2
+TICK t=7 P1(A) remaining=1 preempted
+TICK t=8 P2(B) remaining=0 finished
+TICK t=9 P1(A) remaining=0 finished
+TICK t=10 idle
+SCHED policy=rr(q=2) time=11 running=none ready=(empty) done=3
+OK sched clear
+OK sched policy fcfs
+OK proc new P1 A burst=5 (alive=1)
+OK proc new P2 B burst=3 (alive=2)
+OK proc new P3 C burst=2 (alive=3)
+TICK t=0 P1(A) remaining=4
+TICK t=1 P1(A) remaining=3
+TICK t=2 P1(A) remaining=2
+TICK t=3 P1(A) remaining=1
+TICK t=4 P1(A) remaining=0 finished
+SCHED policy=fcfs time=5 running=none ready=P2(B:3), P3(C:2) done=1
+TICK t=5 P2(B) remaining=2
+TICK t=6 P2(B) remaining=1
+TICK t=7 P2(B) remaining=0 finished
+TICK t=8 P3(C) remaining=1
+TICK t=9 P3(C) remaining=0 finished
+TICK t=10 idle
+SCHED policy=fcfs time=11 running=none ready=(empty) done=3
+ERR proc: name must be 1..8 letters, digits or _
+ERR proc: burst must be 1..20
+ERR proc: burst must be 1..20
+ERR proc: usage new <name> <burst>
+ERR proc: unknown op
+ERR sched: policy must be 'fcfs' or 'rr <quantum 1..10>'
+ERR sched: policy must be 'fcfs' or 'rr <quantum 1..10>'
+ERR sched: policy must be 'fcfs' or 'rr <quantum 1..10>'
+ERR sched: unknown op

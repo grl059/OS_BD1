@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/*
+ * Teal / green theme - this is the one explicit visual departure the user
+ * asked for from the reference project (which used its own color scheme).
+ * Everything here is OKLCH tokens on :root, redefined for dark mode, same
+ * structure shadcn/ui generates.
+ */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-hot: var(--hot);
+  --color-hot-foreground: var(--hot-foreground);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+:root {
+  --radius: 0.65rem;
+  --background: oklch(0.985 0.01 170);
+  --foreground: oklch(0.2 0.03 180);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.03 180);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0.03 180);
+  --primary: oklch(0.47 0.1 170);
+  --primary-foreground: oklch(0.98 0.01 170);
+  --secondary: oklch(0.94 0.03 165);
+  --secondary-foreground: oklch(0.25 0.04 170);
+  --muted: oklch(0.95 0.02 165);
+  --muted-foreground: oklch(0.48 0.03 175);
+  --accent: oklch(0.88 0.08 160);
+  --accent-foreground: oklch(0.2 0.04 170);
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(0.98 0.01 170);
+  --border: oklch(0.88 0.02 170);
+  --input: oklch(0.88 0.02 170);
+  --ring: oklch(0.6 0.1 170);
+  --hot: oklch(0.82 0.17 145);
+  --hot-foreground: oklch(0.18 0.05 150);
+}
+
+:root:not([data-theme="light"]) {
+  @media (prefers-color-scheme: dark) {
+    --background: oklch(0.17 0.02 180);
+    --foreground: oklch(0.95 0.01 170);
+    --card: oklch(0.21 0.02 180);
+    --card-foreground: oklch(0.95 0.01 170);
+    --popover: oklch(0.21 0.02 180);
+    --popover-foreground: oklch(0.95 0.01 170);
+    --primary: oklch(0.72 0.12 165);
+    --primary-foreground: oklch(0.15 0.03 170);
+    --secondary: oklch(0.27 0.03 175);
+    --secondary-foreground: oklch(0.92 0.02 170);
+    --muted: oklch(0.25 0.02 175);
+    --muted-foreground: oklch(0.68 0.03 170);
+    --accent: oklch(0.32 0.06 165);
+    --accent-foreground: oklch(0.92 0.03 165);
+    --destructive: oklch(0.6 0.2 25);
+    --destructive-foreground: oklch(0.97 0.01 170);
+    --border: oklch(0.32 0.02 175);
+    --input: oklch(0.32 0.02 175);
+    --ring: oklch(0.55 0.1 165);
+    --hot: oklch(0.65 0.18 140);
+    --hot-foreground: oklch(0.1 0.03 150);
+  }
+}
+
+:root[data-theme="dark"] {
+  --background: oklch(0.17 0.02 180);
+  --foreground: oklch(0.95 0.01 170);
+  --card: oklch(0.21 0.02 180);
+  --card-foreground: oklch(0.95 0.01 170);
+  --popover: oklch(0.21 0.02 180);
+  --popover-foreground: oklch(0.95 0.01 170);
+  --primary: oklch(0.72 0.12 165);
+  --primary-foreground: oklch(0.15 0.03 170);
+  --secondary: oklch(0.27 0.03 175);
+  --secondary-foreground: oklch(0.92 0.02 170);
+  --muted: oklch(0.25 0.02 175);
+  --muted-foreground: oklch(0.68 0.03 170);
+  --accent: oklch(0.32 0.06 165);
+  --accent-foreground: oklch(0.92 0.03 165);
+  --destructive: oklch(0.6 0.2 25);
+  --destructive-foreground: oklch(0.97 0.01 170);
+  --border: oklch(0.32 0.02 175);
+  --input: oklch(0.32 0.02 175);
+  --ring: oklch(0.55 0.1 165);
+  --hot: oklch(0.65 0.18 140);
+  --hot-foreground: oklch(0.1 0.03 150);
+}
+
+@utility hot-flash {
+  animation: hot-flash 900ms ease-out 1;
+}
+
+@keyframes hot-flash {
+  0% {
+    background-color: var(--hot);
+    color: var(--hot-foreground);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* {
+  border-color: var(--border);
+}

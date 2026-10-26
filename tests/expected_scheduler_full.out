@@ -1,0 +1,14 @@
+OK sched policy fcfs
+OK proc new P1 a burst=1 (alive=1)
+OK proc new P2 b burst=2 (alive=2)
+OK proc new P3 c burst=2 (alive=3)
+OK proc new P4 d burst=2 (alive=4)
+OK proc new P5 e burst=2 (alive=5)
+OK proc new P6 f burst=2 (alive=6)
+OK proc new P7 g burst=2 (alive=7)
+OK proc new P8 h burst=2 (alive=8)
+ERR proc: too many processes (limit 8)
+SCHED policy=fcfs time=0 running=none ready=P1(a:1), P2(b:2), P3(c:2), P4(d:2), P5(e:2), P6(f:2), P7(g:2), P8(h:2) done=0
+TICK t=0 P1(a) remaining=0 finished
+OK proc new P9 i burst=2 (alive=8)
+SCHED policy=fcfs time=1 running=none ready=P2(b:2), P3(c:2), P4(d:2), P5(e:2), P6(f:2), P7(g:2), P8(h:2), P9(i:2) done=1

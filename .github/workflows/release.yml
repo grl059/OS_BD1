@@ -1,0 +1,87 @@
+name: Release
+
+# Runs only after CI has passed on main (workflow_run chaining), so a
+# release is never cut from a build that didn't pass make check / the web
+# build. Version bump follows Conventional Commits since the last tag:
+#   feat: ...          -> minor bump
+#   fix: ...            -> patch bump
+#   BREAKING CHANGE     -> major bump (in body or with a "!" after the type)
+#   anything else       -> no release
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Compute next version
+        id: ver
+        run: |
+          last_tag=$(git tag --list 'v*' --sort=-v:refname | head -1)
+          if [ -z "$last_tag" ]; then
+            last_tag="v0.0.0"
+            range=""
+          else
+            range="$last_tag.."
+          fi
+          echo "last_tag=$last_tag"
+
+          log=$(git log $range --pretty=format:'%s%n%b' 2>/dev/null || true)
+          bump=none
+          if echo "$log" | grep -qiE 'BREAKING CHANGE|^[a-z]+(\(.+\))?!:'; then
+            bump=major
+          elif echo "$log" | grep -qE '^feat(\(.+\))?:'; then
+            bump=minor
+          elif echo "$log" | grep -qE '^fix(\(.+\))?:'; then
+            bump=patch
+          fi
+
+          if [ "$bump" = none ]; then
+            echo "No feat/fix/breaking commits since $last_tag - nothing to release."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          ver=${last_tag#v}
+          IFS=. read -r major minor patch <<< "$ver"
+          case "$bump" in
+            major) major=$((major+1)); minor=0; patch=0 ;;
+            minor) minor=$((minor+1)); patch=0 ;;
+            patch) patch=$((patch+1)) ;;
+          esac
+          next="v$major.$minor.$patch"
+          echo "Bumping $last_tag -> $next ($bump)"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "tag=$next" >> "$GITHUB_OUTPUT"
+          echo "last_tag=$last_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Tag and create release
+        if: steps.ver.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${{ steps.ver.outputs.tag }}"
+          last_tag="${{ steps.ver.outputs.last_tag }}"
+          range="${last_tag}.."
+          [ "$last_tag" = "v0.0.0" ] && range=""
+
+          git tag "$tag"
+          git push origin "$tag"
+
+          notes=$(git log $range --pretty=format:'- %s (%h)')
+          gh release create "$tag" \
+            --title "$tag" \
+            --notes "## Changes since $last_tag
+          $notes"

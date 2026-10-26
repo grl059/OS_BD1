@@ -1,0 +1,21 @@
+# build outputs
+/kds
+*.o
+*.ko
+*.mod
+*.mod.c
+*.cmd
+.*.cmd
+modules.order
+Module.symvers
+.tmp_versions/
+__pycache__/
+# signing keys must never be committed
+*.priv
+*.der
+
+# web/ (Next.js) - package-lock.json IS committed, these are not
+web/node_modules/
+web/.next/
+web/next-env.d.ts
+web/.env*.local

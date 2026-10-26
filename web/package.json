@@ -1,0 +1,30 @@
+{
+  "name": "kds-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web visualizer for the Kernel Data Structures programming project (F.CSM302 BD1). Talks to the ../kds C core over a JSON event stream (--json mode) - this app never recomputes structure state itself.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "node --test lib/**/*.test.ts"
+  },
+  "dependencies": {
+    "next": "16.3.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "radix-ui": "1.6.7",
+    "lucide-react": "1.52.0",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "tailwind-merge": "3.7.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "22.10.5",
+    "@types/react": "19.0.2",
+    "@types/react-dom": "19.0.2",
+    "tailwindcss": "4.3.3",
+    "@tailwindcss/postcss": "4.3.3"
+  }
+}
