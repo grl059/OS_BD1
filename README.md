@@ -24,6 +24,9 @@ make                        # src/user/kds.c -> ./kds (ASan + UBSan)
 make test                   # 6 жишээ + stress: бүгд PASS
 ./kds examples/textbook.txt
 ```
+**macOS 26 + Apple clang:** the bundled ASan runtime can hang while initializing
+(no output, 100% CPU). Build without sanitizers instead: `make SAN=0`; the tests
+and the web app work the same, only the sanitizer checks are skipped.
 **Веб интерфэйс** (Next.js; `../kds`-г шууд ажиллуулдаг, өөрөө дахин хэрэгжүүлдэггүй - `web/EVENT_FORMAT.md`):
 ```sh
 make                        # эхлээд C цөмийг ./kds болгож build хийнэ
@@ -64,16 +67,15 @@ sched  policy fcfs|rr <квант 1..10>  ·  sched tick|print|clear
 | `src/kernel/` | Linux kernel module, Makefile, `run_module_test.sh` |
 | `web/` | Next.js веб апп - `src/app` (хуудсууд, `/api/run`), `src/components`, `src/lib` (`model.ts`, `config.ts`, `levels.ts`, `use-run.ts`); `EVENT_FORMAT.md` - JSON протоколын тодорхойлолт |
 | `examples/` | textbook, all_structures, errors, search, scheduler, scheduler_full |
-| `tests/` | хүлээгдэх гаралт, `run_tests.sh`, `json_check.py`, `fuzz_compare.py`, `avl_check.py` |
+| `tests/` | хүлээгдэх гаралт, `run_tests.sh`, `json_check.py`, `fuzz_json.py`, `avl_check.py` |
 | `.github/workflows/` | `ci.yml` (C цөм + веб апп build/тест, ubuntu+macos), `release.yml` (CI амжилттай болсон тутамд conventional-commit дүрмээр хувилбар нэмэгдүүлж release гаргадаг) |
-| `docs/` | `4_BD1_Report.pdf`, `4_Manual.pdf`, `screenshots/`|
+| `docs/` | `4_BD1_Report.pdf`, `4_Manual.pdf`; `report_src/img/ui_*.png` – веб UI-ийн бодит дэлгэцийн зураг |
 
 ## Known issues
 - Kernel module-ийг жинхэнэ Linux дээр build хийнэ (WSL, Docker дээр ачаалагдахгүй). Secure Boot идэвхтэй бол MOK түлхүүрээр гарын үсэг зурна (Manual 2.6).
 - Hash map-ийн bucket-ийн тоо тогтмол (resize байхгүй); queue, stack, процесс хамгийн ихдээ 8; hash 24 элемент.
 - Scheduler-т бүх процесс `proc new` хийсэн мөчид ирнэ; I/O ба priority байхгүй.
 - Веб апп нь C-г **дахин хэрэгжүүлдэггүй**: дэлгэц дээрх бүх зүйл `kds --json`-ийн гаргасан `state`-ээс шууд ирдэг (`tests/json_check.py`, `web` дотор `node --test` баталгаажуулна).
-- `web/package-lock.json` хараахан commit хийгдээгүй бол CI-ийн `npm ci` алдаа өгнө - `npm install` нэг удаа ажиллуулж lockfile-г commit хийх хэрэгтэй.
 
 ## Бэлэн код, сан, AI ашиглалт
 - Гадны сан ашиглаагүй. `list_head`-ийн функцуудыг Linux `include/linux/list.h`-ийн семантикаар өөрсдөө бичсэн.
