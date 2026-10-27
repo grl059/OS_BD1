@@ -23,7 +23,7 @@ export default async function LearnPage({
         </aside>
         <main>
           {level ? (
-            <Tutorial level={level} />
+            <Tutorial key={level.id} level={level} />
           ) : (
             <div>
               <h1 className="text-2xl font-bold text-primary">Хичээл</h1>
