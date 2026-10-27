@@ -36,7 +36,7 @@ cd web
 npm install                 # (эхний удаа)
 npm run dev                 # http://localhost:3000
 ```
-Цэс → Тоглох / Хичээл / Тухай. `/play` хуудас нь өөрийн бичсэн командыг `/api/run`-р дамжуулж, `kds --json`-ийн буцаасан JSON урсгалаас дэлгэцийг шууд дүүргэнэ - дэлгэц дээр харагдах бүх зүйл (жагсаалт, мод, scheduler progress bar гэх мэт) C программын state-ээс гаралтай.
+Цэс → Хичээл / Чөлөөт горим / Тухай. `/play` хуудас нь өөрийн бичсэн командыг `/api/run`-р дамжуулж, `kds --json`-ийн буцаасан JSON урсгалаас дэлгэцийг шууд дүүргэнэ - дэлгэц дээр харагдах бүх зүйл (жагсаалт, мод, scheduler progress bar гэх мэт) C программын state-ээс гаралтай.
 
 Хичээлийн Багшийн тайлбар бүр монгол дуутай (`public/tts/*.mp3`, `mn-MN-YesuiNeural`). `say` текстээ засварлавал дахин үүсгэнэ:
 ```sh
@@ -76,7 +76,7 @@ sched  policy fcfs|rr <квант 1..10>  ·  sched tick|print|clear
 |---|---|
 | `src/user/kds.c` | User-space хэрэгжилт (list.h-ийн `list_head`, `container_of`) + командын интерпретатор + `--json` горим (вэб-д зориулсан, текст горимыг өөрчлөхгүй) |
 | `src/kernel/` | Linux kernel module, Makefile, `run_module_test.sh` |
-| `web/` | Next.js веб апп - `src/app` (хуудсууд, `/api/run`), `src/components`, `src/lib` (`model.ts`, `config.ts`, `levels.ts`, `use-run.ts`); `EVENT_FORMAT.md` - JSON протоколын тодорхойлолт |
+| `web/` | Next.js веб апп - `src/app` (хуудсууд, `/api/run`), `src/components`, `src/lib` (`model.ts`, `config.ts`, `levels.ts`, `use-run.ts`), `public/tts/` (Багшийн монгол дуут тайлбар), `scripts/gen-tts.mjs` (дууг дахин үүсгэх), `EVENT_FORMAT.md` - JSON протоколын тодорхойлолт |
 | `examples/` | textbook, all_structures, errors, search, scheduler, scheduler_full, hash_resize, rb_heap |
 | `tests/` | хүлээгдэх гаралт, `run_tests.sh`, `json_check.py`, `fuzz_json.py`, `avl_check.py`, `rb_check.py` (red-black ба heap-ийн инвариант) |
 | `.github/workflows/` | `ci.yml` (C цөм + веб апп build/тест, ubuntu+macos), `release.yml` (CI амжилттай болсон тутамд conventional-commit дүрмээр хувилбар нэмэгдүүлж release гаргадаг) |
