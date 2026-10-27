@@ -150,7 +150,7 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7</pre>
 <h2>2.1 Repository clone хийх</h2>
 <pre>git clone https://github.com/grl059/OS_BD1.git kernel-data-structures
 cd kernel-data-structures
-git checkout v1.0          # 9-р долоо хоногт нийтэлсэн хувилбар</pre>
+git checkout v1.0.0        # 9-р долоо хоногт нийтэлсэн хувилбар (GitHub Release)</pre>
 
 <h2>2.2 OS, compiler/runtime, version</h2>
 <table>
@@ -171,6 +171,7 @@ sudo apt install linux-headers-$(uname -r)          # зөвхөн kernel module
 
 <h2>2.4 Build ба Run команд</h2>
 <pre>make                                   # ./kds (-Wall -Wextra -fsanitize=address,undefined)
+make SAN=0                             # sanitizer-гүй (ASan runtime ачаалагдахгүй орчинд)
 ./kds examples/textbook.txt            # script
 echo "queue push 5" | ./kds            # stdin-ээс
 ./kds --json examples/textbook.txt     # JSON горим (веб аппын хэрэглэдэг горим)
@@ -232,7 +233,7 @@ sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv 
   <li>CLI-д нэг мөр 1023 тэмдэгтээс урт бол «ERR line too long» гарна.</li>
   <li>Веб апп серверийн хажуу (<code>web/src/app/api/run/route.ts</code>) C цөмийг дэвсгэр дээр дуудаж ажиллуулдаг тул веб аппыг нээхийн өмнө <code>make</code>-аар <code>./kds</code> (эсвэл Windows дээр <code>kds.exe</code>) build хийсэн байх ёстой; эс бөгөөс «C core not built» алдаа гарна.</li>
   <li>Hash bucket-ийн тоо тогтмол; queue, stack, процесс 8, hash 24 элементээр хязгаарлагдсан (дүрслэлд багтаах зорилгоор).</li>
-  <li>macOS-ийн clang-д <code>-fsanitize=address</code> ажиллахгүй бол <code>make CFLAGS="-Wall -Wextra -O1 -g"</code> гэж build хийнэ.</li>
+  <li><b>macOS 26 + Apple clang:</b> ASan runtime нь програм эхлэх үед төгсгөлгүй хүлээлт үүсгэж болно (гаралтгүй, 100% CPU). Ийм үед <code>make SAN=0</code> гэж sanitizer-гүй build хийнэ; тест болон веб апп хэвийн ажиллана, зөвхөн ASan/UBSan шалгалт хийгдэхгүй.</li>
 </ul>
 </body>
 </html>
