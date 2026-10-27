@@ -1,12 +1,12 @@
 import { BackToMenu } from "@/components/back-to-menu";
 
 const TEAM = [
-  { name: "Н.Ням-Од", id: "B222270805" },
-  { name: "А.Гэрэл", id: "B241940001" },
-  { name: "А.Номин", id: "B242270088" },
-  { name: "Э.Мягмаршагай", id: "B241910001" },
-  { name: "О.Хүслэн", id: "B241910020" },
-  { name: "Ч.Түмэншагай", id: "B160910830" },
+  { name: "Н.Ням-Од", id: "B222270805", role: "Онолын судалгаа, тайлан, вэб дүрслэл" },
+  { name: "А.Гэрэл", id: "B241940001", role: "C цөм, вэб апп, CI, kernel module" },
+  { name: "А.Номин", id: "B242270088", role: "Туршилтын өгөгдөл, захын ба буруу оролтын тест" },
+  { name: "Э.Мягмаршагай", id: "B241910001", role: "Процесс, FCFS/RR хуваарийг тулгаж шалгах" },
+  { name: "О.Хүслэн", id: "B241910020", role: "Заавар (Manual), өөр машинд build/run шалгах" },
+  { name: "Ч.Түмэншагай", id: "B160910830", role: "Hash ба AVL модны туршилт, вэб тайлбар" },
 ];
 
 export default function AboutPage() {
@@ -21,7 +21,7 @@ export default function AboutPage() {
           Structures" (Operating System Concepts, 3-р бүлэг "Processes"). C хэлээр бичигдсэн
           <code className="mx-1 rounded bg-muted px-1">kds.c</code> нь Линукс кернелийн
           <code className="mx-1 rounded bg-muted px-1">struct list_head</code>, bitmap, hash,
-          AVL мод, PCB/scheduler зэрэг 7 бүтцийг хуулбарладаг. Энэ вэб апп нь зөвхөн дэлгэц -
+          AVL ба red-black мод, min-heap, PCB/scheduler зэрэг 9 бүтцийг хуулбарладаг. Энэ вэб апп нь зөвхөн дэлгэц -
           бүх тооцоолол, төлөв C программ дотор явагддаг (<code className="mx-1 rounded bg-muted px-1">
             kds --json
           </code>
@@ -44,6 +44,7 @@ export default function AboutPage() {
               <tr>
                 <th className="p-2 font-medium">Нэр</th>
                 <th className="p-2 font-medium">Оюутны код</th>
+                <th className="p-2 font-medium">Үүрэг</th>
               </tr>
             </thead>
             <tbody>
@@ -51,6 +52,7 @@ export default function AboutPage() {
                 <tr key={m.id} className="border-t border-border">
                   <td className="p-2">{m.name}</td>
                   <td className="p-2 text-muted-foreground">{m.id}</td>
+                  <td className="p-2 text-muted-foreground">{m.role}</td>
                 </tr>
               ))}
             </tbody>
