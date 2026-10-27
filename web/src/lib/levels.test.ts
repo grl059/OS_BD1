@@ -36,6 +36,20 @@ test("levelById / nextLevel walk the sequence in order", () => {
   assert.equal(nextLevel(LEVELS[LEVELS.length - 1].id), undefined);
 });
 
+test("levels: steps cover the whole script, one command per step, tutor line present", () => {
+  for (const l of LEVELS) {
+    assert.ok(l.steps.length > 0, l.id);
+    assert.equal(
+      l.steps.map((s) => s.cmd).join("\n"),
+      l.script,
+      `${l.id}: steps must reproduce the script line by line`,
+    );
+    for (const s of l.steps) {
+      assert.ok(s.say.trim().length >= 10, `${l.id}: step '${s.cmd}' has no tutor line`);
+    }
+  }
+});
+
 test("every level's demo script actually runs clean against the real C core", () => {
   for (const l of LEVELS) {
     const out = execFileSync(KDS_BIN, ["--json"], { input: l.script, encoding: "utf8" });
