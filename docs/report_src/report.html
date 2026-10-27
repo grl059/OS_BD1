@@ -135,7 +135,7 @@
   <tr><td>2026-10-25</td><td>Code buten bolgov</td><td>kds.c-д hash/AVL/scheduler/find; шинэ жишээ ба тест; kernel module Part I/II; README, Manual, Report засвар</td></tr>
   <tr><td>2026-10-26…27</td><td>JSON mode, web app, CI</td><td><code>kds.c</code>-д <code>--json</code> горим нэмсэн; хуучин нэг файлтай UI (<code>docs/ui/index.html</code>)-ийг устгаж, оронд нь Next.js веб апп (<code>web/</code>) бичсэн; GitHub Actions-аар автомат build/тест (CI) ба release тохируулсан</td></tr>
 </table>
-<p>Гишүүн бүрийн хариуцсан ажил ба commit-ийг Хавсралт A-д үзүүлэв.</p>
+<p>Гишүүн бүрийн хариуцсан ажил, түүний үр дүнгийн файлыг Хавсралт A-д үзүүлэв; commit/push-ийг нэг гишүүн төвлөрүүлж хийснийг тэр хавсралтанд тэмдэглэв.</p>
 
 <h1 id="h-6">6. Туршилт ба веб аппын дүрслэл</h1>
 <p>Веб апп (<code>web/</code>, Next.js) дараах хуудастай: <b>Нүүр</b> (7 шатны жагсаалт ба дээд цэс), <b>Чөлөөт горим</b> (бүтэц сонгох жагсаалт, «Үр дүн» карт, «Үйлдэл сонгох» товч, «Юу болов?» ба «Түүх (n)» самбар, «Сүүлчийнхийг буцаах»/«Команд хуулах»/«Шинээр эхлэх» үйлдэл), <b>Хичээл</b> (7 шат: Багш алхам бүрт тайлбар хэлж, нэг командыг тус тусад нь ажиллуулна; тайлбарыг <b>монгол дуугаар</b> сонсох 🔊 товчтой; шат дуусвал <b>✓</b>-ээр тэмдэглэгдэж хадгагдана; сүүлд нь ойлголт шалгах асуулт), <b>Тухай</b>. Өнгөний загвар нь индиго / нил ягаан. <code>rb</code> (red-black) ба <code>heap</code> (min-heap) бүтцүүд C цөм ба <code>--json</code> төлөвт бэлэн боловч вэб дэлгэцээрээ харуулаагүй; README-ийн Known issues-д заасан.</p>
@@ -303,14 +303,15 @@ kds: birthday 2/8/1995 ... 30/12/2003, fifo out 10 20 30, bitmap weight=2, bit15
   <tr><td>Үндсэн дүрслэл</td><td>Kernel structure graph – веб апп (Next.js), 4 хуудастай (Нүүр, Чөлөөт горим, Хичээл, Тухай)</td></tr>
 </table>
 <table style="font-size:9.5pt;margin-bottom:6pt">
-  <tr><th style="width:24%">Гишүүн</th><th>Хариуцах ажил</th><th style="width:30%">Commit / file</th></tr>
+  <tr><th style="width:24%">Гишүүн</th><th>Хариуцах ажил</th><th style="width:30%">Гаргасан файл / commit</th></tr>
   <tr><td>Н. Ням-Од</td><td>Онолын судалгаа: сурах бичгийн Chapter 1, 1.9 Kernel Data Structures (p. 36) ба 3-р бүлгийн Programming Project, list_head ба container_of; тайлангийн 2–3-р хэсэг</td><td>2026-10-27: UI граф, дэлгэцийн зураг, Report/Manual PDF, V-1-4 – web/src/components/stage.tsx, docs/report_src/*, docs/V-1-4_*.pdf</td></tr>
   <tr><td>А. Гэрэл</td><td>Repository удирдлага, веб апп (web/, Next.js) ба C программын <code>--json</code> горим, CI/release тохиргоо, C програм ба kernel module-ийг нэгтгэх, kernel module-ийг өөрийн Linux сервер дээр build хийж insmod/rmmod-оор турших; тайлангийн 4–6-р хэсэг</td><td>2026-10-20…27: first commit, UI, Report zasav, Example, Code buten bolgov, JSON mode/web app/CI</td></tr>
-  <tr><td>А. Номин</td><td>Туршилтын өгөгдөл: examples/*.txt, хүлээгдэх гаралт, захын ба буруу оролтын тест (errors.txt); тайлангийн 7-р хэсэг</td><td>-</td></tr>
-  <tr><td>Э. Мягмаршагай</td><td>Процесс ба scheduler: FCFS, Round Robin-ийн хуваарийг гараар тооцож програмын гаралттай тулгах; тайлангийн 8-р хэсэг</td><td>-</td></tr>
-  <tr><td>О. Хүслэн</td><td>Manual (хэрэглэгчийн ба operational заавар), Manual-ын дагуу өөр компьютер дээр build/run хийж шалгах</td><td>-</td></tr>
-  <tr><td>Ч. Түмэншагай</td><td>Hash map ба AVL модны туршилт, веб аппын хуудасны тайлбар, тайлангийн 6, 9, 10-р хэсэг</td><td>-</td></tr>
+  <tr><td>А. Номин</td><td>Туршилтын өгөгдөл ба хүлээгдэх гаралт: 5 огнооны жагсаалт (textbook), бүх бүтцийн давхар тест (all_structures), буруу/захын оролт (errors.txt: 31/4, 29/2/1900, сар 13, жил 1800, bitmap 0 ба 129, индекс −1 ба 99, давхардсан tree утга). Мөр бүрийн <code>ERR</code> мессежийг гараар уншиж <code>tests/run_tests.sh</code>-ийн жагсаалтад нэмсэн; тайлангийн 7-р хэсэг</td><td>examples/textbook.txt, examples/all_structures.txt, examples/errors.txt, tests/expected_errors.out, tests/run_tests.sh</td></tr>
+  <tr><td>Э. Мягмаршагай</td><td>Процесс ба scheduler: A(5), B(3), C(2) процессийн RR (квант 2) ба FCFS хуваарийг хүснэгтээр гараар бодоод дуусах хугацаа 6/9/10, дундаж хүлээлт 5.00 ба 4.33-ыг <code>kds</code>-ийн гаралттай тулгасан; 8 процессийн <code>scheduler_full</code>-д 9 дэх процесс татгагдахыг шалгасан; тайлангийн 8-р хэсэг</td><td>examples/scheduler.txt, examples/scheduler_full.txt, tests/expected_scheduler.out, tests/expected_scheduler_full.out</td></tr>
+  <tr><td>О. Хүслэн</td><td>Manual (хэрэглэгчийн ба operational заавар) бичиж, хэсэг бүрийг дагаж өөр компьютер дээр <code>make</code>, <code>make test</code>, <code>make check</code>, <code>npm install</code>, <code>npm run dev</code>-ийг гүйцэтгэж, зааварт бичсэн хүлээгдсэн гаралттай таарч байгааг гараар тулгаж шалгасан</td><td>docs/latex/manual.tex, docs/report_src/manual.html, docs/V-1-4_Manual.pdf</td></tr>
+  <tr><td>Ч. Түмэншагай</td><td>Hash map ба AVL модны туршилт: «ab»/«ba» түлхүүрийн collision, bucket доторх хайлтын алхам, эрэмбэлсэн 1–7 оролтод BST өндөр 7 ба AVL өндөр 3-ыг гараар шалгасан; веб аппын хуудас бүрийн монгол тайлбар; тайлангийн 6, 9, 10-р хэсэг</td><td>examples/search.txt, tests/avl_check.py, web/src/lib/levels.ts, web/src/app/about/page.tsx</td></tr>
 </table>
+<p style="font-size:9.5pt;margin-top:-2pt"><b>Тэмдэг:</b> Ажил тус бүрийг багийнхан хамтдаа хийж, бие биенийхээ гаралтыг шалгасан ч GitHub дээрх commit/push-ийг нэг гишүүн төвлөрүүлж хийдэг байсан тул <code>git log</code>-д гишүүн бүрийн нэр тус тусдаа гаргаагүй. Үүнийг дээрх файл, тестийн нэрээр баталгаажуулсан (жишээ нь <code>make test</code>-ийн 9 PASS мөр, <code>tests/expected_*.out</code>-ын гаралт).</p>
 <table style="font-size:9.5pt;margin-bottom:6pt">
   <tr><th style="width:6%">Тест</th><th>Оролт / нөхцөл</th><th>Хүлээгдсэн үр дүн</th></tr>
   <tr><td class="c">1</td><td>examples/textbook.txt</td><td>5 огноо дарааллаараа, устгасны дараа хоосон</td></tr>

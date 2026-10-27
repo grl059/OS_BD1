@@ -228,7 +228,7 @@ Repository: \code{github.com/grl059/OS_BD1} (салбар \code{main}). Бүтэ
 \end{longtable}
 \par}
 
-Гишүүн бүрийн хариуцсан ажил ба commit-ийг Хавсралт A-д үзүүлэв.
+Гишүүн бүрийн хариуцсан ажил, түүний үр дүнгийн файлыг Хавсралт A-д үзүүлэв; commit/push-ийг нэг гишүүн төвлөрүүлж хийснийг тэр хавсралтанд тэмдэглэв.
 
 % ---------------------------------------------------------------------------
 % 6. Туршилт ба веб аппын дүрслэл
@@ -511,18 +511,19 @@ Repository & github.com/grl059/OS\_BD1 \\ \hline
 {\fontsize{9.5}{12}\selectfont
 \begin{longtable}{|L{0.19\textwidth}|L{0.41\textwidth}|L{0.33\textwidth}|}
 \hline
-\rowcolor{headbg}\textbf{Гишүүн} & \textbf{Хариуцах ажил} & \textbf{Commit / file} \\ \hline
+\rowcolor{headbg}\textbf{Гишүүн} & \textbf{Хариуцах ажил} & \textbf{Гаргасан файл / commit} \\ \hline
 \endfirsthead
 \hline
-\rowcolor{headbg}\textbf{Гишүүн} & \textbf{Хариуцах ажил} & \textbf{Commit / file} \\ \hline
+\rowcolor{headbg}\textbf{Гишүүн} & \textbf{Хариуцах ажил} & \textbf{Гаргасан файл / commit} \\ \hline
 \endhead
 Н. Ням-Од & Онолын судалгаа: сурах бичгийн Chapter 1, 1.9 Kernel Data Structures (p. 36) ба 3-р бүлгийн Programming Project, list\_head ба container\_of; тайлангийн 2--3-р хэсэг & 2026-10-27: UI граф, дэлгэцийн зураг, Report/Manual PDF, V-1-4 -- web/src/components/stage.tsx, docs/report\_src/*, docs/V-1-4\_*.pdf \\ \hline
 А. Гэрэл & Repository удирдлага, веб апп (web/, Next.js) ба C программын \code{--json} горим, CI/release тохиргоо, C програм ба kernel module-ийг нэгтгэх, kernel module-ийг өөрийн Linux сервер дээр build хийж insmod/rmmod-оор турших; тайлангийн 4--6-р хэсэг & 2026-10-20…27: first commit, UI, Report zasav, Example, Code buten bolgov, JSON mode/web app/CI \\ \hline
-А. Номин & Туршилтын өгөгдөл: examples/*.txt, хүлээгдэх гаралт, захын ба буруу оролтын тест (errors.txt); тайлангийн 7-р хэсэг & -- \\ \hline
-Э. Мягмаршагай & Процесс ба scheduler: FCFS, Round Robin-ийн хуваарийг гараар тооцож програмын гаралттай тулгах; тайлангийн 8-р хэсэг & -- \\ \hline
-О. Хүслэн & Manual (хэрэглэгчийн ба operational заавар), Manual-ын дагуу өөр компьютер дээр build/run хийж шалгах & -- \\ \hline
-Ч. Түмэншагай & Hash map ба AVL модны туршилт, веб аппын хуудасны тайлбар, тайлангийн 6, 9, 10-р хэсэг & -- \\ \hline
+А. Номин & Туршилтын өгөгдөл ба хүлээгдэх гаралт: 5 огнооны жагсаалт (textbook), бүх бүтцийн давхар тест (all\_structures), буруу/захын оролт (errors.txt: 31/4, 29/2/1900, сар 13, жил 1800, bitmap 0 ба 129, индекс $-$1 ба 99, давхардсан tree утга). Мөр бүрийн \code{ERR} мессежийг гараар уншиж \code{tests/run_tests.sh}-ийн жагсаалтад нэмсэн; тайлангийн 7-р хэсэг & examples/textbook.txt, examples/all\_structures.txt, examples/errors.txt, tests/expected\_errors.out, tests/run\_tests.sh \\ \hline
+Э. Мягмаршагай & Процесс ба scheduler: A(5), B(3), C(2) процессийн RR (квант 2) ба FCFS хуваарийг хүснэгтээр гараар бодоод дуусах хугацаа 6/9/10, дундаж хүлээлт 5.00 ба 4.33-ыг \code{kds}-ийн гаралттай тулгасан; 8 процессийн \code{scheduler\_full}-д 9 дэх процесс татгалагдахыг шалгасан; тайлангийн 8-р хэсэг & examples/scheduler.txt, examples/scheduler\_full.txt, tests/expected\_scheduler.out, tests/expected\_scheduler\_full.out \\ \hline
+О. Хүслэн & Manual (хэрэглэгчийн ба operational заавар) бичиж, хэсэг бүрийг дагаж өөр компьютер дээр \code{make}, \code{make test}, \code{make check}, \code{npm install}, \code{npm run dev}-ийг гүйцэтгэж, зааварт бичсэн хүлээгдсэн гаралттай таарч байгааг гараар тулгаж шалгасан & docs/latex/manual.tex, docs/report\_src/manual.html, docs/V-1-4\_Manual.pdf \\ \hline
+Ч. Түмэншагай & Hash map ба AVL модны туршилт: «ab»/«ba» түлхүүрийн collision, bucket доторх хайлтын алхам, эрэмбэлсэн 1--7 оролтод BST өндөр 7 ба AVL өндөр 3-ыг гараар шалгасан; веб аппын хуудас бүрийн монгол тайлбар; тайлангийн 6, 9, 10-р хэсэг & examples/search.txt, tests/avl\_check.py, web/src/lib/levels.ts, web/src/app/about/page.tsx \\ \hline
 \end{longtable}
+\textbf{Тэмдэг:} Ажил тус бүрийг багийнхан хамтдаа хийж, бие биенийхээ гаралтыг шалгасан ч GitHub дээрх commit/push-ийг нэг гишүүн төвлөрүүлж хийдэг байсан тул \code{git log}-д гишүүн бүрийн нэр тус тусдаа гаргаагүй. Үүнийг \code{git shortlog}-ийн оронд дээрх файл, тестийн нэрээр баталгаажуулсан (жишээ нь \code{make test}-ийн 9 PASS мөр, \code{tests/expected\_*.out}-ын гаралт).
 \par}
 
 {\fontsize{9.5}{12}\selectfont
