@@ -1,0 +1,20 @@
+OK hash size 4
+OK hash put ab -> 1 (bucket=3, size=1)
+OK hash put ba -> 2 (bucket=3, size=2, collision)
+OK hash put cd -> 3 (bucket=3, size=3, collision)
+HASH STATS buckets=4 size=3 load=0.75 used=1 empty=3 collisions=2 put_collisions=2 longest=3 avg_chain=3.00 resizes=0 auto=off heads=32B (list_head would be 64B)
+OK hash auto on (resize when load > 0.75, buckets x2, max 64)
+OK hash put ef -> 4 (bucket=3, size=4, collision, resized 4->8)
+OK hash put gh -> 5 (bucket=7, size=5, collision)
+OK hash put ij -> 6 (bucket=3, size=6, collision)
+OK hash put kl -> 7 (bucket=7, size=7, collision, resized 8->16)
+HASH STATS buckets=16 size=7 load=0.43 used=4 empty=12 collisions=3 put_collisions=6 longest=3 avg_chain=1.75 resizes=2 auto=on heads=128B (list_head would be 256B)
+HASH buckets=16 size=7 collisions=3: b3=[ab:1 -> ba:2 -> ij:6] b7=[cd:3 -> kl:7] b11=[ef:4] b15=[gh:5]
+OK hash get ab = 1 (bucket=3, steps=1)
+OK hash rehash 16->5 (size=7)
+HASH buckets=5 size=7 collisions=2: b0=[ab:1 -> ba:2 -> kl:7] b1=[ij:6] b2=[gh:5] b3=[ef:4] b4=[cd:3]
+HASH STATS buckets=5 size=7 load=1.40 used=5 empty=0 collisions=2 put_collisions=6 longest=3 avg_chain=1.40 resizes=3 auto=on heads=40B (list_head would be 80B)
+OK hash auto off (resize when load > 0.75, buckets x2, max 64)
+ERR hash: rehash buckets must be 1..64
+ERR hash: rehash buckets must be 1..64
+ERR hash: usage auto on|off

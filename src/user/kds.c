@@ -5,8 +5,12 @@
  *   queue  - FIFO on list_head (add at tail, take from head)
  *   stack  - LIFO on list_head (add at head, take from head)
  *   bitmap - n bits (1..128), set / clear / test
- *   hash   - hash map, chaining with a list_head per bucket
- *   tree   - binary search tree, plain (bst) or balanced (avl)
+ *   hash   - hash map, chaining with an hlist_head per bucket (like Linux
+ *            hashtable.h), optional auto-resize at load factor > 0.75,
+ *            manual rehash and collision statistics
+ *   tree   - binary search tree, plain (bst) or balanced (avl); `tree stats`
+ *   rb     - red-black tree (the tree behind the Linux CFS scheduler)
+ *   heap   - min-heap / priority queue (array based)
  *   proc / sched - PCBs in a list_head ready queue, FCFS and Round Robin
  *
  * Default (text) output is unchanged by anything below: every handler still
@@ -49,16 +53,48 @@ static int list_empty(const struct list_head *h) { return h->next == h; }
 #define list_for_each_safe(pos, n, head) \
 	for (pos = (head)->next, n = pos->next; pos != (head); pos = n, n = pos->next)
 
+/* ---------- hlist (include/linux/list.h): singly-headed hash-bucket list ----------
+ * An hlist_head is ONE pointer (8 bytes) while a list_head is two (16 bytes),
+ * which halves the memory of a big bucket array. The price: no O(1) tail
+ * access (hlist_add_tail below walks the chain) - the kernel only adds at
+ * the head (hlist_add_head), we walk to keep our printed chain order. */
+struct hlist_node { struct hlist_node *next, **pprev; };
+struct hlist_head { struct hlist_node *first; };
+static int hlist_empty(const struct hlist_head *h) { return !h->first; }
+static inline void hlist_add_head(struct hlist_node *n, struct hlist_head *h)
+{
+	n->next = h->first;
+	if (h->first) h->first->pprev = &n->next;
+	h->first = n;
+	n->pprev = &h->first;
+}
+static void hlist_add_tail(struct hlist_node *n, struct hlist_head *h)
+{
+	struct hlist_node **pp = &h->first;
+	while (*pp) pp = &(*pp)->next;
+	n->next = NULL; n->pprev = pp; *pp = n;
+}
+static void hlist_del(struct hlist_node *n)
+{
+	*n->pprev = n->next;
+	if (n->next) n->next->pprev = n->pprev;
+	n->next = NULL; n->pprev = NULL;
+}
+#define hlist_entry(ptr, type, m) container_of(ptr, type, m)
+#define hlist_for_each(pos, head) for (pos = (head)->first; pos; pos = pos->next)
+
 /* ---------- data ---------- */
 #define LIMIT 8          /* capacity of queue, stack and alive processes */
 #define MAXBITS 128
-#define MAXBUCKETS 16
+#define MAXBUCKETS 64    /* upper bound of the bucket array (auto-resize / rehash) */
+#define USER_BUCKETS 16  /* `hash size` accepts 1..16 */
 #define HASH_LIMIT 24
+#define HEAP_MAX 16
 #define MAXTOK 16
 
 struct birthday { int day, month, year; struct list_head list; };
 struct node { int val; struct list_head list; };                 /* queue / stack */
-struct hentry { char key[13], val[13]; struct list_head list; }; /* hash chain */
+struct hentry { char key[13], val[13]; struct hlist_node node; }; /* hash chain */
 struct pcb { int pid, rem, slice, burst; char name[9]; struct list_head list; };
 struct tnode { int val, h; struct tnode *l, *r; };
 
@@ -66,10 +102,15 @@ static struct list_head bdays, queue, stack;
 static int nb, nq, ns;
 static unsigned char bits[MAXBITS];
 static int nbits = 32;
-static struct list_head buckets[MAXBUCKETS];
+static struct hlist_head buckets[MAXBUCKETS];
 static int hn = 8, hsize;
+static int hauto, hresizes, hcoll;   /* auto-resize on/off, resize count, collisions seen by put */
 static struct tnode *root;
-static int ntree, avl;
+static int ntree, avl, nrot;         /* nrot: rotations done by the AVL balancer */
+struct rbnode { int val, red; struct rbnode *l, *r, *p; };
+static struct rbnode *rbroot;
+static int nrb, rbrot;               /* rbrot: rotations done by the red-black balancer */
+static int heap[HEAP_MAX], nheap;
 static struct list_head ready;
 static struct pcb *running;
 static int quantum, now, ndone, nextpid = 1, nready;
@@ -246,7 +287,7 @@ static void bitmap_cmd(const char *op, int na, char **a)
 	puts("ERR bitmap: unknown op");
 }
 
-/* ---------- hash map (chaining) ---------- */
+/* ---------- hash map (chaining with hlist_head buckets) ---------- */
 static int hfun(const char *k)
 {
 	int s = 0;
@@ -257,40 +298,80 @@ static int hfun(const char *k)
 static void hash_reset(int n)
 {
 	for (int i = 0; i < MAXBUCKETS; i++) {
-		if (buckets[i].next) free_nodes(&buckets[i], offsetof(struct hentry, list));
-		INIT_LIST_HEAD(&buckets[i]);
+		struct hlist_node *p;
+		while ((p = buckets[i].first)) {
+			hlist_del(p);
+			free(hlist_entry(p, struct hentry, node));
+		}
 	}
 	hn = n;
-	hsize = 0;
+	hsize = hresizes = hcoll = 0;
+}
+
+/* Move every entry into a table of n buckets. The relative order of the
+ * entries is kept (old buckets are walked in order, each entry is appended
+ * to the tail of its new chain), so printed chains stay predictable. */
+static void hash_rehash(int n)
+{
+	struct hentry *all[HASH_LIMIT];
+	int cnt = 0;
+	struct hlist_node *p;
+	for (int i = 0; i < hn; i++)
+		while ((p = buckets[i].first)) {
+			hlist_del(p);
+			all[cnt++] = hlist_entry(p, struct hentry, node);
+		}
+	hn = n;
+	for (int i = 0; i < cnt; i++) hlist_add_tail(&all[i]->node, &buckets[hfun(all[i]->key)]);
+	hresizes++;
 }
 
 static struct hentry *hfind(int b, const char *k, int *steps)
 {
-	struct list_head *p;
+	struct hlist_node *p;
 	int i = 0;
-	list_for_each(p, &buckets[b]) {
-		struct hentry *e = list_entry(p, struct hentry, list);
+	hlist_for_each(p, &buckets[b]) {
+		struct hentry *e = hlist_entry(p, struct hentry, node);
 		i++;
 		if (!strcmp(e->key, k)) { if (steps) *steps = i; return e; }
 	}
 	return NULL;
 }
 
+static void hash_stats(void)
+{
+	int used = 0, longest = 0;
+	struct hlist_node *p;
+	for (int i = 0; i < hn; i++) {
+		int len = 0;
+		hlist_for_each(p, &buckets[i]) len++;
+		if (len) used++;
+		if (len > longest) longest = len;
+	}
+	int load = hn ? hsize * 100 / hn : 0;
+	int avg = used ? hsize * 100 / used : 0;
+	printf("HASH STATS buckets=%d size=%d load=%d.%02d used=%d empty=%d collisions=%d put_collisions=%d "
+	       "longest=%d avg_chain=%d.%02d resizes=%d auto=%s heads=%zuB (list_head would be %zuB)\n",
+	       hn, hsize, load / 100, load % 100, used, hn - used, hsize - used, hcoll, longest,
+	       avg / 100, avg % 100, hresizes, hauto ? "on" : "off",
+	       hn * sizeof(struct hlist_head), hn * sizeof(struct list_head));
+}
+
 static void hash_cmd(const char *op, int na, char **a)
 {
 	int i, b, steps;
-	struct list_head *p;
+	struct hlist_node *p;
 	if (!strcmp(op, "print")) {
 		int nz = 0;
-		for (i = 0; i < hn; i++) if (!list_empty(&buckets[i])) nz++;
+		for (i = 0; i < hn; i++) if (!hlist_empty(&buckets[i])) nz++;
 		printf("HASH buckets=%d size=%d collisions=%d:", hn, hsize, hsize - nz);
 		if (!hsize) printf(" (empty)");
 		for (i = 0; i < hn; i++) {
-			if (list_empty(&buckets[i])) continue;
+			if (hlist_empty(&buckets[i])) continue;
 			int first = 1;
 			printf(" b%d=[", i);
-			list_for_each(p, &buckets[i]) {
-				struct hentry *e = list_entry(p, struct hentry, list);
+			hlist_for_each(p, &buckets[i]) {
+				struct hentry *e = hlist_entry(p, struct hentry, node);
 				printf("%s%s:%s", first ? "" : " -> ", e->key, e->val);
 				first = 0;
 			}
@@ -299,11 +380,28 @@ static void hash_cmd(const char *op, int na, char **a)
 		printf("\n");
 		return;
 	}
+	if (!strcmp(op, "stats")) { hash_stats(); return; }
 	if (!strcmp(op, "clear")) { hash_reset(hn); puts("OK hash clear"); return; }
 	if (!strcmp(op, "size")) {
-		if (na != 1 || !is_int(a[0], &i) || i < 1 || i > MAXBUCKETS) { puts("ERR hash: buckets must be 1..16"); return; }
+		if (na != 1 || !is_int(a[0], &i) || i < 1 || i > USER_BUCKETS) { puts("ERR hash: buckets must be 1..16"); return; }
 		hash_reset(i);
 		printf("OK hash size %s\n", a[0]);
+		return;
+	}
+	if (!strcmp(op, "auto")) {
+		if (na != 1 || (strcmp(a[0], "on") && strcmp(a[0], "off"))) { puts("ERR hash: usage auto on|off"); return; }
+		hauto = !strcmp(a[0], "on");
+		printf("OK hash auto %s (resize when load > 0.75, buckets x2, max %d)\n", a[0], MAXBUCKETS);
+		return;
+	}
+	if (!strcmp(op, "rehash")) {
+		if (na != 1 || !is_int(a[0], &i) || i < 1 || i > MAXBUCKETS) {
+			printf("ERR hash: rehash buckets must be 1..%d\n", MAXBUCKETS);
+			return;
+		}
+		int old = hn;
+		hash_rehash(i);
+		printf("OK hash rehash %d->%d (size=%d)\n", old, hn, hsize);
 		return;
 	}
 	if (!strcmp(op, "put")) {
@@ -313,7 +411,7 @@ static void hash_cmd(const char *op, int na, char **a)
 			return;
 		}
 		b = hfun(a[0]);
-		int had = !list_empty(&buckets[b]);
+		int had = !hlist_empty(&buckets[b]);
 		struct hentry *e = hfind(b, a[0], NULL);
 		if (e) {
 			strcpy(e->val, a[1]);
@@ -324,9 +422,17 @@ static void hash_cmd(const char *op, int na, char **a)
 		e = malloc(sizeof *e);
 		if (!e) { puts("ERR hash: out of memory"); return; }
 		strcpy(e->key, a[0]); strcpy(e->val, a[1]);
-		list_add_tail(&e->list, &buckets[b]);
+		hlist_add_tail(&e->node, &buckets[b]);
 		hsize++;
-		printf("OK hash put %s -> %s (bucket=%d, size=%d%s)\n", a[0], a[1], b, hsize, had ? ", collision" : "");
+		if (had) hcoll++;
+		char note[48] = "";
+		if (hauto && hsize * 4 > hn * 3 && hn < MAXBUCKETS) {   /* load factor > 0.75 */
+			int old = hn, nn = hn * 2 > MAXBUCKETS ? MAXBUCKETS : hn * 2;
+			hash_rehash(nn);
+			snprintf(note, sizeof note, ", resized %d->%d", old, nn);
+			b = hfun(a[0]);
+		}
+		printf("OK hash put %s -> %s (bucket=%d, size=%d%s%s)\n", a[0], a[1], b, hsize, had ? ", collision" : "", note);
 		return;
 	}
 	if (!strcmp(op, "get") || !strcmp(op, "del")) {
@@ -340,7 +446,7 @@ static void hash_cmd(const char *op, int na, char **a)
 			return;
 		}
 		if (!e) { puts("ERR hash: key not found"); return; }
-		list_del(&e->list); free(e); hsize--;
+		hlist_del(&e->node); free(e); hsize--;
 		printf("OK hash del %s (size=%d)\n", a[0], hsize);
 		return;
 	}
@@ -350,8 +456,8 @@ static void hash_cmd(const char *op, int na, char **a)
 /* ---------- binary search tree / AVL ---------- */
 static int ht(struct tnode *t) { return t ? t->h : 0; }
 static void upd(struct tnode *t) { int a = ht(t->l), b = ht(t->r); t->h = 1 + (a > b ? a : b); }
-static struct tnode *rotr(struct tnode *y) { struct tnode *x = y->l; y->l = x->r; x->r = y; upd(y); upd(x); return x; }
-static struct tnode *rotl(struct tnode *x) { struct tnode *y = x->r; x->r = y->l; y->l = x; upd(x); upd(y); return y; }
+static struct tnode *rotr(struct tnode *y) { nrot++; struct tnode *x = y->l; y->l = x->r; x->r = y; upd(y); upd(x); return x; }
+static struct tnode *rotl(struct tnode *x) { nrot++; struct tnode *y = x->r; x->r = y->l; y->l = x; upd(x); upd(y); return y; }
 static struct tnode *bal(struct tnode *t)
 {
 	upd(t);
@@ -412,6 +518,13 @@ static void tree_cmd(const char *op, int na, char **a)
 		printf("OK tree mode %s\n", a[0]);
 		return;
 	}
+	if (!strcmp(op, "stats")) {
+		int h = th(root), best = 0;
+		while ((1 << best) - 1 < ntree) best++;     /* smallest possible height of n nodes */
+		printf("TREE STATS mode=%s size=%d height=%d min_height=%d rotations=%d\n",
+		       avl ? "avl" : "bst", ntree, h, best, nrot);
+		return;
+	}
 	if (na != 1 || !is_int(a[0], &v)) { puts("ERR tree: usage <op> <int>"); return; }
 	if (!strcmp(op, "insert")) {
 		root = tins(root, v, &f, &oom);
@@ -427,6 +540,214 @@ static void tree_cmd(const char *op, int na, char **a)
 		while (t && t->val != v) t = v < t->val ? t->l : t->r;
 		printf("OK tree find %d = %s\n", v, t ? "yes" : "no");
 	} else puts("ERR tree: unknown op");
+}
+
+/* ---------- red-black tree (the tree behind the Linux CFS scheduler) ----------
+ * Rules: root is black, a red node has black children, every path from a
+ * node to its NULL leaves has the same number of black nodes. Insert needs
+ * at most 2 rotations, delete at most 3 - an AVL tree may rotate O(log n)
+ * times on delete but is stricter (shorter): that is the trade-off
+ * `tree stats` / `rb print` let you compare. */
+static int isred(const struct rbnode *n) { return n && n->red; }
+
+static void rb_rotl(struct rbnode *x)
+{
+	struct rbnode *y = x->r;
+	x->r = y->l; if (y->l) y->l->p = x;
+	y->p = x->p;
+	if (!x->p) rbroot = y; else if (x == x->p->l) x->p->l = y; else x->p->r = y;
+	y->l = x; x->p = y;
+	rbrot++;
+}
+static void rb_rotr(struct rbnode *x)
+{
+	struct rbnode *y = x->l;
+	x->l = y->r; if (y->r) y->r->p = x;
+	y->p = x->p;
+	if (!x->p) rbroot = y; else if (x == x->p->l) x->p->l = y; else x->p->r = y;
+	y->r = x; x->p = y;
+	rbrot++;
+}
+
+static void rb_insert_fix(struct rbnode *z)
+{
+	while (z->p && z->p->red) {
+		struct rbnode *g = z->p->p;       /* a red parent is never the root */
+		if (z->p == g->l) {
+			struct rbnode *u = g->r;
+			if (isred(u)) { z->p->red = 0; u->red = 0; g->red = 1; z = g; }
+			else {
+				if (z == z->p->r) { z = z->p; rb_rotl(z); }
+				z->p->red = 0; g->red = 1; rb_rotr(g);
+			}
+		} else {
+			struct rbnode *u = g->l;
+			if (isred(u)) { z->p->red = 0; u->red = 0; g->red = 1; z = g; }
+			else {
+				if (z == z->p->l) { z = z->p; rb_rotr(z); }
+				z->p->red = 0; g->red = 1; rb_rotl(g);
+			}
+		}
+	}
+	rbroot->red = 0;
+}
+
+static void rb_transplant(struct rbnode *u, struct rbnode *v)
+{
+	if (!u->p) rbroot = v; else if (u == u->p->l) u->p->l = v; else u->p->r = v;
+	if (v) v->p = u->p;
+}
+
+static void rb_delete_fix(struct rbnode *x, struct rbnode *xp)
+{
+	while (x != rbroot && !isred(x)) {
+		if (x == xp->l) {
+			struct rbnode *w = xp->r;
+			if (isred(w)) { w->red = 0; xp->red = 1; rb_rotl(xp); w = xp->r; }
+			if (!isred(w->l) && !isred(w->r)) { w->red = 1; x = xp; xp = x->p; }
+			else {
+				if (!isred(w->r)) { w->l->red = 0; w->red = 1; rb_rotr(w); w = xp->r; }
+				w->red = xp->red; xp->red = 0;
+				if (w->r) w->r->red = 0;
+				rb_rotl(xp); x = rbroot; break;
+			}
+		} else {
+			struct rbnode *w = xp->l;
+			if (isred(w)) { w->red = 0; xp->red = 1; rb_rotr(xp); w = xp->l; }
+			if (!isred(w->l) && !isred(w->r)) { w->red = 1; x = xp; xp = x->p; }
+			else {
+				if (!isred(w->l)) { w->r->red = 0; w->red = 1; rb_rotl(w); w = xp->l; }
+				w->red = xp->red; xp->red = 0;
+				if (w->l) w->l->red = 0;
+				rb_rotr(xp); x = rbroot; break;
+			}
+		}
+	}
+	if (x) x->red = 0;
+}
+
+static void rb_erase(struct rbnode *z)
+{
+	struct rbnode *y = z, *x, *xp;
+	int yred = y->red;
+	if (!z->l) { x = z->r; xp = z->p; rb_transplant(z, z->r); }
+	else if (!z->r) { x = z->l; xp = z->p; rb_transplant(z, z->l); }
+	else {
+		y = z->r;
+		while (y->l) y = y->l;            /* in-order successor */
+		yred = y->red; x = y->r;
+		if (y->p == z) xp = y;
+		else { xp = y->p; rb_transplant(y, y->r); y->r = z->r; y->r->p = y; }
+		rb_transplant(z, y);
+		y->l = z->l; y->l->p = y; y->red = z->red;
+	}
+	free(z);
+	if (!yred) rb_delete_fix(x, xp);
+}
+
+static int rb_height(const struct rbnode *t)
+{ if (!t) return 0; int a = rb_height(t->l), b = rb_height(t->r); return 1 + (a > b ? a : b); }
+static int rb_bheight(const struct rbnode *t)     /* black nodes on the left spine */
+{ int n = 0; for (; t; t = t->l) n += !t->red; return n; }
+static void rb_in(const struct rbnode *t, int *first)
+{
+	if (!t) return;
+	rb_in(t->l, first);
+	printf("%s%d%c", *first ? " " : ", ", t->val, t->red ? 'R' : 'B');
+	*first = 0;
+	rb_in(t->r, first);
+}
+static void rb_free(struct rbnode *t) { if (!t) return; rb_free(t->l); rb_free(t->r); free(t); }
+
+static void rb_cmd(const char *op, int na, char **a)
+{
+	int v;
+	if (!strcmp(op, "print")) {
+		int first = 1;
+		printf("RB size=%d height=%d black_height=%d rotations=%d inorder:", nrb, rb_height(rbroot), rb_bheight(rbroot), rbrot);
+		if (!nrb) printf(" (empty)");
+		rb_in(rbroot, &first);
+		printf("\n");
+		return;
+	}
+	if (!strcmp(op, "clear")) { rb_free(rbroot); rbroot = NULL; nrb = rbrot = 0; puts("OK rb clear"); return; }
+	if (na != 1 || !is_int(a[0], &v)) { puts("ERR rb: usage <op> <int>"); return; }
+	if (!strcmp(op, "insert")) {
+		struct rbnode *p = NULL, *t = rbroot;
+		while (t) {
+			if (v == t->val) { printf("ERR rb: duplicate %d\n", v); return; }
+			p = t; t = v < t->val ? t->l : t->r;
+		}
+		struct rbnode *z = calloc(1, sizeof *z);
+		if (!z) { puts("ERR rb: out of memory"); return; }
+		z->val = v; z->red = 1; z->p = p;
+		if (!p) rbroot = z; else if (v < p->val) p->l = z; else p->r = z;
+		int before = rbrot;
+		rb_insert_fix(z);
+		nrb++;
+		printf("OK rb insert %d (size=%d, rotations=%d)\n", v, nrb, rbrot - before);
+	} else if (!strcmp(op, "delete")) {
+		struct rbnode *t = rbroot;
+		while (t && t->val != v) t = v < t->val ? t->l : t->r;
+		if (!t) { printf("ERR rb: %d not found\n", v); return; }
+		int before = rbrot;
+		rb_erase(t);
+		nrb--;
+		printf("OK rb delete %d (size=%d, rotations=%d)\n", v, nrb, rbrot - before);
+	} else if (!strcmp(op, "find")) {
+		struct rbnode *t = rbroot;
+		while (t && t->val != v) t = v < t->val ? t->l : t->r;
+		if (t) printf("OK rb find %d = yes (%s)\n", v, t->red ? "red" : "black");
+		else printf("OK rb find %d = no\n", v);
+	} else puts("ERR rb: unknown op");
+}
+
+/* ---------- min-heap / priority queue (array, parent i -> children 2i+1, 2i+2) ---------- */
+static void heap_cmd(const char *op, int na, char **a)
+{
+	int v, i, sw = 0;
+	if (!strcmp(op, "print")) {
+		printf("HEAP size=%d:", nheap);
+		if (!nheap) printf(" (empty)");
+		for (i = 0; i < nheap; i++) printf("%s%d", i ? ", " : " ", heap[i]);
+		printf("\n");
+		return;
+	}
+	if (!strcmp(op, "clear")) { nheap = 0; puts("OK heap clear"); return; }
+	if (!strcmp(op, "peek")) {
+		if (!nheap) { puts("ERR heap: empty"); return; }
+		printf("OK heap peek %d (size=%d)\n", heap[0], nheap);
+		return;
+	}
+	if (!strcmp(op, "pop")) {
+		if (!nheap) { puts("ERR heap: underflow (empty)"); return; }
+		v = heap[0];
+		heap[0] = heap[--nheap];
+		for (i = 0;;) {                     /* sift down */
+			int l = 2 * i + 1, r = l + 1, m = i;
+			if (l < nheap && heap[l] < heap[m]) m = l;
+			if (r < nheap && heap[r] < heap[m]) m = r;
+			if (m == i) break;
+			int t = heap[i]; heap[i] = heap[m]; heap[m] = t;
+			i = m; sw++;
+		}
+		printf("OK heap pop %d (size=%d, swaps=%d)\n", v, nheap, sw);
+		return;
+	}
+	if (!strcmp(op, "push")) {
+		if (na != 1 || !is_int(a[0], &v)) { puts("ERR heap: usage push <int>"); return; }
+		if (nheap >= HEAP_MAX) { printf("ERR heap: overflow (limit %d)\n", HEAP_MAX); return; }
+		i = nheap++;
+		heap[i] = v;
+		while (i > 0 && heap[(i - 1) / 2] > heap[i]) {   /* sift up */
+			int p = (i - 1) / 2, t = heap[p];
+			heap[p] = heap[i]; heap[i] = t;
+			i = p; sw++;
+		}
+		printf("OK heap push %d (size=%d, swaps=%d)\n", v, nheap, sw);
+		return;
+	}
+	puts("ERR heap: unknown op");
 }
 
 /* ---------- processes and scheduler (PCB + list_head ready queue) ---------- */
@@ -612,6 +933,9 @@ static void emit_hot(const char *cmd, const char *op, int na, char **a, int ok, 
 			size_t ml = strlen(msg);
 			if (ml >= 3 && !strcmp(msg + ml - 3, "yes")) { printf("{\"val\":%d}", atoi(a[0])); return; }
 		}
+	} else if (!strcmp(cmd, "rb")) {
+		if (!strcmp(op, "insert") && na == 1) { printf("{\"val\":%d}", atoi(a[0])); return; }
+		if (!strcmp(op, "find") && na == 1 && strstr(msg, "= yes")) { printf("{\"val\":%d}", atoi(a[0])); return; }
 	} else if (!strcmp(cmd, "proc")) {
 		if (!strcmp(op, "new") && nready > 0) {
 			struct pcb *last = list_entry(ready.prev, struct pcb, list);
@@ -635,6 +959,17 @@ static void print_tnode(struct tnode *t)
 	print_tnode(t->l);
 	printf(",\"r\":");
 	print_tnode(t->r);
+	printf("}");
+}
+
+/* {"v":..,"c":"r"|"b","l":<rec>,"r":<rec>} or null */
+static void print_rbnode(const struct rbnode *t)
+{
+	if (!t) { printf("null"); return; }
+	printf("{\"v\":%d,\"c\":\"%c\",\"l\":", t->val, t->red ? 'r' : 'b');
+	print_rbnode(t->l);
+	printf(",\"r\":");
+	print_rbnode(t->r);
 	printf("}");
 }
 
@@ -669,12 +1004,13 @@ static void emit_state(void)
 	for (int i = 0; i < nbits; i++) printf("%s%d", i ? "," : "", bits[i]);
 	printf("]},");
 
-	printf("\"hash\":{\"n\":%d,\"size\":%d,\"buckets\":[", hn, hsize);
+	printf("\"hash\":{\"n\":%d,\"size\":%d,\"auto\":%s,\"resizes\":%d,\"buckets\":[", hn, hsize, hauto ? "true" : "false", hresizes);
 	for (int b = 0; b < hn; b++) {
+		struct hlist_node *hp;
 		printf("%s[", b ? "," : "");
 		first = 1;
-		list_for_each(p, &buckets[b]) {
-			struct hentry *e = list_entry(p, struct hentry, list);
+		hlist_for_each(hp, &buckets[b]) {
+			struct hentry *e = hlist_entry(hp, struct hentry, node);
 			printf("%s[", first ? "" : ",");
 			putjs(e->key); printf(",");
 			putjs(e->val); printf("]");
@@ -687,6 +1023,14 @@ static void emit_state(void)
 	printf("\"tree\":{\"avl\":%s,\"size\":%d,\"height\":%d,\"node\":", avl ? "true" : "false", ntree, th(root));
 	print_tnode(root);
 	printf("},");
+
+	printf("\"rb\":{\"size\":%d,\"height\":%d,\"rotations\":%d,\"node\":", nrb, rb_height(rbroot), rbrot);
+	print_rbnode(rbroot);
+	printf("},");
+
+	printf("\"heap\":{\"size\":%d,\"items\":[", nheap);
+	for (int i = 0; i < nheap; i++) printf("%s%d", i ? "," : "", heap[i]);
+	printf("]},");
 
 	printf("\"sched\":{\"quantum\":%d,\"time\":%d,\"done\":%d,\"running\":", quantum, now, ndone);
 	if (running) printf("{\"pid\":%d,\"name\":\"%s\",\"rem\":%d,\"burst\":%d}", running->pid, running->name, running->rem, running->burst);
@@ -709,6 +1053,7 @@ static void cleanup(void)
 	free_nodes(&stack, offsetof(struct node, list));
 	hash_reset(hn);
 	tfree(root);
+	rb_free(rbroot);
 	sched_reset();
 }
 
@@ -768,6 +1113,8 @@ int main(int argc, char **argv)
 			else if (!strcmp(cmd, "bitmap")) JSON_CAPTURE(bitmap_cmd(op, na, a), msg);
 			else if (!strcmp(cmd, "hash")) JSON_CAPTURE(hash_cmd(op, na, a), msg);
 			else if (!strcmp(cmd, "tree")) JSON_CAPTURE(tree_cmd(op, na, a), msg);
+			else if (!strcmp(cmd, "rb")) JSON_CAPTURE(rb_cmd(op, na, a), msg);
+			else if (!strcmp(cmd, "heap")) JSON_CAPTURE(heap_cmd(op, na, a), msg);
 			else if (!strcmp(cmd, "proc")) JSON_CAPTURE(proc_cmd(op, na, a), msg);
 			else if (!strcmp(cmd, "sched")) JSON_CAPTURE(sched_cmd(op, na, a), msg);
 			else known = 0;

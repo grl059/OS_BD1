@@ -2,7 +2,7 @@
 # Builds the kernel module, signs it when Secure Boot is on, loads it with
 # three parameters and saves the evidence for the report:
 #   docs/kernel_build_log.txt   - environment + compiler output
-#   docs/kernel_dmesg.txt       - dmesg lines of every load / unload
+#   docs/kernel_dmesg.txt       - dmesg lines of every load / unload + `cat /proc/kds`
 # Run on a real Linux machine (not WSL/Docker) with linux-headers-$(uname -r):
 #   sh src/kernel/run_module_test.sh
 # Signing key (Secure Boot): ~/mok/MOK.priv + ~/mok/MOK.der, or set MOK_DIR.
@@ -51,6 +51,16 @@ run() {   # $1 = insmod arguments, $2 = expected result (ok|fail)
   if sudo insmod kds_module.ko $1 2>>"$DOCS/kernel_dmesg.txt"; then
     got=ok
     lsmod | grep -q '^kds_module' && echo "(lsmod: kds_module loaded)" >> "$DOCS/kernel_dmesg.txt"
+    if [ -r /proc/kds ]; then
+      { echo "### cat /proc/kds"; cat /proc/kds; } >> "$DOCS/kernel_dmesg.txt" 2>&1
+      if grep -q '^start=' /proc/kds && grep -q '^hashtable(' /proc/kds && grep -q '^rbtree(' /proc/kds; then
+        echo "PASS /proc/kds ($1)"
+      else
+        echo "FAIL /proc/kds content ($1)"; fail=1
+      fi
+    else
+      echo "FAIL /proc/kds missing ($1)"; fail=1
+    fi
     sudo rmmod kds_module
     echo "### rmmod kds_module" >> "$DOCS/kernel_dmesg.txt"
   else

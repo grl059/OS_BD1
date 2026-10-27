@@ -23,6 +23,7 @@ check: test
 	@python3 tests/json_check.py
 	@python3 tests/fuzz_json.py 8 5000
 	@python3 tests/avl_check.py
+	@python3 tests/rb_check.py
 
 # Kernel module: real Linux with linux-headers-$(uname -r)
 module:
