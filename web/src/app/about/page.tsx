@@ -13,7 +13,7 @@ export default function AboutPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">
       <BackToMenu />
-      <h1 className="mt-4 text-2xl font-bold text-primary">Төслийн тухай</h1>
+      <h1 className="mt-4 text-2xl font-bold text-primary">Тухай</h1>
 
       <section className="mt-6 space-y-2 text-sm leading-relaxed">
         <p>
