@@ -1,5 +1,12 @@
 CC ?= gcc
+# Sanitizers are on by default. On hosts where the ASan runtime itself hangs
+# at startup (seen on macOS 26 with Apple clang), build with `make SAN=0`.
+SAN ?= 1
+ifeq ($(SAN),1)
 CFLAGS = -Wall -Wextra -O1 -g -fsanitize=address,undefined
+else
+CFLAGS = -Wall -Wextra -O1 -g
+endif
 
 all: kds
 
