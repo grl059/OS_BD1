@@ -54,8 +54,10 @@ Kernel module & Жинхэнэ Linux (VM эсвэл үндсэн машин; WSL
 \code{list add_head}\newline\code{add_tail|del|find}\newline\code{<d> <s> <j>} & өдөр, сар, жил & жил 1900--2100, хүчинтэй огноо (2-р сарын 29-г өндөр жилээр шалгана)\\
 \code{queue|stack push}\newline\code{find <тоо>}, \code{pop} & бүхэл тоо & багтаамж 8 (overflow/underflow мэдээлнэ)\\
 \code{bitmap size <n>},\newline\code{set|clear|test <i>} & хэмжээ, индекс & n = 1..128, индекс 0..n$-$1\\
-\code{hash size <n>},\newline\code{put <key> <value>},\newline\code{get|del <key>} & bucket-ийн тоо, түлхүүр, утга & n = 1..16 (анхдагч 8); түлхүүр/утга 1--12 тэмдэгт (үсэг, тоо, \_), нийт $\le$ 24\\
-\code{tree mode bst|avl},\newline\code{insert|delete|find}\newline\code{<тоо>} & төрөл, бүхэл тоо & төрлийг зөвхөн хоосон модонд солино; давхардсан утга татгалзана\\
+\code{hash size <n>},\newline\code{put <key> <value>},\newline\code{get|del <key>},\newline\code{auto on|off},\newline\code{rehash <n>}, \code{stats} & bucket-ийн тоо, түлхүүр, утга & \code{size}: n = 1..16 (анхдагч 8); \code{rehash}: n = 1..64; түлхүүр/утга 1--12 тэмдэгт (үсэг, тоо, \_); \code{auto on} үед ачаалал 0.75-аас хэтрвэл bucket 2 дахин ихэснэ\\
+\code{tree mode bst|avl},\newline\code{insert|delete|find}\newline\code{<тоо>}, \code{stats} & төрөл, бүхэл тоо & төрлийг зөвхөн хоосон модонд солино; давхардсан утга татгалзана\\
+\code{rb insert|delete|find}\newline\code{<тоо>}, \code{print|clear} & бүхэл тоо & red-black мод; давхардсан утга татгалзана, байхгүй утгыг устгавал ERR\\
+\code{heap push <тоо>},\newline\code{pop|peek}, \code{print|clear} & бүхэл тоо & min-heap: хамгийн бага утга түрүүлж гарна; багтаамж 16 (overflow/underflow мэдээлнэ)\\
 \code{proc new <нэр>}\newline\code{<ажил>} & нэр, ажлын тик & нэр 1--8 тэмдэгт, ажил 1--20 тик, амьд процесс $\le$ 8\\
 \code{sched policy}\newline\code{fcfs | rr <квант>},\newline\code{tick|print|clear} & бодлого, квант & квант 1--10; 1 tick = 1 нэгж цаг\\
 \code{... print},\newline\code{... clear} & --- & бүтцийн төлөвийг хэвлэх / цэвэрлэх\\
@@ -65,32 +67,32 @@ Kernel module & Жинхэнэ Linux (VM эсвэл үндсэн машин; WSL
 
 \manualsubsection{1.5 Ажиллуулах, зогсоох, reset хийх}
 \begin{itemize}[leftmargin=20pt,itemsep=1pt,topsep=2pt]
-  \item \textbf{Веб апп:} «Тоглох» хуудас дээр зүүн талаас бүтцээ сонгоно. Команд бичих талбарт команд (жишээ нь \code{list add_tail 2 8 1995}) бичиж Enter дарна, эсвэл жишээ скриптийг сонгож ажиллуулна. \textbf{«Эхнээс нь»} товч тухайн бүтцийг reset хийнэ (хуудсыг дахин ачаалах нь бүгдийг reset хийнэ, учир нь бүтцийн төлөв зөвхөн C программ дотор, дэвсгэр process бүрт шинээр эхэлдэг).
+  \item \textbf{Веб апп:} «Чөлөөт горим» хуудас дээр зүүн талаас бүтцээ сонгоно. «Үйлдэл сонгох» хэсгээс үйлдлээ дарж (жишээ нь \code{add\_tail}), талбаруудад утга оруулаад \textbf{«Ажиллуулах»}-ыг дарна; команд яг юу болохыг хэсэг дээрх \code{code} мөрөд урьдчилан харуулна. «Ахисан түвшин: команд шууд бичих» хэсэгт команд (жишээ нь \code{list add\_tail 2 8 1995}) гараар бичиж болно. «Юу болов?» ба «Түүх (n)» самбар хариу болон ажиллуулсан командуудаа харуулж, «Сүүлчийнхийг буцаах», «Команд хуулах», «Шинээр эхлэх» товч тусална. \textbf{«Хичээл»} хуудсанд Багш алхам бүрт тайлбар хэлнэ (🔊 товчоор монгол дуугаар сонсоно), чи нэг алхамыг нэг удаа ажиллуулж дэвшинэ; дууссан шат \textbf{✓}-ээр тэмдэглэгдэж браузерад хадгагдана. Хуудсыг дахин ачаалах нь бүх бүтцийг reset хийнэ, учир нь бүтцийн төлөв зөвхөн C программ дотор, дэвсгэр process бүрт шинээр эхэлдэг.
   \item \textbf{CLI:} \code{./kds файл.txt} нь script ажиллуулна. \code{./kds} гэж ажиллуулаад команд бичиж болно. \textbf{Ctrl+D} дарж зогсооно (Ctrl+C мөн зогсооно). Програмыг дахин ажиллуулахад бүх бүтэц хоосон эхэлнэ (reset). Бүтэц тус бүрийг \code{list clear}, \code{hash clear}, \code{sched clear}-ээр цэвэрлэнэ. JSON горимоор ажиллуулахад \code{./kds --json} гэж нэмж бичнэ.
   \item \textbf{Kernel module:} \code{sudo insmod} ачаална, \code{sudo rmmod kds_module} буулгана (2.7).
 \end{itemize}
 
 \manualsubsection{1.6 Дүрслэлийн тэмдэг, өнгө, төлөв}
-Веб апп нь тийл-ногоон (teal/green) өнгөний загвартай. Дараах зарчмуудаар бүтцийг зурдаг:
+Веб апп нь индиго / нил ягаан өнгөний загвартай. Дараах зарчмуудаар бүтцийг зурдаг:
 \begin{longtable}{@{}L{62mm}L{96mm}@{}}
 \rowcolor{headbg}\textbf{Тэмдэг} & \textbf{Утга}\\
 \endfirsthead
 \rowcolor{headbg}\textbf{Тэмдэг} & \textbf{Утга}\\
 \endhead
 Хайрцаг/дугуйлсан элемент & node (struct birthday, queue/stack-ийн элемент, hash-ийн түлхүүр, PCB)\\
-Өөр өнгөөр тодотгосон элемент & сүүлийн үйлдэлд нэмэгдсэн эсвэл олдсон элемент\\
+Улбар шар хүрээтэй элемент & сүүлийн үйлдэлд нэмэгдсэн эсвэл олдсон элемент\\
 Сум (next/prev) & жагсаалтын холбоос (давхар холбоост)\\
 Сум (hash bucket, ready queue) & жагсаалтын дараагийн элемент; bucket-д 2 ба түүнээс олон элемент байвал collision\\
 Дүүргэсэн нүд (1) / хоосон нүд (0) & bitmap-ийн асаалттай / унтраалттай бит\\
 Дугаарлагдсан багана & hash-ийн bucket-ийн индекс\\
-PCB карт, доорх ажлын түүх & процесс ба ажлын явц; тик бүрд ажилласан процесс, «idle» нь CPU сул\\
+PCB карт, «Юу болов?» самбар & процесс ба ажлын явц; тик бүрд ажилласан процесс, «idle» нь CPU сул\\
 Модны доорх «өндөр» бичиг & модны түвшний тоо = хамгийн муу хайлтын алхам\\
-Ажлын түүхэн дэх OK / ERR мөр & OK / ERR мессеж, Монгол тайлбартай\\
+«Юу болов?» самбарын OK / ERR мөр & OK / ERR мессеж, Монгол тайлбартай\\
 \end{longtable}
 Эдгээр бүх дүрслэл нь веб апп дотор зураг зурж гаргадаг дүрс биш, C программын \code{--json} горимоос ирсэн төлөвөөс шууд зурагддаг.
 
 \manualsubsection{1.7 Жишээ}
-\textbf{Жишээ 1 (сурах бичгийн жишээ).} «Тоглох» хуудас дээр «list» бүтцийг сонгоод доорх командуудыг нэг нэгээр бичиж Enter дарна, эсвэл «Шатлал» хуудсанд байгаа ижил жишээг сонгоно (CLI: \code{./kds examples/textbook.txt}). Хүлээгдэх үр дүн: 5 огноо дарааллаараа жагсаж, устгасны дараа жагсаалт хоосон болно.
+\textbf{Жишээ 1 (сурах бичгийн жишээ).} «Чөлөөт горим» хуудас дээр «list» бүтцийг сонгоод доорх командуудыг нэг нэгээр бичиж Enter дарна, эсвэл «Хичээл» хуудсанд байгаа ижил жишээг сонгоно (CLI: \code{./kds examples/textbook.txt}). Хүлээгдэх үр дүн: 5 огноо дарааллаараа жагсаж, устгасны дараа жагсаалт хоосон болно.
 \begin{codeblock}
 OK list add_tail 2/8/1995 (size=1)
 OK list add_tail 17/3/1998 (size=2)
@@ -107,9 +109,9 @@ OK list del 30/12/2003 (size=0)
 LIST size=0: (empty)
 \end{codeblock}
 
-\textbf{Жишээ 2 (өөрийн оролт -- bitmap).} «Тоглох» хуудсанд «bitmap» бүтцийг сонгоод командаар \code{bitmap size 16}, \code{bitmap set 3}, \code{bitmap set 9} гэж оруулна. 16 нүдний 3 ба 9-р нүд тодотгогддог болно. \code{bitmap print} командын гаралт: \code{BITMAP n=16: 0001000001000000 (set=2)}. \code{bitmap set 16} гэвэл \code{ERR bitmap: index 16 out of range 0..15} гарна.
+\textbf{Жишээ 2 (өөрийн оролт -- bitmap).} «Чөлөөт горим» хуудсанд «bitmap» бүтцийг сонгоод командаар \code{bitmap size 16}, \code{bitmap set 3}, \code{bitmap set 9} гэж оруулна. 16 нүдний 3 ба 9-р нүд тодотгогддог болно. \code{bitmap print} командын гаралт: \code{BITMAP n=16: 0001000001000000 (set=2)}. \code{bitmap set 16} гэвэл \code{ERR bitmap: index 16 out of range 0..15} гарна.
 
-\textbf{Жишээ 3 (процесс ба CPU).} «Тоглох» хуудсанд «sched»/«proc» бүтцийг сонгоод доорх командуудыг оруулна. Квант 2-той Round Robin-оор A (5 тик), B (3), C (2) ээлжилж ажиллана. C нь t=5, B нь t=8, A нь t=9 тик дээр дуусна, өөрөөр хэлбэл дуусах хугацаа 6, 9, 10 болно. Дундаж хүлээлт 5.00 гарна. Дараа нь «Эхнээс нь» дарж бодлогыг FCFS болгоод ижил процессуудыг дахин оруулж хүлээлтийг харьцуулна (FCFS: 4.33). Командаар: \code{./kds examples/scheduler.txt}
+\textbf{Жишээ 3 (процесс ба CPU).} «Чөлөөт горим» хуудсанд «sched»/«proc» бүтцийг сонгоод доорх командуудыг оруулна. Квант 2-той Round Robin-оор A (5 тик), B (3), C (2) ээлжилж ажиллана. C нь t=5, B нь t=8, A нь t=9 тик дээр дуусна, өөрөөр хэлбэл дуусах хугацаа 6, 9, 10 болно. Дундаж хүлээлт 5.00 гарна. Дараа нь «Шинээр эхлэх» дарж бодлогыг FCFS болгоод ижил процессуудыг дахин оруулж хүлээлтийг харьцуулна (FCFS: 4.33). Командаар: \code{./kds examples/scheduler.txt}
 \begin{codeblock}
 OK sched policy rr q=2
 OK proc new P1 A burst=5 (alive=1)
@@ -130,7 +132,7 @@ TICK t=10 idle
 SCHED policy=rr(q=2) time=11 running=none ready=(empty) done=3
 \end{codeblock}
 
-\textbf{Жишээ 4 (хэш хүснэгт ба мод).} «Тоглох» хуудсанд «hash» бүтцийг сонгоод «ab», «ba» зэрэг түлхүүр нэмэхэд тэд «bob»-той нэг bucket-д орж collision үүсэхийг харна. «tree» бүтцийг сонгоод эхлээд энгийн төрлөөр 1--7-г дараалуулан оруулна (өндөр 7). Дараа нь «Эхнээс нь» $\rightarrow$ төрөл «avl» болгож дахин 1--7-г оруулж харьцуулна (өндөр 3). Командаар: \code{./kds examples/search.txt}
+\textbf{Жишээ 4 (хэш хүснэгт ба мод).} «Чөлөөт горим» хуудсанд «hash» бүтцийг сонгоод «ab», «ba» зэрэг түлхүүр нэмэхэд тэд «bob»-той нэг bucket-д орж collision үүсэхийг харна. «tree» бүтцийг сонгоод эхлээд энгийн төрлөөр 1--7-г дараалуулан оруулна (өндөр 7). Дараа нь «Шинээр эхлэх» $\rightarrow$ төрөл «avl» болгож дахин 1--7-г оруулж харьцуулна (өндөр 3). Командаар: \code{./kds examples/search.txt}
 \begin{codeblock}
 OK hash put ab -> 7 (bucket=3, size=5, collision)
 OK hash put ba -> 8 (bucket=3, size=6, collision)
@@ -155,7 +157,7 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7
 \code{ERR queue: underflow}\newline\code{(empty)} & Хоосон дээр pop & Эхлээд push\\
 \code{ERR bitmap: index N}\newline\code{out of range} & Индекс хэтэрсэн & 0..n$-$1 дотор оруулах\\
 \code{ERR tree: duplicate N} & Ижил утга & Өөр утга\\
-\code{ERR tree: mode can only}\newline\code{be changed ...} & Мод хоосон биш & «Эхнээс нь» / бүх тоог хасах\\
+\code{ERR tree: mode can only}\newline\code{be changed ...} & Мод хоосон биш & «Шинээр эхлэх» / бүх тоог хасах\\
 \code{ERR hash: key and value}\newline\code{must be ...}, \code{key must be ...} & 12-оос урт эсвэл «-» гэх мэт тэмдэгттэй & Ж: alice, key\_1\\
 \code{ERR hash: full}\newline\code{(limit 24)} & 24 элемент & \code{hash del} эсвэл \code{hash clear}\\
 \code{ERR proc: name must be ...} & Нэр урт эсвэл тусгай тэмдэгттэй & Ж: A, job1\\
@@ -218,17 +220,19 @@ cd web && npm install && npm run dev   # http://localhost:3000 дээр нээн
 \manualsubsection{2.5 Үндсэн тестийн өгөгдөл}
 \begin{codeblock}
 make test
-#   PASS textbook / all_structures / errors / scheduler / scheduler_full / search
+#   PASS textbook / all_structures / errors / scheduler / scheduler_full
+#   PASS search / hash_resize / rb_heap
 #   PASS stress (5000 x 8 commands, ERR 0, no sanitizer report)
-make check                             # make test + доорх гурав
-python3 tests/json_check.py            # текст горим == --json горим, 6 скрипт: PASS x6
+make check                             # make test + доорх тав
+python3 tests/json_check.py            # текст горим == --json горим, 8 скрипт: PASS x9
 python3 tests/fuzz_json.py 8 5000      # 8 seed x 5000 санамсаргүй команд (тэгш seed-д AVL): PASS x8
-python3 tests/avl_check.py             # AVL: inorder ба өндөр <= 1.44*log2(n+2), 30 гүйлт: PASS
+python3 tests/avl_check.py             # AVL: inorder ба өндөр <= 1.44*log2(n+2), 30 гүйлт: PASS x32
+python3 tests/rb_check.py              # red-black 30 seed (өнгө, black-height, inorder) + min-heap 10 seed (эс хазайх чанар): PASS x40
 \end{codeblock}
 Хүлээгдэх гаралт \code{tests/expected_*.out}-д байна. Шинэ тест нэмэхдээ \code{examples/нэр.txt} үүсгээд \code{./kds examples/нэр.txt > tests/expected_нэр.out} гэж хадгалж, гаралтыг гараар шалгаад \code{tests/run_tests.sh}-ийн жагсаалтад нэрийг нэмнэ.
 
 \manualsubsection{2.6 Нэмэлт boundary/error test}
-\code{examples/errors.txt}: буруу огноо (31/4, 29/2/1900), сар 13, жил 1800, үсэг бүхий аргумент, хоосон бүтцээс pop, bitmap size 0 ба 129, индекс $-$1 ба 99, давхардсан tree утга, байхгүй утга устгах. \code{examples/scheduler.txt}-ийн төгсгөл: урт нэр, ажил 0 ба 21, квант 0 ба 11, мэдэгдэхгүй бодлого. \code{examples/scheduler_full.txt}: 9 дэх процесс татгалзагдана. \code{examples/search.txt}: 13 тэмдэгттэй түлхүүр, «-» тэмдэгттэй түлхүүр, хоосон биш модны төрлийг солих. Эдгээрийн мөр бүр ойлгомжтой \code{ERR} мессеж өгч, програм үргэлжлэн ажиллах ёстой.
+\code{examples/errors.txt}: буруу огноо (31/4, 29/2/1900), сар 13, жил 1800, үсэг бүхий аргумент, хоосон бүтцээс pop, bitmap size 0 ба 129, индекс $-$1 ба 99, давхардсан tree утга, байхгүй утга устгах. \code{examples/scheduler.txt}-ийн төгсгөл: урт нэр, ажил 0 ба 21, квант 0 ба 11, мэдэгдэхгүй бодлого. \code{examples/scheduler_full.txt}: 9 дэх процесс татгалзагдана. \code{examples/search.txt}: 13 тэмдэгттэй түлхүүр, «-» тэмдэгттэй түлхүүр, хоосон биш модны төрлийг солих. \code{examples/hash_resize.txt}: \code{rehash 65} (64-оос дээш), \code{rehash 0}, \code{auto maybe} мөрүүд ERR. \code{examples/rb_heap.txt}: давхардсан \code{rb insert}, байхгүй утгын \code{rb delete}, хоосон heap-ийн \code{pop} ба \code{peek} ERR. Эдгээрийн мөр бүр ойлгомжтой \code{ERR} мессеж өгч, програм үргэлжлэн ажиллах ёстой.
 
 \manualsubsection{2.7 Kernel module}
 \begin{codeblock}
@@ -264,9 +268,9 @@ sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv 
 \rowcolor{headbg}\textbf{Команд} & \textbf{Хүлээгдэх}\\
 \endhead
 \code{make} & Анхааруулгагүй compile хийгдэж \code{./kds} үүснэ\\
-\code{make test} & 7 PASS (6 скрипт + stress), exit 0\\
-\code{make check} & Нийт 53 PASS (7 + 6 text==json + 8 fuzz + 32 AVL), FAIL 0\\
-Веб апп (\code{npm run dev}) & Browser-ийн console-д алдаа гарахгүй; «Тоглох» хуудасны гаралт CLI-тай ижил (хоёулаа нэг C программ ашигладаг)\\
+\code{make test} & 9 PASS (8 скрипт + stress), exit 0\\
+\code{make check} & Нийт 98 PASS (9 test + 9 text==json + 8 fuzz + 32 AVL + 40 rb/heap), FAIL 0\\
+Веб апп (\code{npm run dev}) & Browser-ийн console-д алдаа гарахгүй; «Чөлөөт горим» хуудасны гаралт CLI-тай ижил (хоёулаа нэг C программ ашигладаг)\\
 \code{run_module_test.sh} & 3 PASS, build log ба dmesg файл үүснэ\\
 \end{longtable}
 
@@ -276,7 +280,7 @@ sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv 
   \item Өөр kernel хувилбар дээр API өөрчлөгдсөн бол module-ийг дахин build хийнэ.
   \item CLI-д нэг мөр 1023 тэмдэгтээс урт бол «ERR line too long» гарна.
   \item Веб апп серверийн хажуу (\code{web/src/app/api/run/route.ts}) C цөмийг дэвсгэр дээр дуудаж ажиллуулдаг тул веб аппыг нээхийн өмнө \code{make}-аар \code{./kds} (эсвэл Windows дээр \code{kds.exe}) build хийсэн байх ёстой; эс бөгөөс «C core not built» алдаа гарна.
-  \item Hash bucket-ийн тоо тогтмол; queue, stack, процесс 8, hash 24 элементээр хязгаарлагдсан (дүрслэлд багтаах зорилгоор).
+  \item Hash-ийн хувьд \code{size} 1..16, \code{rehash} 1..64 bucket; \code{auto on} үед ачаалал 0.75-аас хэтрвэл bucket автомат 2 дахин ихэснэ. Элементийн тоо 24, queue, stack, процесс 8 (дүрслэлд багтаах зорилгоор).
   \item \textbf{macOS 26 + Apple clang:} ASan runtime нь програм эхлэх үед төгсгөлгүй хүлээлт үүсгэж болно (гаралтгүй, 100\% CPU). Ийм үед \code{make SAN=0} гэж sanitizer-гүй build хийнэ; тест болон веб апп хэвийн ажиллана, зөвхөн ASan/UBSan шалгалт хийгдэхгүй.
 \end{itemize}
 
