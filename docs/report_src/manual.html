@@ -2,7 +2,7 @@
 <html lang="mn">
 <head>
 <meta charset="utf-8">
-<title>4_Manual – Kernel Data Structures</title>
+<title>V-1-4_Manual – Kernel Data Structures</title>
 <link rel="stylesheet" href="style.css">
 <style>
   .head { border-bottom: 2px solid #1d3f7a; padding-bottom: 6pt; margin-bottom: 10pt; }
@@ -58,7 +58,7 @@
 <ul>
   <li><b>Веб апп:</b> «Тоглох» хуудас дээр зүүн талаас бүтцээ сонгоно. Команд бичих талбарт команд (жишээ нь <code>list add_tail 2 8 1995</code>) бичиж Enter дарна, эсвэл жишээ скриптийг сонгож ажиллуулна. <b>«Эхнээс нь»</b> товч тухайн бүтцийг reset хийнэ (хуудсыг дахин ачаалах нь бүгдийг reset хийнэ, учир нь бүтцийн төлөв зөвхөн C программ дотор, дэвсгэр process бүрт шинээр эхэлдэг).</li>
   <li><b>CLI:</b> <code>./kds файл.txt</code> нь script ажиллуулна. <code>./kds</code> гэж ажиллуулаад команд бичиж болно. <b>Ctrl+D</b> дарж зогсооно (Ctrl+C мөн зогсооно). Програмыг дахин ажиллуулахад бүх бүтэц хоосон эхэлнэ (reset). Бүтэц тус бүрийг <code>list clear</code>, <code>hash clear</code>, <code>sched clear</code>-ээр цэвэрлэнэ. JSON горимоор ажиллуулахад <code>./kds --json</code> гэж нэмж бичнэ.</li>
-  <li><b>Kernel module:</b> <code>sudo insmod</code> ачаална, <code>sudo rmmod kds_module</code> буулгана (2.6).</li>
+  <li><b>Kernel module:</b> <code>sudo insmod</code> ачаална, <code>sudo rmmod kds_module</code> буулгана (2.7).</li>
 </ul>
 
 <h2>1.6 Дүрслэлийн тэмдэг, өнгө, төлөв</h2>
@@ -140,7 +140,7 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7</pre>
   <tr><td><code>ERR proc: name must be …</code></td><td>Нэр урт эсвэл тусгай тэмдэгттэй</td><td>Ж: A, job1</td></tr>
   <tr><td><code>ERR proc: too many processes</code></td><td>8-аас олон амьд процесс</td><td>Зарим нь дуустал tick хийх</td></tr>
   <tr><td><code>ERR unknown structure 'x'</code></td><td>Бүтцийн нэр буруу</td><td>list, queue, stack, bitmap, hash, tree, proc, sched</td></tr>
-  <tr><td><code>insmod: Key was rejected by service</code></td><td>Secure Boot, гарын үсэггүй модуль</td><td>MOK-оор гарын үсэг зурах (2.6)</td></tr>
+  <tr><td><code>insmod: Key was rejected by service</code></td><td>Secure Boot, гарын үсэггүй модуль</td><td>MOK-оор гарын үсэг зурах (2.7)</td></tr>
   <tr><td><code>insmod: Invalid parameters</code></td><td><code>start</code> 1..1 000 000-аас гадуур</td><td>Ж: <code>start=27</code></td></tr>
   <tr><td><code>make: *** /lib/modules/…/build: No such file</code></td><td>Kernel header суугаагүй</td><td><code>sudo apt install linux-headers-$(uname -r)</code></td></tr>
 </table>
