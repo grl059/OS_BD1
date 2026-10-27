@@ -69,7 +69,7 @@ GitHub: github.com/grl059/OS\_BD1\par}
 
 \textbf{Шийдэл.} Linux-ийн \code{list_head}-ийн next/prev семантикийг C-ээр дахин бичиж, долоон бүтэц (жагсаалт, queue, stack, bitmap, hash map, BST/AVL мод, PCB бүхий ready queue ба FCFS/Round Robin scheduler) бүхий командын интерпретатор (\code{kds}) бүтээв. Энэ C программд \code{--json} горим нэмж, команд бүрийн дараах бүтцийн төлөвийг JSON хэлбэрээр гаргадаг болгов. Веб дээр ажилладаг хэрэглэгчийн интерфэйс (Next.js, \code{web/} хавтас) нь тэр JSON-ыг C программаас шууд авч, өөрөө юу ч тооцоолохгүйгээр зурж харуулдаг -- өөрөөр хэлбэл, нэг л «бодол» (логик) байдаг: C. Веб нь түүнийг зөвхөн дэлгэцэнд үзүүлнэ. Сурах бичгийн 3-р бүлгийн Programming Project-ийн дагуу kernel module нь \code{struct color} жагсаалт болон \code{start} параметртэй Collatz дарааллын жагсаалтыг kernel орчинд үүсгэж, устгана.
 
-\textbf{Туршилт.} 6 жишээ скрипт ба 5000×8 командын stress тест ASan/UBSan-тай давсан. Текст гаралт ба \code{--json} гаралтыг нэг C программаас зэрэг гаргаж, 40\,000 санамсаргүй командад (8 seed × 5000, тэр дотор AVL) мөр мөрөөрөө ижил мессеж өгснийг баталгаажуулсан. AVL-ийн өндрийн хязгаарыг 30 санамсаргүй гүйлтээр шалгасан. GitHub Actions дээр C программ ба веб аппыг автоматаар build, тест хийдэг CI тохируулсан. Kernel module-ийн өмнөх хувилбар Ubuntu 24.04 (kernel 6.11.0-17) дээр insmod/rmmod хийгдсэн.
+\textbf{Туршилт.} 8 жишээ скрипт ба 5000×8 командын stress тест ASan/UBSan-тай давсан (GitHub Actions-ийн Linux job; macOS 26 дээр ASan runtime эхлэхэд чиддэг асуудлаар \code{make SAN=0} ашигласан). Текст гаралт ба \code{--json} гаралтыг нэг C программаас зэрэг гаргаж, 40\,000 санамсаргүй командад (8 seed × 5000, тэр дотор AVL) мөр мөрөөрөө ижил мессеж өгснийг баталгаажуулсан. AVL-ийн өндрийн хязгаарыг 30 санамсаргүй гүйлтээр шалгасан. GitHub Actions дээр C программ ба веб аппыг автоматаар build, тест хийдэг CI тохируулсан. Kernel module-ийн өмнөх хувилбар Ubuntu 24.04 (kernel 6.11.0-17) дээр insmod/rmmod хийгдсэн.
 
 \textbf{Гол үр дүн.} Оролт, огноо, хязгаарыг шалгадаг, хэрэглэгч өөр өгөгдлөөр дахин туршиж болох, терминал (CLI) ба веб хуудас хоёулаа яг нэг C программаас гарсан мэдээллийг харуулдаг хэрэгсэл бүтээгдсэн.
 
@@ -112,12 +112,14 @@ Operating System Concepts-ийн 3-р бүлгийн Programming Project «Kerne
 \endhead
 Ch.3 Part I: struct color жагсаалт & \code{kds_module.c}, \code{color_list} & \code{list_add_tail}, \code{list_del}, \code{list_for_each_entry} & \code{run_module_}\allowbreak\code{test.sh}, dmesg \\ \hline
 Ch.3 Part II: Collatz, \code{start} параметр & \code{kds_module.c}, \code{module_param}\allowbreak\code{(start)}, 1..1\,000\,000 & \code{list_add_tail}, \code{list_del} & start=25, 15, 0 (татгалзана) \\ \hline
-1.9.1 Холбоост жагсаалт (list\_head) & Давхар холбоост дугуй жагсаалт (struct birthday) & add\_head, add\_tail, del, find & textbook, search, веб «Тоглох» \\ \hline
+1.9.1 Холбоост жагсаалт (list\_head) & Давхар холбоост дугуй жагсаалт (struct birthday) & add\_head, add\_tail, del, find & textbook, search, веб «Чөлөөт горим» \\ \hline
 1.9.1 Stack (LIFO) & list\_head, дээд талаас нэмж авна & push, pop, find & all\_structures, search \\ \hline
 1.9.1 Queue (FIFO) & list\_head, төгсгөлд нэмж эхнээс авна & push, pop, find & all\_structures, search \\ \hline
 1.9.2 Binary search tree & Энгийн BST (хамгийн муу $O(n)$) & insert, delete, find & search: 1--5 $\rightarrow$ өндөр 5 \\ \hline
 1.9.2 Тэнцвэржсэн мод ($O(\lg n)$) & AVL (\code{tree mode avl}) & insert, delete, find & search, avl\_check: 1--7 $\rightarrow$ өндөр 3 \\ \hline
-1.9.3 Хэш функц ба hash map & Кодын нийлбэр mod n; collision-д bucket доторх list\_head & put, del, get & search: bob, ab, ba нэг bucket \\ \hline
+1.9.3 Хэш функц ба hash map & Кодын нийлбэр mod n; collision-д bucket доторх hlist\_head жагсаалт; ачаалал > 0.75 бол bucket $\times$2 (\code{hash auto on}), гараар \code{rehash} & put, del, get, rehash, stats & search, hash\_resize \\ \hline
+Нэмэлт: red-black мод (CFS-ийн мод) & \code{rb} горим: өнгө, black-height, эргүүлэлтийн тоо & insert, delete, find & rb\_heap, rb\_check (30 seed) \\ \hline
+Нэмэлт: min-heap (priority queue) & массив дээрх овоолго, багтаамж 16, swap тоо & push, pop, peek & rb\_heap, rb\_check (10 seed) \\ \hline
 1.9.4 Bitmap & n = 1..128 бит & set, clear, test & all\_structures, errors \\ \hline
 «Processes» холбоос & PCB + list\_head ready queue, FCFS, Round Robin & proc new / дуусах / sched print & scheduler, scheduler\_full \\ \hline
 \end{longtable}
@@ -156,9 +158,9 @@ Ch.3 Part II: Collatz, \code{start} параметр & \code{kds_module.c}, \cod
 \textbf{Компонентууд:}
 
 \begin{itemize}[leftmargin=20pt,itemsep=2pt,topsep=2pt]
-  \item \textbf{(a) src/user/kds.c} -- командын интерпретатор ба 7 бүтэц. Жагсаалт, queue, stack, hash-ийн bucket, ready queue бүгд нэг \code{list_head} хэрэгжилтийг ашиглана. Энэ файл дотор ердийн текст мессеж гаргадаг горимоос гадна \code{--json} горим бий: команд тус бүрийн дараа бүтцийн бүх төлөвийг нэг JSON мөр болгож бичдэг.
-  \item \textbf{(b) web/} -- Next.js (React, TypeScript) дээр бичигдсэн веб апп. Хэрэглэгч товч дарах эсвэл команд бичих үед веб апп сервер талд \code{kds --json}-ыг ажиллуулж, буцаж ирсэн JSON мөр бүрийг дэлгэц дээр граф болгож зурна. Веб апп өөрөө ямар ч бүтцийн логик (нэмэх, устгах, хайх дүрэм) агуулдаггүй -- зөвхөн C программаас ирсэн төлөвийг дүрсэлж харуулна. Цэс (Нүүр), «Тоглох» (команд оруулж турших), «Хичээл» (онол, жишээ дасгал ба асуулттай тест, 7 шатлалтай), «Тухай» хуудастай.
-  \item \textbf{(c) \texttt{src/kernel/kds\_module.c}} -- kernel орчинд ажиллах хувилбар: color, Collatz, birthday жагсаалт, kfifo, bitmap.
+  \item \textbf{(a) src/user/kds.c} -- командын интерпретатор ба 9 бүтэц (жагсаалт, queue, stack, bitmap, hash, BST/AVL мод, red-black мод, min-heap, процесс/хуваарилагч). Жагсаалт, queue, stack, hash-ийн bucket, ready queue бүгд нэг \code{list_head} хэрэгжилтийг ашиглана. Энэ файл дотор ердийн текст мессеж гаргадаг горимоос гадна \code{--json} горим бий: команд тус бүрийн дараа бүтцийн бүх төлөвийг нэг JSON мөр болгож бичдэг.
+  \item \textbf{(b) web/} -- Next.js (React, TypeScript) дээр бичигдсэн веб апп. Хэрэглэгч товч дарах эсвэл команд бичих үед веб апп сервер талд \code{kds --json}-ыг ажиллуулж, буцаж ирсэн JSON мөр бүрийг дэлгэц дээр граф болгож зурна. Веб апп өөрөө ямар ч бүтцийн логик (нэмэх, устгах, хайх дүрэм) агуулдаггүй -- зөвхөн C программаас ирсэн төлөвийг дүрсэлж харуулна. Нүүр (7 шатны жагсаалт ба дээд цэс), «Чөлөөт горим» (бүтэц сонгож, үйлдлийн товчоор турших), «Хичээл» (7 шат: алхам бүрт Багшийн тайлбар ба монгол дуу, асуулттай тест), «Тухай» хуудастай.
+  \item \textbf{(c) \texttt{src/kernel/kds\_module.c}} -- kernel орчинд ажиллах хувилбар: color, Collatz, birthday жагсаалт, kfifo, bitmap, мөн \code{hashtable.h}, \code{rbtree.h} болон \code{/proc/kds}.
   \item \textbf{(d) tests/} -- C-ийн текст гаралт ба \code{--json} гаралтыг хооронд нь, мөн хүлээгдэх гаралттай харьцуулдаг тестүүд.
 \end{itemize}
 
@@ -234,18 +236,18 @@ Repository: \code{github.com/grl059/OS_BD1} (салбар \code{main}). Бүтэ
 \section*{6. Туршилт ба веб аппын дүрслэл}
 \phantomsection\addcontentsline{toc}{section}{6. Туршилт ба веб аппын дүрслэл}
 
-Веб апп (\code{web/}, Next.js) дараах хуудастай: \textbf{Нүүр} (цэс), \textbf{Тоглох} (7 бүтцийг сонгож команд өгөх, граф нь шууд өөрчлөгдөнө), \textbf{Хичээл} (7 шатлалтай заавар: бүтэц бүрийн онолын товч тайлбар, жишээ скрипт ажиллуулах, ойлгосон эсэхийг шалгах асуулт), \textbf{Тухай}. Өнгөний загвар нь тийл-ногоон (teal/green). «Тоглох» хуудасны зүүн тал бүтэц сонгох жагсаалт, баруун тал граф, доор нь ажлын түүх (event log) болон команд оруулах талбар.
+Веб апп (\code{web/}, Next.js) дараах хуудастай: \textbf{Нүүр} (7 шатны жагсаалт ба дээд цэс), \textbf{Чөлөөт горим} (бүтэц сонгох жагсаалт, «Үр дүн» карт, «Үйлдэл сонгох» товч, «Юу болов?» ба «Түүх (n)» самбар, «Сүүлчийнхийг буцаах», «Команд хуулах», «Шинээр эхлэх» үйлдэл), \textbf{Хичээл} (7 шат: Багш алхам бүрт тайлбар хэлж, нэг командыг тус тусад нь ажиллуулна; тайлбарыг \textbf{монгол дуугаар} сонсох 🔊 товчтой; шат дуусвал \textbf{✓}-ээр тэмдэглэгдэж хадгагдана; сүүлд нь ойлголт шалгах асуулт), \textbf{Тухай}. Өнгөний загвар нь индиго / нил ягаан. \code{rb} (red-black) ба \code{heap} (min-heap) бүтцүүд C цөм ба \code{--json} төлөвт бэлэн боловч вэб дэлгэцээрээ харуулаагүй; README-ийн Known issues-д заасан.
 
-\textbf{Юуг өөрчилж турших вэ:} огноо, тоо, bitmap-ийн хэмжээ (1--128), bucket-ийн тоо (1--16), түлхүүр/утга, модны төрөл (BST/AVL), процессын нэр, ажлын хугацаа (1--20), scheduler-ийн бодлого ба квант (1--10). Өгөгдлийг командын мөр эсвэл script файлаар (\code{examples/*.txt}) оруулна. «Эхнээс нь» товч бүх бүтцийг reset хийнэ.
+\textbf{Юуг өөрчилж турших вэ:} огноо, тоо, bitmap-ийн хэмжээ (1--128), bucket-ийн тоо (1--16), түлхүүр/утга, модны төрөл (BST/AVL), процессын нэр, ажлын хугацаа (1--20), scheduler-ийн бодлого ба квант (1--10). Өгөгдлийг командын мөр эсвэл script файлаар (\code{examples/*.txt}) оруулна. «Шинээр эхлэх» товч ажиллуулсан командуудыг устгаж бүтцийг reset хийнэ.
 
-\textbf{Юуг ажиглах вэ:} сүүлийн үйлдэлд өөрчлөгдсөн эсвэл олдсон элементийг граф дээр өөр өнгөөр тэмдэглэнэ. Ажлын түүхэнд OK/ERR мессеж бүр жагсаалтаар харагдана. Хэш хүснэгтэд collision-ийн тоо болон хайлтын алхам, модонд өндөр, scheduler-т процесс бүрийн явцыг ажиглана. Нэг команд оруулах болгонд веб апп нь дэвсгэр дээр \code{kds --json}-ыг дуудаж, буцаж ирсэн JSON-ыг шууд зурдаг тул дэлгэц дээр харагдах зураг C программын бодит тооцооноос хэзээ ч зөрөхгүй.
+\textbf{Юуг ажиглах вэ:} сүүлийн үйлдэлд өөрчлөгдсөн эсвэл олдсон элементийг граф дээр улбар шараар тэмдэглэнэ. Ажлын түүхэнд OK/ERR мессеж бүр жагсаалтаар харагдана. Хэш хүснэгтэд collision-ийн тоо болон хайлтын алхам, модонд өндөр, scheduler-т процесс бүрийн явцыг ажиглана. Нэг команд оруулах болгонд веб апп нь дэвсгэр дээр \code{kds --json}-ыг дуудаж, буцаж ирсэн JSON-ыг шууд зурдаг тул дэлгэц дээр харагдах зураг C программын бодит тооцооноос хэзээ ч зөрөхгүй.
 
-Доорх зургууд нь веб аппын бодит дэлгэцээс (Chrome, 1280×900) авсан бөгөөд зураг бүр \code{kds --json}-ийн буцаасан сүүлийн \code{state}-ийг шууд харуулна. Сүүлийн үйлдэлд өөрчлөгдсөн эсвэл олдсон элементийг ногоон хүрээгээр тодотгосон.
+Доорх зургууд нь веб аппын бодит дэлгэцээс (Chrome) авсан бөгөөд зураг бүр \code{kds --json}-ийн буцаасан сүүлийн \code{state}-ийг шууд харуулна. Сүүлийн үйлдэлд өөрчлөгдсөн эсвэл олдсон элементийг улбар шар хүрээгээр тодотгосон.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth,height=0.40\textheight,keepaspectratio]{ui_play_list.png}
-\caption*{Зураг 2 -- Холбоост жагсаалт: textbook-ийн 5 төрсөн өдөр, дараа нь \code{list find 17 3 1998}. Олдсон элемент (index 1) тодотгогдож, зангилаа бүрийн хооронд next/prev хоёр холбоос харагдана.}
+\caption*{Зураг 2 -- Холбоост жагсаалт: 5 төрсөн өдрийг \code{add_tail}-аар дараалуулан оруулж, дараа нь \code{list find 17 3 1998}. Олдсон элемент (index 1) тодотгогдож, зангилаа бүрийн хооронд next/prev хоёр холбоос харагдана.}
 \end{figure}
 
 \begin{figure}[H]
@@ -291,7 +293,7 @@ search & Бүх бүтцэд хайлт, hash collision, BST 1--5, AVL 1--7 & in
 scheduler & RR q=2 ба FCFS: A=5, B=3, C=2; буруу нэр, ажил, бодлого & Гараар тооцсон хуваарьтай таарна (8-р хэсэг) \\ \hline
 scheduler\_full & 9 процесс үүсгэх & 9 дэх нь татгалзагдана, нэг нь дууссаны дараа зөвшөөрөгдөнө \\ \hline
 stress & 5000 × (queue/stack push+pop, hash put+del, proc new+tick) & ERR 0, ASan/UBSan мэдээлэлгүй \\ \hline
-text == --json & tests/json\_check.py: 6 скриптийг текст горим ба \code{--json} горимоор зэрэг ажиллуулах & Мессеж бүр мөр мөрөөрөө ижил, state бүр 7 бүтцийг агуулна \\ \hline
+text == --json & tests/json\_check.py: 8 скриптийг текст горим ба \code{--json} горимоор зэрэг ажиллуулах & Мессеж бүр мөр мөрөөрөө ижил, state бүр 7 бүтцийг агуулна \\ \hline
 fuzz & tests/fuzz\_json.py: 8 seed × 5000 санамсаргүй команд (буруу огноо, том индекс, 8-аас олон процесс, урт түлхүүр г.м.) & Текст ба \code{--json} горимын мессеж ижил \\ \hline
 avl\_check & tests/avl\_check.py: 30 санамсаргүй гүйлт (50--400 insert/delete) & Inorder = эрэмбэлсэн олонлог, өндөр $\le 1.44\cdot\log_2(n+2)$ \\ \hline
 kernel module & src/kernel/run\_module\_test.sh: start=25, start=15, start=0 & 24 ба 18 гишүүнтэй Collatz, start=0 үед $-EINVAL$ \\ \hline
@@ -314,16 +316,17 @@ Fuzz тест алдааг илрүүлж чадаж байгаа эсэхийг
 \hline
 \rowcolor{headbg}\textbf{Тест} & \textbf{Үр дүн} \\ \hline
 \endhead
-textbook, all\_structures, errors & \textcolor{passgreen}{\textbf{PASS ×3}} \\ \hline
+textbook, all\_structures, errors, hash\_resize, rb\_heap & \textcolor{passgreen}{\textbf{PASS ×5}} \\ \hline
 search (хайлт, hash, BST/AVL) & \textcolor{passgreen}{\textbf{PASS}} \\ \hline
 scheduler (RR, FCFS, алдаа), scheduler\_full (8 процесс) & \textcolor{passgreen}{\textbf{PASS ×2}} \\ \hline
 stress (5000 × 8 команд) & \textcolor{passgreen}{\textbf{PASS, ERR 0, sanitizer мэдээлэлгүй}} \\ \hline
-text == --json (6 скрипт) & \textcolor{passgreen}{\textbf{PASS ×6}} \\ \hline
+text == --json (8 скрипт) & \textcolor{passgreen}{\textbf{PASS ×8}} \\ \hline
 fuzz text == json (8 seed × 5000 команд, тэгш seed-д AVL) & \textcolor{passgreen}{\textbf{PASS ×8 (seed бүрд ≈4\,700 гаралтын мөр)}} \\ \hline
 avl\_check (30 гүйлт + эрэмбэлсэн 1..15) & \textcolor{passgreen}{\textbf{PASS ×32 (BST өндөр 15, AVL өндөр 4)}} \\ \hline
-Kernel module, өмнөх хувилбар (birthday, kfifo, bitmap) & \textcolor{passgreen}{\textbf{PASS: Ubuntu 24.04, kernel 6.11.0-17, insmod/rmmod (Зураг 1)}} \\ \hline
+rb\_check (red-black 30 seed + min-heap 10 seed: өнгө, black-height, inorder/эс хазайх чанар) & \textcolor{passgreen}{\textbf{PASS ×40}} \\ \hline
+Kernel module, баталгаажуулсан хувилбар (birthday, kfifo, bitmap) & \textcolor{passgreen}{\textbf{PASS: Ubuntu 24.04, kernel 6.11.0-17, insmod/rmmod (Зураг 1)}} \\ \hline
 CI (GitHub Actions) & \textcolor{passgreen}{\textbf{PASS: C цөм (Ubuntu+macOS) ба Next.js веб апп build+тест}} \\ \hline
-Kernel module, Part I/II (color, Collatz) & Хэрэгжсэн; \code{run_module_test.sh}-ээр баталгаажуулна. Хүлээгдэх гаралтыг доор үзүүлэв. \\ \hline
+Kernel module-ийн шинэчлэгдсэн хэсэг (hashtable.h, rbtree.h, /proc/kds) & Жинхэнэ Linux дээр \code{run_module_test.sh}-ээр баталгаажуулна (CI Linux job build л хийнэ). Хүлээгдэх гаралтыг доор үзүүлэв. \\ \hline
 \end{longtable}
 \par}
 
@@ -451,14 +454,14 @@ kds: birthday 2/8/1995 ... 30/12/2003, fifo out 10 20 30, bitmap weight=2, bit15
 \section*{9. Хэлэлцүүлэг}
 \phantomsection\addcontentsline{toc}{section}{9. Хэлэлцүүлэг}
 
-Бүх буруу оролт тодорхой мессеж өгч, програм нэг ч удаа унасангүй. ASan/UBSan санах ойн алдаа, leak мэдээлээгүй. Веб апп нь бүтцийн логикийг дахин бичсэн хуулбар биш, зөвхөн C программаас ирсэн \code{--json} төлөвийг зурдаг тул «зураг бодит ажиллагаанаас зөрөх» асуудал угаасаа гарч ирэх боломжгүй; үүнийг 40\,000 санамсаргүй командад текст гаралт ба \code{--json} гаралтын мессеж яг таарч байгаагаар баталгаажуулсан (мөн энэ нь веб апп ямар JSON-г хүлээж авч байгааг шалгасан гэсэн үг). Эрэмбэлсэн оролтод BST-ийн өндөр n-тэй тэнцүү болж, AVL-ийнх $\lg n$ орчим байсан нь онолтой таарч байна. Хэш хүснэгтэд collision нэмэгдэх тусам хайлтын алхам өссөн нь мөн онолтой нийцнэ.
+Бүх буруу оролт тодорхой мессеж өгч, програм нэг ч удаа унасангүй. ASan/UBSan санах ойн алдаа, leak мэдээлээгүй (Linux CI дээр; macOS 26 дээр \code{SAN=0} ажиллуулсан нь зөвхөн sanitizer шалгалтыг хасна). Веб апп нь бүтцийн логикийг дахин бичсэн хуулбар биш, зөвхөн C программаас ирсэн \code{--json} төлөвийг зурдаг тул «зураг бодит ажиллагаанаас зөрөх» асуудал угаасаа гарч ирэх боломжгүй; үүнийг 40\,000 санамсаргүй командад текст гаралт ба \code{--json} гаралтын мессеж яг таарч байгаагаар баталгаажуулсан (мөн энэ нь веб апп ямар JSON-г хүлээж авч байгааг шалгасан гэсэн үг). Эрэмбэлсэн оролтод BST-ийн өндөр n-тэй тэнцүү болж, AVL-ийнх $\lg n$ орчим байсан нь онолтой таарч байна. Хэш хүснэгтэд collision нэмэгдэх тусам хайлтын алхам өссөн нь мөн онолтой нийцнэ.
 
 \Needspace{3\baselineskip}\textbf{Хязгаарлалт:}
 
 \begin{enumerate}[leftmargin=22pt,itemsep=2pt,topsep=2pt]
   \item Kernel module-ийн өмнөх хувилбарыг нэг машин дээр (kernel 6.11.0-17) ачаалж туршсан. Өөр kernel хувилбарт дахин build хийх шаардлагатай. Secure Boot идэвхтэй үед гарын үсэггүй модуль ачаалагдахгүй тул MOK түлхүүрээр гарын үсэг зурсан.
   \item 1.9-д дурдсан red-black мод (\code{rbtree.h}) болон тусдаа singly жагсаалтыг хэрэгжүүлээгүй. Жагсаалт нь kernel-ийн list\_head шиг давхар холбоост дугуй, тэнцвэржсэн модыг AVL-аар загварчилсан.
-  \item Hash map-ийн bucket-ийн тоо тогтмол (динамик resize байхгүй). Хэш функц нь энгийн нийлбэр тул «ab», «ba» шиг үсгийн байр солигдсон түлхүүрүүд үргэлж collision үүсгэнэ.
+  \item Хэш функц нь энгийн нийлбэр тул «ab», «ba» шиг үсгийн байр солигдсон түлхүүрүүд үргэлж collision үүсгэнэ. Bucket-ийн тоо auto resize-ээр 64 хүртэл ихэсдэг ч элементийн хязгаар 24-өөр бүдүүн дүрслэл болгож тоог хязгаарласан.
   \item Scheduler-т бүх процесс үүсгэсэн мөчдөө ирнэ гэж үзсэн. I/O хүлээлт ба тэргүүлэх эрэмбэ байхгүй.
   \item Веб апп зөвхөн дэлгэц дээр зурдаг, өөрөө логик агуулдаггүй тул интернэт/сервер шаардлагатай (хуучин нэг файлтай UI-гээс ялгаатай нь, тэр нь browser дотроо бүх логикыг давтдаг байсан). Веб аппыг локал ажиллуулахад \code{make}-аар \code{kds}-г урьдчилан build хийх шаардлагатай.
   \item Queue, stack ба амьд процессын тоо 8, hash-ийн элемент 24-өөр хязгаарлагдсан. Энэ нь дүрслэлд багтаах зорилготой.
@@ -470,7 +473,7 @@ kds: birthday 2/8/1995 ... 30/12/2003, fifo out 10 20 30, bitmap weight=2, bit15
 \section*{10. Дүгнэлт}
 \phantomsection\addcontentsline{toc}{section}{10. Дүгнэлт}
 
-Сурах бичгийн 3-р бүлгийн «Kernel Data Structures» төслийн хоёр хэсэг (color жагсаалт, \code{start} параметртэй Collatz жагсаалт) болон 1.9-ийн бүтэц бүрийг хэрэгжүүлсэн: холбоост жагсаалт, дараалал, стек, BST ба тэнцвэржсэн мод, хэш хүснэгт, bitmap. Нэмэх, устгах, хайх үйлдлийн дараах төлөвийг CLI (текст) болон веб хуудас (граф) хоёуланд харуулж чадсан бөгөөд хоёулаа яг нэг C программаас ирсэн мэдээлэлд тулгуурладаг. Нүдээр харуулсан: энгийн мод эрэмбэлсэн оролтод нэг шугам болдог (өндөр 7) бол тэнцвэржсэн мод өндрөө 3 хэвээр хадгалдаг, хэш хүснэгтэд collision үүсэхэд хайлтын алхам нэмэгддэг. Зөв ажиллагааг 6 скрипт, stress тест, AVL-ийн инвариант шалгалт, текст==JSON харьцуулалт (40\,000 санамсаргүй команд), GitHub Actions дээрх автомат CI болон жинхэнэ Linux дээр ачаалсан kernel module-аар нотолсон. Нэмэлтээр «Processes» сэдвийн PCB ба ready queue ашиглан FCFS ба Round Robin-ийг хүлээлтийн хугацаагаар хэмжиж харьцуулсан.
+Сурах бичгийн 3-р бүлгийн «Kernel Data Structures» төслийн хоёр хэсэг (color жагсаалт, \code{start} параметртэй Collatz жагсаалт) болон 1.9-ийн бүтэц бүрийг хэрэгжүүлсэн: холбоост жагсаалт, дараалал, стек, BST ба тэнцвэржсэн мод, хэш хүснэгт, bitmap. Нэмэх, устгах, хайх үйлдлийн дараах төлөвийг CLI (текст) болон веб хуудас (граф) хоёуланд харуулж чадсан бөгөөд хоёулаа яг нэг C программаас ирсэн мэдээлэлд тулгуурладаг. Нүдээр харуулсан: энгийн мод эрэмбэлсэн оролтод нэг шугам болдог (өндөр 7) бол тэнцвэржсэн мод өндрөө 3 хэвээр хадгалдаг, хэш хүснэгтэд collision үүсэхэд хайлтын алхам нэмэгддэг. Зөв ажиллагааг 8 скрипт, stress тест, AVL, red-black ба min-heap-ийн инвариант шалгалт, текст==JSON харьцуулалт (40\,000 санамсаргүй команд), GitHub Actions дээрх автомат CI болон жинхэнэ Linux дээр ачаалсан kernel module-аар нотолсон. Нэмэлтээр «Processes» сэдвийн PCB ба ready queue ашиглан FCFS ба Round Robin-ийг хүлээлтийн хугацаагаар хэмжиж харьцуулсан.
 
 % ---------------------------------------------------------------------------
 % Ашигласан материал
@@ -501,7 +504,7 @@ kds: birthday 2/8/1995 ... 30/12/2003, fifo out 10 20 30, bitmap weight=2, bit15
 Төсөл & Kernel Data Structures \\ \hline
 Repository & github.com/grl059/OS\_BD1 \\ \hline
 Хэл / сан / орчин & C (gcc 13), TypeScript/React (Next.js), kernel C; Python 3, Node.js (тест, build); Ubuntu 24.04 \\ \hline
-Үндсэн дүрслэл & Kernel structure graph -- веб апп (Next.js), 4 хуудастай (Нүүр, Тоглох, Хичээл, Тухай) \\ \hline
+Үндсэн дүрслэл & Kernel structure graph -- веб апп (Next.js), 4 хуудастай (Нүүр, Чөлөөт горим, Хичээл, Тухай) \\ \hline
 \end{longtable}
 \par}
 
