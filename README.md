@@ -1,6 +1,6 @@
 # Kernel Data Structures
 
-**F.CSM302 Үйлдлийн систем · БД1 · Хуваарилалтын код: 4**
+**F.CSM302 Үйлдлийн систем · БД1 · Хуваарилалтын код: V-1-4**
 Үзүүлэлт: **Kernel structure graph** · Бүлэг: **3 – Processes** · Сурах бичиг: Silberschatz, Galvin, Gagne, *Operating System Concepts* (Programming Project «Kernel Data Structures», онол нь 1.9-д)
 
 ## Зорилго
