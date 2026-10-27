@@ -13,6 +13,7 @@ export function EventLog({ events }: { events: KdsEvent[] }) {
           className={cn(
             "flex items-start gap-2 rounded px-1.5 py-0.5",
             !e.ok && "bg-destructive/10 text-destructive",
+            e === events[events.length - 1] && "hot-flash",
           )}
         >
           <span className="w-6 shrink-0 text-right text-muted-foreground">{e.t}</span>

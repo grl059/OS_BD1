@@ -171,7 +171,7 @@ function Cell({ children, active }: { children: ReactNode; active: boolean }) {
     <div
       className={cn(
         "rounded-md border border-border bg-card px-3 py-1.5 text-sm font-mono shadow-sm",
-        active && "border-primary bg-accent text-accent-foreground ring-2 ring-primary",
+        active && "anim-pop border-primary bg-accent text-accent-foreground ring-2 ring-primary",
       )}
     >
       {children}
