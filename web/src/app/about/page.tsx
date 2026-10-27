@@ -37,7 +37,7 @@ export default function AboutPage() {
       </section>
 
       <section className="mt-8">
-        <h2 className="mb-3 text-lg font-semibold">Баг</h2>
+        <h2 className="mb-3 text-lg font-semibold">Багийн гишүүд</h2>
         <div className="overflow-hidden rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead className="bg-muted text-left">
