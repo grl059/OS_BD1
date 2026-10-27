@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Gamepad2, Info, LayoutGrid } from "lucide-react";
+import { BookOpen, Gamepad2, Info } from "lucide-react";
 import { STRUCTURE_ORDER, STRUCTURE_SPECS } from "@/lib/config";
 
 const NAV = [
   { href: "/play", label: "Тоглох", desc: "Чөлөөт горим - командаа бичиж шууд ажиллуулах", icon: Gamepad2 },
   { href: "/learn", label: "Хичээл", desc: "7 шатлалтай заавар + шалгалт", icon: BookOpen },
-  { href: "/levels", label: "Шатууд", desc: "Бүх шатны жагсаалт", icon: LayoutGrid },
   { href: "/about", label: "Тухай", desc: "Баг, төслийн тухай", icon: Info },
 ];
 

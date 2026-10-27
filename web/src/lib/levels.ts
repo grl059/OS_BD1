@@ -1,5 +1,5 @@
 /**
- * The guided path shown on /learn and /levels: one Level per structure,
+ * The guided path shown on /learn (and its sidebar level list): one Level per structure,
  * each with a short narration, a demo script to run through the real C
  * core (never a reimplementation), and one quiz question to check
  * understanding before moving on.
