@@ -3,9 +3,10 @@
     pip install playwright && playwright install chromium   (once)
     python3 docs/report_src/build_pdf.py
 
-Edit report.html / manual.html, then run this script again.  The table of
-contents page numbers are filled in automatically (two passes, needs
-pdftotext from poppler-utils; without it the numbers are left empty).
+If no bundled Playwright browser is installed, set PW_CHANNEL=chrome to use
+the system Chrome instead.  The table of contents page numbers are filled in
+automatically (two passes, uses pdftotext from poppler-utils when available,
+otherwise the pypdf package; without either they are left empty).
 """
 import os
 import re
@@ -29,13 +30,24 @@ def render(page, html_path, pdf_path):
              display_header_footer=True, header_template='<span></span>', footer_template=FOOTER)
 
 
+def pdf_text(pdf_path):
+    """Layout-preserving text of every page, or None when no extractor exists."""
+    if shutil.which('pdftotext'):
+        return subprocess.run(['pdftotext', '-layout', pdf_path, '-'], capture_output=True, text=True).stdout
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        return None
+    return '\n\f'.join(page.extract_text() or '' for page in PdfReader(pdf_path).pages)
+
+
 def toc_pages(pdf_path, page, html_path):
     """Return {heading id: page number} by finding each heading's text in the PDF."""
-    if not shutil.which('pdftotext'):
+    out = pdf_text(pdf_path)
+    if out is None:
         return {}
     heads = page.evaluate("""() => [...document.querySelectorAll('h1[id]')]
         .map(h => [h.id, h.textContent.trim()])""")
-    out = subprocess.run(['pdftotext', '-layout', pdf_path, '-'], capture_output=True, text=True).stdout
     pages = out.split('\f')
     found, start = {}, 2          # skip cover and TOC pages
     for hid, text in heads:
@@ -50,7 +62,8 @@ def toc_pages(pdf_path, page, html_path):
 
 def main():
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        channel = os.environ.get('PW_CHANNEL')
+        browser = p.chromium.launch(channel=channel) if channel else p.chromium.launch()
         page = browser.new_page()
         for src, dst, has_toc in JOBS:
             html_path = os.path.join(HERE, src)
