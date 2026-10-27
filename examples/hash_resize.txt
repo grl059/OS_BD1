@@ -1,0 +1,21 @@
+# Hash resize / rehash + statistics (load factor 0.75)
+hash size 4
+hash put ab 1
+hash put ba 2          # same char sum as "ab" -> collision
+hash put cd 3
+hash stats
+hash auto on
+hash put ef 4          # size 4 > 0.75*4 -> buckets 4 -> 8
+hash put gh 5
+hash put ij 6
+hash put kl 7          # size 7 > 0.75*8 -> buckets 8 -> 16
+hash stats
+hash print
+hash get ab
+hash rehash 5
+hash print
+hash stats
+hash auto off
+hash rehash 65         # error: max 64
+hash rehash 0          # error
+hash auto maybe        # error

@@ -28,20 +28,21 @@ Three kinds of line appear, all with a `"type"` field:
   "msg": "TICK t=0 P1(worker) remaining=3",
   "hot": {"pid": 1},
   "state": { "list": {...}, "queue": {...}, "stack": {...}, "bitmap": {...},
-             "hash": {...}, "tree": {...}, "sched": {...} }
+             "hash": {...}, "tree": {...}, "rb": {...}, "heap": {...},
+             "sched": {...} }
 }
 ```
 
 | field  | meaning |
 |--------|---------|
 | `t`    | 0-based step index (one per input line that produced an event; blank lines and comment-only lines don't count) |
-| `cmd`  | the structure name (`list`, `queue`, `stack`, `bitmap`, `hash`, `tree`, `proc`, `sched`), or the unrecognised token if the line named an unknown structure |
+| `cmd`  | the structure name (`list`, `queue`, `stack`, `bitmap`, `hash`, `tree`, `rb`, `heap`, `proc`, `sched`), or the unrecognised token if the line named an unknown structure |
 | `op`   | the requested operation, or `""` if the line had no second token |
 | `args` | the raw argument tokens, as typed |
 | `ok`   | `false` iff the message starts with `ERR` |
 | `msg`  | exactly the line the equivalent non-`--json` run would have printed for this command (no trailing newline) |
 | `hot`  | what the UI should highlight as a result of this one command, or `null` for nothing (see below) |
-| `state`| a full snapshot of **all seven** structures, taken immediately after the command ran, straight from the same C globals the plain-text handlers already update |
+| `state`| a full snapshot of **all nine** structures, taken immediately after the command ran, straight from the same C globals the plain-text handlers already update |
 
 `state` is sent in full on every event, not as a diff. The browser never
 reconstructs or guesses state of its own — it only ever displays the last
@@ -56,7 +57,9 @@ inside the C program.*
 "queue":  {"size": 1, "items": [5]}
 "stack":  {"size": 1, "items": [9]}
 "bitmap": {"n": 32, "bits": [0,0,0,1,0,...]}
-"hash":   {"n": 8, "size": 1, "buckets": [[],[],[],[],[["foo","bar"]],[],[],[]]}
+"hash":   {"n": 8, "size": 1, "auto": false, "resizes": 0, "buckets": [[],[],[],[],[["foo","bar"]],[],[],[]]}
+"rb":     {"size": 3, "height": 2, "rotations": 1, "node": {"v":20,"c":"b","l":{"v":10,"c":"r","l":null,"r":null},"r":{"v":30,"c":"r","l":null,"r":null}}}   // c = "r" | "b"
+"heap":   {"size": 3, "items": [5,10,20]}   // array order (min-heap)
 "tree":   {"avl": false, "size": 2, "height": 2,
            "node": {"v":7,"l":{"v":3,"l":null,"r":null},"r":null} }
 "sched":  {"quantum": 2, "time": 2, "done": 0,
@@ -82,6 +85,7 @@ the shape alone is enough to redraw the whole tree).
 | `queue/stack find` (found) | `{"idx": <position>}` |
 | `bitmap set/clear/test` | `{"idx": <bit index>}` |
 | `hash put` | `{"key": "<key>"}` |
+| `rb insert`, `rb find` (found) | `{"val": <int>}` |
 | `hash get` (found) | `{"key": "<key>"}` |
 | `tree insert` | `{"val": <value>}` |
 | `tree find` (found) | `{"val": <value>}` |

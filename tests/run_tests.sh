@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.." || exit 1
 tmp=$(mktemp -d) || exit 1
 trap 'rm -rf "$tmp"' EXIT
 fail=0
-for t in textbook all_structures errors scheduler scheduler_full search; do
+for t in textbook all_structures errors scheduler scheduler_full search hash_resize rb_heap; do
   ./kds examples/$t.txt > "$tmp/$t.out" 2>&1
   if diff -u tests/expected_$t.out "$tmp/$t.out" > "$tmp/diff"; then
     echo "PASS $t"

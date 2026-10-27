@@ -12,7 +12,7 @@ at a smaller size so this stays fast) this:
          with the "event" lines (same count)
        - each event's "msg" is exactly the matching plain-text output line
        - each event's "ok" agrees with whether that line starts with ERR
-       - "state" always has all 7 structure keys with the right shape
+       - "state" always has all 9 structure keys with the right shape
 
 This proves --json is a faithful additive layer: it never changes what the
 text mode says, it only adds structure around it.
@@ -24,7 +24,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KDS = os.path.join(ROOT, 'kds')
-STATE_KEYS = {'list', 'queue', 'stack', 'bitmap', 'hash', 'tree', 'sched'}
+STATE_KEYS = {"list", "queue", "stack", "bitmap", "hash", "tree", "rb", "heap", "sched"}
 
 
 def run(args, stdin_text):

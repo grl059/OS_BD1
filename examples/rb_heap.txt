@@ -1,0 +1,35 @@
+# Red-black tree vs AVL (same keys) and the min-heap / priority queue
+rb insert 10
+rb insert 20
+rb insert 30           # needs a rotation: 20 becomes the black root
+rb insert 15
+rb insert 25
+rb insert 5
+rb insert 5            # duplicate
+rb find 15
+rb find 99
+rb print
+rb delete 20
+rb delete 99           # error
+rb print
+tree mode avl
+tree insert 10
+tree insert 20
+tree insert 30
+tree insert 15
+tree insert 25
+tree insert 5
+tree stats
+heap push 30
+heap push 10
+heap push 20
+heap push 5
+heap print
+heap peek
+heap pop
+heap pop
+heap print
+heap pop
+heap pop
+heap pop               # underflow
+heap peek              # empty

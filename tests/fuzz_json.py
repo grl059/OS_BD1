@@ -26,7 +26,7 @@ WORDS = ['a', 'b', 'ab', 'ba', 'bob', 'alice', 'key_1', 'x9', 'zed', 'too_long_k
 
 
 def command(r):
-    s = r.choice(['list', 'queue', 'stack', 'bitmap', 'hash', 'tree', 'proc', 'sched', 'junk'])
+    s = r.choice(['list', 'queue', 'stack', 'bitmap', 'hash', 'tree', 'rb', 'heap', 'proc', 'sched', 'junk'])
     if s == 'list':
         op = r.choice(['add_head', 'add_tail', 'del', 'find', 'del', 'print', 'clear', 'bogus'])
         if op in ('print', 'clear', 'bogus'):
@@ -50,7 +50,12 @@ def command(r):
             return f'bitmap {op} {r.randint(-2, 130)}'
         return f'bitmap {op}'
     if s == 'hash':
-        op = r.choice(['put', 'put', 'get', 'del', 'print', 'size', 'clear', 'bogus'])
+        op = r.choice(['put', 'put', 'get', 'del', 'print', 'size', 'clear', 'bogus',
+                       'auto', 'rehash', 'stats'])
+        if op == 'auto':
+            return f'hash auto {r.choice(["on", "off", "on", "maybe"])}'
+        if op == 'rehash':
+            return f'hash rehash {r.randint(0, 66)}'
         if op == 'put':
             return f'hash put {r.choice(WORDS)} {r.choice(WORDS[:8] + [NUM(r)])}'
         if op in ('get', 'del'):
@@ -59,10 +64,18 @@ def command(r):
             return f'hash size {r.randint(0, 17)}'
         return f'hash {op}'
     if s == 'tree':
-        op = r.choice(['insert', 'insert', 'insert', 'delete', 'find', 'print', 'bogus'])
+        op = r.choice(['insert', 'insert', 'insert', 'delete', 'find', 'print', 'stats', 'bogus'])
         if op in ('insert', 'delete', 'find'):
             return f'tree {op} {r.randint(-20, 60)}'
         return f'tree {op}'
+    if s == 'rb':
+        op = r.choice(['insert', 'insert', 'insert', 'delete', 'find', 'print', 'clear', 'bogus'])
+        if op in ('insert', 'delete', 'find'):
+            return f'rb {op} {r.randint(-20, 60)}'
+        return f'rb {op}'
+    if s == 'heap':
+        op = r.choice(['push', 'push', 'pop', 'peek', 'print', 'clear', 'bogus'])
+        return f'heap push {r.randint(-20, 60)}' if op == 'push' else f'heap {op}'
     if s == 'proc':
         if r.random() < 0.1:
             return r.choice(['proc kill 1', 'proc new', 'proc new x'])
