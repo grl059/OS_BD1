@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Level } from "@/lib/levels";
 import { nextLevel } from "@/lib/levels";
 import { useRun } from "@/lib/use-run";
 import { Stage } from "@/components/stage";
 import { Quiz } from "@/components/quiz";
+import { markLevelDone } from "@/components/levels-list";
 import { Button } from "@/components/ui/button";
 import { Check, FastForward, Play, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,10 @@ export function Tutorial({ level }: { level: Level }) {
   const total = steps.length;
   const allDone = current >= total;
   const lastEvent = events.length ? events[events.length - 1] : null;
+
+  useEffect(() => {
+    if (allDone) markLevelDone(level.id);
+  }, [allDone, level.id]);
 
   const runStep = async () => {
     if (current >= total) return;
