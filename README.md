@@ -36,6 +36,12 @@ npm run dev                 # http://localhost:3000
 ```
 Цэс → Тоглох / Хичээл / Тухай. `/play` хуудас нь өөрийн бичсэн командыг `/api/run`-р дамжуулж, `kds --json`-ийн буцаасан JSON урсгалаас дэлгэцийг шууд дүүргэнэ - дэлгэц дээр харагдах бүх зүйл (жагсаалт, мод, scheduler progress bar гэх мэт) C программын state-ээс гаралтай.
 
+Хичээлийн Багшийн тайлбар бүр монгол дуутай (`public/tts/*.mp3`, `mn-MN-YesuiNeural`). `say` текстээ засварлавал дахин үүсгэнэ:
+```sh
+python3 -m pip install --user edge-tts   # (эхний удаа)
+cd web && node scripts/gen-tts.mjs
+```
+
 **Нэмэлт тест** (node ≥ 18, python3 хэрэгтэй):
 ```sh
 make check                  # make test + --json==текст (json_check.py) + fuzz (8 seed x 5000 команд) + AVL шалгалт

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Level } from "@/lib/levels";
 import { nextLevel } from "@/lib/levels";
@@ -9,7 +9,7 @@ import { Stage } from "@/components/stage";
 import { Quiz } from "@/components/quiz";
 import { markLevelDone } from "@/components/levels-list";
 import { Button } from "@/components/ui/button";
-import { Check, FastForward, Play, RotateCcw } from "lucide-react";
+import { Check, FastForward, Play, RotateCcw, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -22,6 +22,8 @@ import { cn } from "@/lib/utils";
 export function Tutorial({ level }: { level: Level }) {
   const { events, state, running, runScript, reset } = useRun();
   const [current, setCurrent] = useState(0); // index of the next step to run
+  const [speaking, setSpeaking] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const next = nextLevel(level.id);
   const steps = level.steps;
   const total = steps.length;
@@ -31,6 +33,38 @@ export function Tutorial({ level }: { level: Level }) {
   useEffect(() => {
     if (allDone) markLevelDone(level.id);
   }, [allDone, level.id]);
+
+  // Changing step or level must not leave the previous explanation playing.
+  useEffect(() => {
+    audioRef.current?.pause();
+    audioRef.current = null;
+    setSpeaking(false);
+  }, [current, level.id]);
+
+  useEffect(() => () => audioRef.current?.pause(), []);
+
+  const speak = (index: number) => {
+    audioRef.current?.pause();
+    if (speaking) {
+      setSpeaking(false);
+      return;
+    }
+    const audio = new Audio(`/tts/${level.id}-${index}.mp3`);
+    audio.onended = () => {
+      setSpeaking(false);
+      audioRef.current = null;
+    };
+    audio.onerror = () => {
+      setSpeaking(false);
+      audioRef.current = null;
+    };
+    audioRef.current = audio;
+    setSpeaking(true);
+    audio.play().catch(() => {
+      setSpeaking(false);
+      audioRef.current = null;
+    });
+  };
 
   const runStep = async () => {
     if (current >= total) return;
@@ -113,8 +147,28 @@ export function Tutorial({ level }: { level: Level }) {
                     <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-lg text-primary-foreground shadow-sm">
                       🧑‍🏫
                     </span>
-                    <div>
-                      <div className="text-[11px] font-semibold uppercase tracking-wide text-primary">Багш</div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-semibold uppercase tracking-wide text-primary">
+                          Багш
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => speak(i)}
+                          aria-label={speaking ? "Дуу зогсоох" : "Тайлбарыг сонсох"}
+                          className={cn(
+                            "flex size-6 items-center justify-center rounded-full border transition-colors",
+                            speaking
+                              ? "border-primary bg-primary text-primary-foreground"
+                              : "border-border bg-card text-primary hover:bg-accent",
+                          )}
+                        >
+                          <Volume2 className="size-3.5" />
+                        </button>
+                        {speaking && (
+                          <span className="text-[11px] text-muted-foreground">яриж байна...</span>
+                        )}
+                      </div>
                       <p className="mt-0.5 text-sm leading-relaxed">{step.say}</p>
                     </div>
                   </div>
