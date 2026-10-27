@@ -40,7 +40,7 @@ export function Menu() {
         </h1>
         <p className="max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
           Жинхэнэ C код (<code className="rounded bg-muted px-1">kds.c</code>) дээр нэг алхам тутамд тайлбартайгаар
-          ажиллаж, бүтэц бүр толгойд чинь унах болно. Хичээлч алхам бүрд гар хүргэж заана.
+          ажиллаж, бүтэц бүр толгойд чинь унах болно. Багш алхам бүрд гар хүргэж заана.
         </p>
         <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
           <Link

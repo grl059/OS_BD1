@@ -109,9 +109,7 @@ export function Tutorial({ level }: { level: Level }) {
                       🧑‍🏫
                     </span>
                     <div>
-                      <div className="text-[11px] font-semibold uppercase tracking-wide text-primary">
-                        Хичээлч
-                      </div>
+                      <div className="text-[11px] font-semibold uppercase tracking-wide text-primary">Багш</div>
                       <p className="mt-0.5 text-sm leading-relaxed">{step.say}</p>
                     </div>
                   </div>
