@@ -28,19 +28,11 @@ export function Menu() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-10">
       <header className="anim-fade-up flex flex-col items-center gap-4 py-10 text-center">
-        <span className="rounded-full border border-primary/30 bg-card px-3 py-1 text-xs font-medium text-primary shadow-sm">
-          F.CSM302 БД1 · Хуваарилалт 4 · Г.Ганбат
-        </span>
-        <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight text-primary md:text-5xl">
-          Кернелийн 7 өгөгдлийн бүтцийг{" "}
-          <span className="underline decoration-primary/40 decoration-4 underline-offset-4">
-            гараараа ажилуулж
-          </span>{" "}
-          суръя
+        <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight text-foreground md:text-5xl">
+          Кернелийн <span className="text-primary">7 бүтэц</span> — гар хүргэж суръя
         </h1>
         <p className="max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
-          Жинхэнэ C код (<code className="rounded bg-muted px-1">kds.c</code>) дээр нэг алхам тутамд тайлбартайгаар
-          ажиллаж, бүтэц бүр толгойд чинь унах болно. Багш алхам бүрд гар хүргэж заана.
+          Багш нэг алхам тутамд тайлбарлана. Чи команд ажилуулж, бүтэц өөрөө хэрхэн өөрчлөгдөж байгааг шууд харна.
         </p>
         <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
           <Link
