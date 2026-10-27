@@ -1,4 +1,4 @@
-"""Builds docs/4_BD1_Report.pdf and docs/4_Manual.pdf from the HTML sources.
+"""Builds docs/V-1-4_BD1_Report.pdf and docs/V-1-4_Manual.pdf from the HTML sources.
 
     pip install playwright && playwright install chromium   (once)
     python3 docs/report_src/build_pdf.py
@@ -20,7 +20,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DOCS = os.path.dirname(HERE)
 FOOTER = ('<div style="width:100%;font-size:9pt;text-align:center;font-family:serif;color:#444">'
           '<span class="pageNumber"></span></div>')
-JOBS = [('report.html', '4_BD1_Report.pdf', True), ('manual.html', '4_Manual.pdf', False)]
+JOBS = [('report.html', 'V-1-4_BD1_Report.pdf', True), ('manual.html', 'V-1-4_Manual.pdf', False)]
 
 
 def render(page, html_path, pdf_path):
