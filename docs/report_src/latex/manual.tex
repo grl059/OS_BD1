@@ -1,0 +1,283 @@
+\input{kds-preamble}
+\hypersetup{
+  pdftitle={V-1-4_Manual -- Kernel Data Structures},
+  pdfauthor={V-1-4 team}
+}
+
+\begin{document}
+\thispagestyle{fancy}
+
+% ---------------------------------------------------------------------------
+% Толгой хэсэг
+% ---------------------------------------------------------------------------
+{\fontsize{20}{24}\selectfont\bfseries Manual -- Kernel Data Structures\par}
+\vspace{2pt}
+{\fontsize{11.5}{14}\selectfont Хуваарилалтын код: V-1-4 · F.CSM302 Үйлдлийн систем · БД1\par
+Repository: github.com/grl059/OS\_BD1\par}
+\vspace{3pt}
+{\color{linkblue}\rule{\textwidth}{1.5pt}}
+\vspace{2pt}
+
+% ---------------------------------------------------------------------------
+% 1. Хэрэглэгчийн заавар
+% ---------------------------------------------------------------------------
+\manualsection{1. Хэрэглэгчийн заавар}
+
+\manualsubsection{1.1 Програмын зорилго}
+Linux kernel-ийн өгөгдлийн бүтцүүдийг загварчилж, элемент нэмэх, устгах, хайх үйлдэл бүрийн дараах бүтцийг график дээр харуулна. Бүтцүүд: холбоост жагсаалт (\code{list_head}, struct birthday), queue (FIFO), stack (LIFO), bitmap, hash map (collision-той), хайлтын мод (энгийн BST ба тэнцвэржсэн AVL), процесс ба CPU (PCB, ready queue, FCFS ба Round Robin). Kernel module нь \code{struct color} жагсаалт болон \code{start} параметртэй Collatz жагсаалтыг kernel дотор үүсгэнэ. Хэрэглэгч өөрийн огноо, тоо, түлхүүр, процессоо оруулж туршина.
+
+\manualsubsection{1.2 Дэмжих орчин}
+\begin{longtable}{@{}L{40mm}L{118mm}@{}}
+\rowcolor{headbg}\textbf{Хэсэг} & \textbf{Орчин}\\
+\endfirsthead
+\rowcolor{headbg}\textbf{Хэсэг} & \textbf{Орчин}\\
+\endhead
+Веб апп (\code{web/}, Next.js) & Node.js $\ge$ 18 (\code{npm install}, \code{npm run dev}), орчин үеийн browser (Chrome, Edge, Firefox, Safari). Веб апп дэвсгэр дээр \code{./kds --json}-г дуудаж ажилладаг тул эхлээд C цөмийг build хийсэн байх шаардлагатай (1.3-г үз).\\
+CLI (\code{./kds}) & Linux, macOS эсвэл Windows (MSYS2/MinGW эсвэл WSL); gcc $\ge$ 9 (эсвэл clang), GNU make\\
+Нэмэлт тест & python3 $\ge$ 3.8, Node.js $\ge$ 18\\
+Kernel module & Жинхэнэ Linux (VM эсвэл үндсэн машин; WSL/Docker биш), \code{linux-headers-$(uname -r)}, sudo эрх\\
+\end{longtable}
+
+\manualsubsection{1.3 Суулгах эсвэл нээх алхам}
+\begin{enumerate}[leftmargin=20pt,itemsep=1pt,topsep=2pt]
+  \item Repository-г татна: \code{git clone https://github.com/grl059/OS_BD1.git} эсвэл GitHub-ийн «Code $\rightarrow$ Download ZIP»-ээр татаж задлана.
+  \item \textbf{CLI (C цөм):} терминалд repository-ийн хавтсанд \code{make} ажиллуулна. Ингэснээр \code{./kds} (Windows дээр \code{kds.exe}) үүснэ. Веб аппд энэ алхам заавал хэрэгтэй.
+  \item \textbf{Веб апп:} \code{cd web} $\rightarrow$ \code{npm install} (нэг удаа) $\rightarrow$ \code{npm run dev}. Терминал дээр гарсан хаягийг (жишээ нь \code{http://localhost:3000}) browser-т нээнэ.
+\end{enumerate}
+
+\manualsubsection{1.4 Оролт ба тохиргоо}
+\begin{longtable}{@{}L{48mm}L{60mm}L{42mm}@{}}
+\rowcolor{headbg}\textbf{Команд} & \textbf{Оролт} & \textbf{Хязгаар}\\
+\endfirsthead
+\rowcolor{headbg}\textbf{Команд} & \textbf{Оролт} & \textbf{Хязгаар}\\
+\endhead
+\code{list add_head}\newline\code{add_tail|del|find}\newline\code{<d> <s> <j>} & өдөр, сар, жил & жил 1900--2100, хүчинтэй огноо (2-р сарын 29-г өндөр жилээр шалгана)\\
+\code{queue|stack push}\newline\code{find <тоо>}, \code{pop} & бүхэл тоо & багтаамж 8 (overflow/underflow мэдээлнэ)\\
+\code{bitmap size <n>},\newline\code{set|clear|test <i>} & хэмжээ, индекс & n = 1..128, индекс 0..n$-$1\\
+\code{hash size <n>},\newline\code{put <key> <value>},\newline\code{get|del <key>} & bucket-ийн тоо, түлхүүр, утга & n = 1..16 (анхдагч 8); түлхүүр/утга 1--12 тэмдэгт (үсэг, тоо, \_), нийт $\le$ 24\\
+\code{tree mode bst|avl},\newline\code{insert|delete|find}\newline\code{<тоо>} & төрөл, бүхэл тоо & төрлийг зөвхөн хоосон модонд солино; давхардсан утга татгалзана\\
+\code{proc new <нэр>}\newline\code{<ажил>} & нэр, ажлын тик & нэр 1--8 тэмдэгт, ажил 1--20 тик, амьд процесс $\le$ 8\\
+\code{sched policy}\newline\code{fcfs | rr <квант>},\newline\code{tick|print|clear} & бодлого, квант & квант 1--10; 1 tick = 1 нэгж цаг\\
+\code{... print},\newline\code{... clear} & --- & бүтцийн төлөвийг хэвлэх / цэвэрлэх\\
+\code{insmod kds_module.ko}\newline\code{start=N} & Collatz-ийн эхний гишүүн & 1..1\,000\,000 (анхдагч 25)\\
+\end{longtable}
+\texttt{\#}-ээс хойших хэсэг коммент. Тоог \code{+5}, \code{-3}, \code{007} хэлбэрээр бичиж болно. \code{3x}, \code{1.5} хэлбэрийн утга эсвэл int-ийн мужаас хэтэрсэн тоо буруу оролтод тооцогдоно.
+
+\manualsubsection{1.5 Ажиллуулах, зогсоох, reset хийх}
+\begin{itemize}[leftmargin=20pt,itemsep=1pt,topsep=2pt]
+  \item \textbf{Веб апп:} «Тоглох» хуудас дээр зүүн талаас бүтцээ сонгоно. Команд бичих талбарт команд (жишээ нь \code{list add_tail 2 8 1995}) бичиж Enter дарна, эсвэл жишээ скриптийг сонгож ажиллуулна. \textbf{«Эхнээс нь»} товч тухайн бүтцийг reset хийнэ (хуудсыг дахин ачаалах нь бүгдийг reset хийнэ, учир нь бүтцийн төлөв зөвхөн C программ дотор, дэвсгэр process бүрт шинээр эхэлдэг).
+  \item \textbf{CLI:} \code{./kds файл.txt} нь script ажиллуулна. \code{./kds} гэж ажиллуулаад команд бичиж болно. \textbf{Ctrl+D} дарж зогсооно (Ctrl+C мөн зогсооно). Програмыг дахин ажиллуулахад бүх бүтэц хоосон эхэлнэ (reset). Бүтэц тус бүрийг \code{list clear}, \code{hash clear}, \code{sched clear}-ээр цэвэрлэнэ. JSON горимоор ажиллуулахад \code{./kds --json} гэж нэмж бичнэ.
+  \item \textbf{Kernel module:} \code{sudo insmod} ачаална, \code{sudo rmmod kds_module} буулгана (2.7).
+\end{itemize}
+
+\manualsubsection{1.6 Дүрслэлийн тэмдэг, өнгө, төлөв}
+Веб апп нь тийл-ногоон (teal/green) өнгөний загвартай. Дараах зарчмуудаар бүтцийг зурдаг:
+\begin{longtable}{@{}L{62mm}L{96mm}@{}}
+\rowcolor{headbg}\textbf{Тэмдэг} & \textbf{Утга}\\
+\endfirsthead
+\rowcolor{headbg}\textbf{Тэмдэг} & \textbf{Утга}\\
+\endhead
+Хайрцаг/дугуйлсан элемент & node (struct birthday, queue/stack-ийн элемент, hash-ийн түлхүүр, PCB)\\
+Өөр өнгөөр тодотгосон элемент & сүүлийн үйлдэлд нэмэгдсэн эсвэл олдсон элемент\\
+Сум (next/prev) & жагсаалтын холбоос (давхар холбоост)\\
+Сум (hash bucket, ready queue) & жагсаалтын дараагийн элемент; bucket-д 2 ба түүнээс олон элемент байвал collision\\
+Дүүргэсэн нүд (1) / хоосон нүд (0) & bitmap-ийн асаалттай / унтраалттай бит\\
+Дугаарлагдсан багана & hash-ийн bucket-ийн индекс\\
+PCB карт, доорх ажлын түүх & процесс ба ажлын явц; тик бүрд ажилласан процесс, «idle» нь CPU сул\\
+Модны доорх «өндөр» бичиг & модны түвшний тоо = хамгийн муу хайлтын алхам\\
+Ажлын түүхэн дэх OK / ERR мөр & OK / ERR мессеж, Монгол тайлбартай\\
+\end{longtable}
+Эдгээр бүх дүрслэл нь веб апп дотор зураг зурж гаргадаг дүрс биш, C программын \code{--json} горимоос ирсэн төлөвөөс шууд зурагддаг.
+
+\manualsubsection{1.7 Жишээ}
+\textbf{Жишээ 1 (сурах бичгийн жишээ).} «Тоглох» хуудас дээр «list» бүтцийг сонгоод доорх командуудыг нэг нэгээр бичиж Enter дарна, эсвэл «Шатлал» хуудсанд байгаа ижил жишээг сонгоно (CLI: \code{./kds examples/textbook.txt}). Хүлээгдэх үр дүн: 5 огноо дарааллаараа жагсаж, устгасны дараа жагсаалт хоосон болно.
+\begin{codeblock}
+OK list add_tail 2/8/1995 (size=1)
+OK list add_tail 17/3/1998 (size=2)
+OK list add_tail 29/2/2000 (size=3)
+OK list add_tail 5/11/2001 (size=4)
+OK list add_tail 30/12/2003 (size=5)
+LIST size=5: 2/8/1995 -> 17/3/1998 -> 29/2/2000 -> 5/11/2001 -> 30/12/2003
+OK list del 17/3/1998 (size=4)
+LIST size=4: 2/8/1995 -> 29/2/2000 -> 5/11/2001 -> 30/12/2003
+OK list del 2/8/1995 (size=3)
+OK list del 29/2/2000 (size=2)
+OK list del 5/11/2001 (size=1)
+OK list del 30/12/2003 (size=0)
+LIST size=0: (empty)
+\end{codeblock}
+
+\textbf{Жишээ 2 (өөрийн оролт -- bitmap).} «Тоглох» хуудсанд «bitmap» бүтцийг сонгоод командаар \code{bitmap size 16}, \code{bitmap set 3}, \code{bitmap set 9} гэж оруулна. 16 нүдний 3 ба 9-р нүд тодотгогддог болно. \code{bitmap print} командын гаралт: \code{BITMAP n=16: 0001000001000000 (set=2)}. \code{bitmap set 16} гэвэл \code{ERR bitmap: index 16 out of range 0..15} гарна.
+
+\textbf{Жишээ 3 (процесс ба CPU).} «Тоглох» хуудсанд «sched»/«proc» бүтцийг сонгоод доорх командуудыг оруулна. Квант 2-той Round Robin-оор A (5 тик), B (3), C (2) ээлжилж ажиллана. C нь t=5, B нь t=8, A нь t=9 тик дээр дуусна, өөрөөр хэлбэл дуусах хугацаа 6, 9, 10 болно. Дундаж хүлээлт 5.00 гарна. Дараа нь «Эхнээс нь» дарж бодлогыг FCFS болгоод ижил процессуудыг дахин оруулж хүлээлтийг харьцуулна (FCFS: 4.33). Командаар: \code{./kds examples/scheduler.txt}
+\begin{codeblock}
+OK sched policy rr q=2
+OK proc new P1 A burst=5 (alive=1)
+OK proc new P2 B burst=3 (alive=2)
+OK proc new P3 C burst=2 (alive=3)
+SCHED policy=rr(q=2) time=0 running=none ready=P1(A:5), P2(B:3), P3(C:2) done=0
+TICK t=0 P1(A) remaining=4
+TICK t=1 P1(A) remaining=3 preempted
+TICK t=2 P2(B) remaining=2
+TICK t=3 P2(B) remaining=1 preempted
+TICK t=4 P3(C) remaining=1
+TICK t=5 P3(C) remaining=0 finished
+TICK t=6 P1(A) remaining=2
+TICK t=7 P1(A) remaining=1 preempted
+TICK t=8 P2(B) remaining=0 finished
+TICK t=9 P1(A) remaining=0 finished
+TICK t=10 idle
+SCHED policy=rr(q=2) time=11 running=none ready=(empty) done=3
+\end{codeblock}
+
+\textbf{Жишээ 4 (хэш хүснэгт ба мод).} «Тоглох» хуудсанд «hash» бүтцийг сонгоод «ab», «ba» зэрэг түлхүүр нэмэхэд тэд «bob»-той нэг bucket-д орж collision үүсэхийг харна. «tree» бүтцийг сонгоод эхлээд энгийн төрлөөр 1--7-г дараалуулан оруулна (өндөр 7). Дараа нь «Эхнээс нь» $\rightarrow$ төрөл «avl» болгож дахин 1--7-г оруулж харьцуулна (өндөр 3). Командаар: \code{./kds examples/search.txt}
+\begin{codeblock}
+OK hash put ab -> 7 (bucket=3, size=5, collision)
+OK hash put ba -> 8 (bucket=3, size=6, collision)
+HASH buckets=4 size=6 collisions=2: b0=[dave:11] b1=[carol:9] b2=[alice:1234] b3=[bob:5678 -> ab:7 -> ba:8]
+OK hash get ba = 8 (bucket=3, steps=3)
+OK hash get zed = not found (bucket=3)
+TREE size=5 height=5 inorder: 1, 2, 3, 4, 5
+TREE(avl) size=7 height=3 inorder: 1, 2, 3, 4, 5, 6, 7
+OK tree find 5 = yes
+TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7
+\end{codeblock}
+
+\manualsubsection{1.8 Түгээмэл алдаа ба шийдэл}
+\begin{longtable}{@{}L{54mm}L{62mm}L{38mm}@{}}
+\rowcolor{headbg}\textbf{Мессеж} & \textbf{Шалтгаан} & \textbf{Шийдэл}\\
+\endfirsthead
+\rowcolor{headbg}\textbf{Мессеж} & \textbf{Шалтгаан} & \textbf{Шийдэл}\\
+\endhead
+\code{ERR list: day out of range for month} & Байхгүй огноо (31/4, 29/2/1900) & Зөв огноо оруулах\\
+\code{ERR list: usage <op>}\newline\code{<day> <month> <year>} & 3 тоо биш (дутуу, үсэг, «2/8/1995» гэж налуу зураастай) & \code{list add_tail 2 8 1995}\\
+\code{ERR queue: overflow}\newline\code{(limit 8)} & 8-аас олон push & pop хийх\\
+\code{ERR queue: underflow}\newline\code{(empty)} & Хоосон дээр pop & Эхлээд push\\
+\code{ERR bitmap: index N}\newline\code{out of range} & Индекс хэтэрсэн & 0..n$-$1 дотор оруулах\\
+\code{ERR tree: duplicate N} & Ижил утга & Өөр утга\\
+\code{ERR tree: mode can only}\newline\code{be changed ...} & Мод хоосон биш & «Эхнээс нь» / бүх тоог хасах\\
+\code{ERR hash: key and value}\newline\code{must be ...}, \code{key must be ...} & 12-оос урт эсвэл «-» гэх мэт тэмдэгттэй & Ж: alice, key\_1\\
+\code{ERR hash: full}\newline\code{(limit 24)} & 24 элемент & \code{hash del} эсвэл \code{hash clear}\\
+\code{ERR proc: name must be ...} & Нэр урт эсвэл тусгай тэмдэгттэй & Ж: A, job1\\
+\code{ERR proc: too many}\newline\code{processes} & 8-аас олон амьд процесс & Зарим нь дуустал tick хийх\\
+\code{ERR unknown structure 'x'} & Бүтцийн нэр буруу & list, queue, stack, bitmap, hash, tree, proc, sched\\
+\code{insmod: Key was rejected}\newline\code{by service} & Secure Boot, гарын үсэггүй модуль & MOK-оор гарын үсэг зурах (2.7)\\
+\code{insmod: Invalid parameters} & \code{start} 1..1\,000\,000-аас гадуур & Ж: \code{start=27}\\
+\code{make: ***}\newline\code{/lib/modules/.../build:}\newline\code{No such file} & Kernel header суугаагүй & \code{sudo apt install}\newline\code{linux-headers-}\newline\code{$(uname -r)}\\
+\end{longtable}
+
+% ---------------------------------------------------------------------------
+% 2. Operational заавар
+% ---------------------------------------------------------------------------
+\clearpage
+\manualsection{2. Operational заавар}
+
+\manualsubsection{2.1 Repository clone хийх}
+\begin{codeblock}
+git clone https://github.com/grl059/OS_BD1.git kernel-data-structures
+cd kernel-data-structures
+git checkout v1.0.0        # 9-р долоо хоногт нийтэлсэн хувилбар (GitHub Release)
+\end{codeblock}
+
+\manualsubsection{2.2 OS, compiler/runtime, version}
+\begin{longtable}{@{}L{45mm}L{50mm}L{58mm}@{}}
+\rowcolor{headbg}\textbf{Хэрэгсэл} & \textbf{Туршсан хувилбар} & \textbf{Шаардлага}\\
+\endfirsthead
+\rowcolor{headbg}\textbf{Хэрэгсэл} & \textbf{Туршсан хувилбар} & \textbf{Шаардлага}\\
+\endhead
+OS & Ubuntu 24.04 LTS & Linux / macOS / WSL (CLI); жинхэнэ Linux (module)\\
+gcc & 13.3 & $\ge$ 9 (ASan/UBSan дэмжлэгтэй); clang мөн болно\\
+GNU make & 4.3 & ---\\
+Python & 3.13 & $\ge$ 3.8 (fuzz, AVL тест)\\
+Node.js & 22 & $\ge$ 18 (веб апп, text==json тест, CI)\\
+Linux kernel & 6.11.0-17-generic & headers нь ажиллаж буй kernel-тэй ижил хувилбартай байх\\
+\end{longtable}
+
+\manualsubsection{2.3 Dependency суулгах}
+\begin{codeblock}
+sudo apt update
+sudo apt install build-essential python3 nodejs     # CLI ба тест
+sudo apt install linux-headers-$(uname -r)          # зөвхөн kernel module-д
+\end{codeblock}
+C цөм гадны сан (library) ашиглаагүй тул өөр dependency шаардлагагүй. Веб апп \code{web/package.json}-д заасан сангуудыг \code{npm install}-оор татна (интернэт шаардлагатай зөвхөн энэ алхамд).
+
+\manualsubsection{2.4 Build ба Run команд}
+\begin{codeblock}
+make                                   # ./kds (-Wall -Wextra -fsanitize=address,undefined)
+make SAN=0                             # sanitizer-гүй (ASan runtime ачаалагдахгүй орчинд)
+./kds examples/textbook.txt            # script
+echo "queue push 5" | ./kds            # stdin-ээс
+./kds --json examples/textbook.txt     # JSON горим (веб аппын хэрэглэдэг горим)
+./kds                                  # интерактив, Ctrl+D-ээр гарна
+make clean                             # build-ийн гаралтыг устгах
+
+# Веб апп (эхлээд дээрх make-ээр ./kds-г build хийсэн байх ёстой):
+cd web && npm install && npm run dev   # http://localhost:3000 дээр нээнэ
+\end{codeblock}
+
+\manualsubsection{2.5 Үндсэн тестийн өгөгдөл}
+\begin{codeblock}
+make test
+#   PASS textbook / all_structures / errors / scheduler / scheduler_full / search
+#   PASS stress (5000 x 8 commands, ERR 0, no sanitizer report)
+make check                             # make test + доорх гурав
+python3 tests/json_check.py            # текст горим == --json горим, 6 скрипт: PASS x6
+python3 tests/fuzz_json.py 8 5000      # 8 seed x 5000 санамсаргүй команд (тэгш seed-д AVL): PASS x8
+python3 tests/avl_check.py             # AVL: inorder ба өндөр <= 1.44*log2(n+2), 30 гүйлт: PASS
+\end{codeblock}
+Хүлээгдэх гаралт \code{tests/expected_*.out}-д байна. Шинэ тест нэмэхдээ \code{examples/нэр.txt} үүсгээд \code{./kds examples/нэр.txt > tests/expected_нэр.out} гэж хадгалж, гаралтыг гараар шалгаад \code{tests/run_tests.sh}-ийн жагсаалтад нэрийг нэмнэ.
+
+\manualsubsection{2.6 Нэмэлт boundary/error test}
+\code{examples/errors.txt}: буруу огноо (31/4, 29/2/1900), сар 13, жил 1800, үсэг бүхий аргумент, хоосон бүтцээс pop, bitmap size 0 ба 129, индекс $-$1 ба 99, давхардсан tree утга, байхгүй утга устгах. \code{examples/scheduler.txt}-ийн төгсгөл: урт нэр, ажил 0 ба 21, квант 0 ба 11, мэдэгдэхгүй бодлого. \code{examples/scheduler_full.txt}: 9 дэх процесс татгалзагдана. \code{examples/search.txt}: 13 тэмдэгттэй түлхүүр, «-» тэмдэгттэй түлхүүр, хоосон биш модны төрлийг солих. Эдгээрийн мөр бүр ойлгомжтой \code{ERR} мессеж өгч, програм үргэлжлэн ажиллах ёстой.
+
+\manualsubsection{2.7 Kernel module}
+\begin{codeblock}
+sh src/kernel/run_module_test.sh
+#   make -> docs/kernel_build_log.txt
+#   PASS insmod  (start=25, 24 гишүүн)
+#   PASS insmod start=15 (18 гишүүн)
+#   PASS insmod start=0 (fail: Invalid parameters)
+#   -> docs/kernel_dmesg.txt
+
+# Гараар:
+cd src/kernel && make
+sudo insmod kds_module.ko start=15 && sudo dmesg | grep kds:
+sudo rmmod kds_module && sudo dmesg | grep kds: | tail -30
+\end{codeblock}
+\textbf{Хүлээгдэх dmesg} (\code{start=15}): «loading module (start=15)», 4 «color red=... blue=... green=...» мөр, 18 «collatz» мөр (15 46 23 70 35 106 53 160 80 40 20 10 5 16 8 4 2 1), «collatz start=15 terms=18», 5 «birthday d/m/y», «fifo out» 10, 20, 30, «bitmap weight=2, bit15=1». rmmod үед «removing color/collatz/birthday» мөрүүд болон «module unloaded» гарна. \code{start=0} үед «start must be 1..1000000 (got 0)» гарч, insmod амжилтгүй болно.
+
+\textbf{Secure Boot идэвхтэй үед} (\code{insmod: Key was rejected}\newline\code{by service}) дараах тохиргоог нэг удаа хийнэ:
+\begin{codeblock}
+mkdir -p ~/mok && cd ~/mok
+openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der \
+        -nodes -days 3650 -subj "/CN=KDS module signing/"
+sudo mokutil --import MOK.der       # reboot хийж, MOK дэлгэц дээр Enroll MOK
+# build бүрийн дараа:
+sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv ~/mok/MOK.der kds_module.ko
+\end{codeblock}
+\code{MOK.priv} түлхүүрийг repository-д хэзээ ч commit хийхгүй (\code{.gitignore}-д хассан).
+
+\manualsubsection{2.8 Хүлээгдсэн үр дүн}
+\begin{longtable}{@{}L{58mm}L{98mm}@{}}
+\rowcolor{headbg}\textbf{Команд} & \textbf{Хүлээгдэх}\\
+\endfirsthead
+\rowcolor{headbg}\textbf{Команд} & \textbf{Хүлээгдэх}\\
+\endhead
+\code{make} & Анхааруулгагүй compile хийгдэж \code{./kds} үүснэ\\
+\code{make test} & 7 PASS (6 скрипт + stress), exit 0\\
+\code{make check} & Нийт 53 PASS (7 + 6 text==json + 8 fuzz + 32 AVL), FAIL 0\\
+Веб апп (\code{npm run dev}) & Browser-ийн console-д алдаа гарахгүй; «Тоглох» хуудасны гаралт CLI-тай ижил (хоёулаа нэг C программ ашигладаг)\\
+\code{run_module_test.sh} & 3 PASS, build log ба dmesg файл үүснэ\\
+\end{longtable}
+
+\manualsubsection{2.9 Known issues}
+\begin{itemize}[leftmargin=20pt,itemsep=1pt,topsep=2pt]
+  \item Kernel module WSL, Docker-т ачаалагдахгүй (kernel header ба insmod эрх байхгүй). Linux VM эсвэл үндсэн Linux ашиглана.
+  \item Өөр kernel хувилбар дээр API өөрчлөгдсөн бол module-ийг дахин build хийнэ.
+  \item CLI-д нэг мөр 1023 тэмдэгтээс урт бол «ERR line too long» гарна.
+  \item Веб апп серверийн хажуу (\code{web/src/app/api/run/route.ts}) C цөмийг дэвсгэр дээр дуудаж ажиллуулдаг тул веб аппыг нээхийн өмнө \code{make}-аар \code{./kds} (эсвэл Windows дээр \code{kds.exe}) build хийсэн байх ёстой; эс бөгөөс «C core not built» алдаа гарна.
+  \item Hash bucket-ийн тоо тогтмол; queue, stack, процесс 8, hash 24 элементээр хязгаарлагдсан (дүрслэлд багтаах зорилгоор).
+  \item \textbf{macOS 26 + Apple clang:} ASan runtime нь програм эхлэх үед төгсгөлгүй хүлээлт үүсгэж болно (гаралтгүй, 100\% CPU). Ийм үед \code{make SAN=0} гэж sanitizer-гүй build хийнэ; тест болон веб апп хэвийн ажиллана, зөвхөн ASan/UBSan шалгалт хийгдэхгүй.
+\end{itemize}
+
+\end{document}
