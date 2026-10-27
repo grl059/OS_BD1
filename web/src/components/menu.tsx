@@ -42,12 +42,6 @@ export function Menu() {
             <BookOpen className="size-4" /> Хичээл эхлүүлэх
             <ArrowRight className="size-4" />
           </Link>
-          <Link
-            href="/play"
-            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-semibold shadow-sm transition-transform hover:-translate-y-0.5 hover:border-primary"
-          >
-            <Gamepad2 className="size-4" /> Чөлөөт горим
-          </Link>
         </div>
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Sparkles className="size-3.5 text-primary" />
