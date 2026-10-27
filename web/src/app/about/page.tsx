@@ -57,21 +57,6 @@ export default function AboutPage() {
           </table>
         </div>
       </section>
-
-      <section className="mt-8 text-xs text-muted-foreground">
-        <h2 className="mb-2 text-sm font-semibold text-foreground">Эх сурвалж / шагнал</h2>
-        <p>
-          Вэб интерфэйсийн архитектур (Next.js + JSON урсгал + хичээлийн шат + CI/Release) нь{" "}
-          <a
-            href="https://github.com/khuslenshi/os-bd1-producer-consumer"
-            className="text-primary underline"
-          >
-            khuslenshi/os-bd1-producer-consumer
-          </a>{" "}
-          төслийн бүтцээс санаа авсан (ижил хичээлийн өөр хуваарилалтын код дээр хийгдсэн). Сэдэв
-          (Kernel Data Structures), C цөм, өнгөний схем, элементийн байрлал нь энэ багийнх.
-        </p>
-      </section>
     </div>
   );
 }
