@@ -14,6 +14,7 @@
   <div class="title">Судалгаа, хэрэгжилт, туршилтын тайлан</div>
   <div class="proj">Kernel Data Structures</div>
   <div class="meta">Хуваарилалтын код: <b>V-1-4</b> · Үзүүлэлт: Kernel structure graph · Бүлэг 3 – Processes</div>
+  <div class="meta">Сурах бичиг: Chapter 1 Introduction, 1.9 Kernel Data Structures (p. 36)</div>
   <div class="meta">GitHub: github.com/grl059/OS_BD1</div>
   <table class="people">
     <tr><td>Хичээл заасан багш:</td><td>Г. Ганбат (F.CS10)</td></tr>
@@ -56,8 +57,8 @@
 <p><b>Хамрах хүрээ.</b> Хэрэглэгчийн орчны загвар (C, CLI), түүн дээр суурилсан веб хуудас (Next.js), мөн нэг kernel module. Бодит Linux scheduler-т холбогдохгүй.</p>
 
 <h1 id="h-2">2. Сурах бичгийн шаардлага</h1>
-<p><b>Хуваарилалт:</b> код 4, «Kernel Data Structures», үзүүлэлт «Kernel structure graph», бүлэг 3 – Processes. <b>Хүрэх үр дүн:</b> «Сурах бичигт заасан kernel data structure-ийн хэрэглээг хэрэгжүүлж, элемент нэмэх, устгах, хайх үйлдлийн дараах бүтцийг графаар харуулна.»</p>
-<p>Operating System Concepts-ийн 3-р бүлгийн Programming Project «Kernel Data Structures» нь 1.9-д тайлбарласан бүтцүүд дээр тулгуурласан хоёр хэсэгтэй:</p>
+<p><b>Хуваарилалт:</b> код 4, «Kernel Data Structures», үзүүлэлт «Kernel structure graph», бүлэг 3 – Processes. Онолын хэсэг нь <b>Chapter 1 Introduction-ийн 1.9 Kernel Data Structures (p. 36)</b>. <b>Хүрэх үр дүн:</b> «Сурах бичигт заасан kernel data structure-ийн хэрэглээг хэрэгжүүлж, элемент нэмэх, устгах, хайх үйлдлийн дараах бүтцийг графаар харуулна.»</p>
+<p>Operating System Concepts-ийн 3-р бүлгийн Programming Project «Kernel Data Structures» нь Chapter 1-ийн 1.9 Kernel Data Structures (p. 36)-д тайлбарласан бүтцүүд дээр тулгуурласан хоёр хэсэгтэй:</p>
 <ul>
   <li><b>Part I:</b> <code>struct color {red, blue, green; struct list_head list;}</code> төрлийн элементүүдийг kernel module дотор жагсаалтад нэмж, <code>list_for_each_entry</code>-ээр гүйлгэн хэвлэх, module-ийг буулгахад <code>list_for_each_entry_safe</code>-ээр устгаж санах ойг чөлөөлөх.</li>
   <li><b>Part II:</b> module-д <code>start</code> параметр дамжуулж (<code>module_param</code>), Collatz дарааллыг (тэгш бол n/2, сондгой бол 3n+1, 1 хүртэл) холбоост жагсаалтад хадгалан хэвлэх, буулгахад устгах.</li>
@@ -79,6 +80,7 @@
 <p><b>Харуулах шаардлага:</b> веб хуудас нь бүтэц бүрийн нэмэх, устгах, хайх үйлдлийн дараах төлөвийг граф хэлбэрээр шууд зурдаг (6-р хэсэг).</p>
 
 <h1 id="h-3">3. Онолын үндэс</h1>
+<p><b>Эх сурвалж:</b> Silberschatz, Galvin, Gagne, <i>Operating System Concepts</i>, 10th ed., Chapter 1 Introduction, 1.9 Kernel Data Structures, p. 36 (1.9.1 жагсаалт/stack/queue, 1.9.2 мод, 1.9.3 hash, 1.9.4 bitmap).</p>
 <p><b>list_head</b> нь intrusive, давхар холбоост, дугуй жагсаалт юм. Node нь өгөгдлийн struct дотор <code>list_head</code> талбар агуулж, <code>container_of</code> макро нь талбарын хаягаас эзэн struct-ийг сэргээнэ. Нэмэх, устгах үйлдэл O(1), хайх нь O(n).</p>
 <p><b>Queue (FIFO)</b> нь tail-д нэмж head-ээс авдаг. Kernel-ийн ready queue ийм зарчмаар ажилладаг. <b>Stack (LIFO)</b> нь head-д нэмж head-ээс авдаг.</p>
 <p><b>Bitmap</b>-д 1 бит нь 1 нөөцийг илэрхийлнэ. set/clear/test нь O(1) бөгөөд Boolean массиваас 8 дахин бага зай эзэлнэ.</p>
@@ -281,7 +283,7 @@ kds: birthday 2/8/1995 ... 30/12/2003, fifo out 10 20 30, bitmap weight=2, bit15
 
 <h1 id="h-ref">Ашигласан материал</h1>
 <ol>
-  <li>A. Silberschatz, P. B. Galvin, G. Gagne. <i>Operating System Concepts</i>, 10th ed. Wiley, 2018 – 1.9 Kernel Data Structures, 3-р бүлэг Processes ба Programming Projects.</li>
+  <li>A. Silberschatz, P. B. Galvin, G. Gagne. <i>Operating System Concepts</i>, 10th ed. Wiley, 2018 – Chapter 1 Introduction, 1.9 Kernel Data Structures (p. 36); 3-р бүлэг Processes ба Programming Projects.</li>
   <li>Linux kernel эх код ба баримт: <code>include/linux/list.h</code>, <code>include/linux/kfifo.h</code>, <code>include/linux/bitmap.h</code>, <code>include/linux/moduleparam.h</code>; Documentation/core-api/kernel-api.rst.</li>
   <li>The Linux Kernel Module Programming Guide (module_param, insmod/rmmod).</li>
   <li>F.CSM302 «Бие даалт 1» удирдамж.</li>
@@ -299,7 +301,7 @@ kds: birthday 2/8/1995 ... 30/12/2003, fifo out 10 20 30, bitmap weight=2, bit15
 </table>
 <table style="font-size:9.5pt;margin-bottom:6pt">
   <tr><th style="width:24%">Гишүүн</th><th>Хариуцах ажил</th><th style="width:30%">Commit / file</th></tr>
-  <tr><td>Н. Ням-Од</td><td>Онолын судалгаа: сурах бичгийн 1.9 ба 3-р бүлгийн Programming Project, list_head ба container_of; тайлангийн 2–3-р хэсэг</td><td>-</td></tr>
+  <tr><td>Н. Ням-Од</td><td>Онолын судалгаа: сурах бичгийн Chapter 1, 1.9 Kernel Data Structures (p. 36) ба 3-р бүлгийн Programming Project, list_head ба container_of; тайлангийн 2–3-р хэсэг</td><td>-</td></tr>
   <tr><td>А. Гэрэл</td><td>Repository удирдлага, веб апп (web/, Next.js) ба C программын <code>--json</code> горим, CI/release тохиргоо, C програм ба kernel module-ийг нэгтгэх, kernel module-ийг өөрийн Linux сервер дээр build хийж insmod/rmmod-оор турших; тайлангийн 4–6-р хэсэг</td><td>2026-10-20…27: first commit, UI, Report zasav, Example, Code buten bolgov, JSON mode/web app/CI</td></tr>
   <tr><td>А. Номин</td><td>Туршилтын өгөгдөл: examples/*.txt, хүлээгдэх гаралт, захын ба буруу оролтын тест (errors.txt); тайлангийн 7-р хэсэг</td><td>-</td></tr>
   <tr><td>Э. Мягмаршагай</td><td>Процесс ба scheduler: FCFS, Round Robin-ийн хуваарийг гараар тооцож програмын гаралттай тулгах; тайлангийн 8-р хэсэг</td><td>-</td></tr>
