@@ -29,7 +29,7 @@ export function Menu() {
     <div className="mx-auto max-w-6xl px-6 py-10">
       <header className="anim-fade-up flex flex-col items-center gap-4 py-10 text-center">
         <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight text-foreground md:text-5xl">
-          Кернелийн <span className="text-primary">7 бүтэц</span> — гар хүргэж суръя
+          Кернелийн <span className="text-primary">7 бүтэц</span>
         </h1>
         <p className="max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
           Багш нэг алхам тутамд тайлбарлана. Чи команд ажилуулж, бүтэц өөрөө хэрхэн өөрчлөгдөж байгааг шууд харна.
