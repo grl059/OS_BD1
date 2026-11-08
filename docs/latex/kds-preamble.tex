@@ -20,9 +20,34 @@
 \usepackage{tocloft}
 \usepackage{etoolbox}
 \usepackage{needspace}
+\usepackage{amssymb}
 
-\setmainfont{Times New Roman}
-\setmonofont{Menlo}
+% DejaVu Serif/Sans Mono: монгол кирилл (Ү, Ө) дэмждэг, кросс-платформ фонт.
+% Эхлээд TeX Live-ийн dejavu багцаас файлаар, олдохгүй бол системийн
+% DejaVu фонтны нэрээр ачаална (Linux-д fonts-dejavu-core). Times New Roman,
+% Menlo нь зөвхөн macOS-д байдаг тул Linux дээр build унадаг байсан.
+\IfFontExistsTF{DejaVuSerif.ttf}{
+  \setmainfont{DejaVuSerif}[
+    Extension = .ttf,
+    UprightFont = *,
+    BoldFont = *-Bold,
+    ItalicFont = *-Italic,
+    BoldItalicFont = *-BoldItalic,
+  ]
+}{
+  \setmainfont{DejaVu Serif}
+}
+\IfFontExistsTF{DejaVuSansMono.ttf}{
+  \setmonofont{DejaVuSansMono}[
+    Extension = .ttf,
+    UprightFont = *,
+    BoldFont = *-Bold,
+    ItalicFont = *-Oblique,
+    BoldItalicFont = *-BoldOblique,
+  ]
+}{
+  \setmonofont{DejaVu Sans Mono}
+}
 \graphicspath{{../report_src/img/}}
 
 \definecolor{linkblue}{HTML}{1D3F7A}
@@ -76,6 +101,8 @@
 }
 
 \newcommand{\code}[1]{{\fontsize{10}{12}\selectfont\texttt{\detokenize{#1}}}}
+\newcommand{\term}[1]{\textit{#1}}
+\newcommand{\srccite}[1]{\hyperlink{ref#1}{[#1]}}
 
 \captionsetup{font={small,it}, justification=centering, skip=3pt, labelformat=empty}
 

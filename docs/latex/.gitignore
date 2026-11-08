@@ -1,4 +1,1 @@
-build/*.aux
-build/*.log
-build/*.out
-build/*.toc
+build/

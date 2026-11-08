@@ -1,5 +1,7 @@
 #!/bin/sh
-# LaTeX эх кодоос PDF үүсгэх: docs/report_src/latex/build/
+# LaTeX эх кодоос PDF үүсгэх: docs/latex/build/ -> эцсийн хувилбар docs/ руу.
+# Албан ёсны эх нь report.tex/manual.tex; DejaVu фонт шаардлагатай
+# (TeX Live-ийн dejavu багц эсвэл системийн fonts-dejavu-core).
 set -eu
 cd "$(dirname "$0")"
 
@@ -31,3 +33,6 @@ build() {
 
 build report V-1-4_BD1_Report
 build manual V-1-4_Manual
+cp build/V-1-4_BD1_Report.pdf ../V-1-4_BD1_Report.pdf
+cp build/V-1-4_Manual.pdf ../V-1-4_Manual.pdf
+echo "OK docs/V-1-4_BD1_Report.pdf docs/V-1-4_Manual.pdf"

@@ -11,6 +11,9 @@ modules.order
 Module.symvers
 .tmp_versions/
 __pycache__/
+.DS_Store
+# submission export (repo-ийн хуулбар, эх код биш)
+/V-1-4_BD1_attachments.zip
 # signing keys must never be committed
 *.priv
 *.der
