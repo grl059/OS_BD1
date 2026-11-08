@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<title>V-1-4_BD1_Poster – Kernel Data Structures</title>
+<!-- Build: python3 docs/report_src/build_poster.py  (playwright + chromium) -->
+<style>
+@page { size: A3 landscape; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 420mm; height: 297mm; }
+body { font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; color: #000; background: #fff; }
+.page {
+  width: 420mm; height: 297mm; display: grid;
+  grid-template-columns: 56mm 1fr 1fr 1fr;
+  grid-template-rows: 36mm 1fr;
+  grid-template-areas: "brand head head head" "side c1 c2 c3";
+}
+.brand { grid-area: brand; background: #bdd7ee; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2mm; padding: 2mm; }
+.brand img { width: 14mm; }
+.brand div { font-size: 8pt; font-weight: bold; text-align: center; line-height: 1.3; }
+.head { grid-area: head; background: linear-gradient(180deg, #2e75b6 0%, #9dc3e6 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.2mm; text-align: center; padding: 2mm 6mm; }
+.head h1 { font-size: 25pt; line-height: 1.15; }
+.head h1 .red { color: #c00000; }
+.head p { font-size: 12.5pt; }
+.side { grid-area: side; background: #2e75b6; padding: 4mm 3mm; display: flex; flex-direction: column; gap: 4mm; }
+.sbox { background: #9dc3e6; border-radius: 2mm; padding: 3mm; }
+.sbox h2 { font-size: 12.5pt; text-align: center; margin-bottom: 2mm; }
+.sbox p { font-size: 10pt; line-height: 1.4; margin-bottom: 2mm; }
+.sbox p:last-child { margin-bottom: 0; }
+.sbox.contact { margin-top: auto; }
+.sbox.contact p { margin-bottom: 1.5mm; font-size: 9pt; }
+.col { padding: 4mm; display: flex; flex-direction: column; gap: 4mm; min-height: 0; }
+#c1 { grid-area: c1; } #c2 { grid-area: c2; } #c3 { grid-area: c3; }
+.box { background: #e8f6f8; border: 0.4mm solid #b9dde4; border-radius: 5mm; box-shadow: 0 1mm 2mm rgba(0,0,0,.25); padding: 4mm 4.5mm; }
+.box h2 { font-size: 13pt; text-align: center; text-transform: uppercase; margin-bottom: 2.5mm; line-height: 1.2; }
+.box ul { list-style: none; }
+.box li { font-size: 11pt; line-height: 1.45; margin-bottom: 2mm; padding-left: 3.5mm; position: relative; }
+.box li::before { content: "•"; position: absolute; left: 0; }
+.box li:last-child { margin-bottom: 0; }
+.box h3 { font-size: 10.8pt; margin: 2.2mm 0 1mm; }
+.box h3:first-of-type { margin-top: 0; }
+.box p { font-size: 11pt; line-height: 1.45; }
+#c1 .box { flex: 1; display: flex; flex-direction: column; }
+#c1 li { font-size: 12pt; line-height: 1.55; margin-bottom: 3mm; }
+#c2 .box:first-child { flex: 1; }
+#c3 .box { flex: 1; }
+#c3 .box li { font-size: 10.3pt; line-height: 1.35; }
+.pipe { margin-top: auto; display: flex; align-items: stretch; gap: 1.6mm; }
+.pbox { flex: 1; background: #fff; border-radius: 2mm; box-shadow: 0 0.8mm 1.6mm rgba(0,0,0,.25); padding: 3mm 2mm; text-align: center; }
+.pbox b { display: block; color: #2e75b6; font-size: 9.5pt; margin-bottom: 1.5mm; }
+.pbox span { font-size: 8.2pt; color: #444; line-height: 1.35; display: block; }
+.arrow { align-self: center; width: 0; height: 0; border-left: 2.6mm solid #2e75b6; border-top: 1.8mm solid transparent; border-bottom: 1.8mm solid transparent; }
+.shots { display: grid; grid-template-columns: 1fr; gap: 2mm; }
+.shots figure { border: 0.4mm solid #888; background: #fff; padding: 1mm; }
+.shots img { width: 100%; display: block; }
+.shots figcaption { font-size: 7.2pt; color: #333; text-align: center; margin-top: 0.8mm; line-height: 1.25; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="brand">
+    <img src="img/logo.png" alt="ШУТИС">
+    <div>Мэдээлэл, Холбооны<br>Технологийн Сургууль</div>
+  </div>
+
+  <div class="head">
+    <h1><span class="red">"Kernel Data Structures"</span>: Кернелийн Өгөгдлийн Бүтцийн Загварчлал</h1>
+    <p>Оюутан: B222270805 Н.Ням-Од, B241940001 А.Гэрэл, B242270088 А.Номин, B241910001 Э.Мягмаршагай, B241910020 О.Хүслэн, B160910830 Ч.Түмэншагай</p>
+    <p>Удирдагч багш: Г.Ганбат (F.CS10)</p>
+  </div>
+
+  <div class="side">
+    <div class="sbox">
+      <h2>ХУРААНГҮЙ</h2>
+      <p>Linux kernel нь процесс, нөөц, файлуудаа холбоост жагсаалт, дараалал, стек, bitmap, хэш хүснэгт, мод зэрэг өгөгдлийн бүтцээр удирддаг. Эдгээрт элемент нэмэх, устгах, хайх үед бүтэц хэрхэн өөрчлөгддөгийг нүдээр харуулах нь энэ төслийн зорилго юм.</p>
+      <p>Бид kernel-ийн list_head семантикийг C-ээр дахин бичиж, есөн бүтэц бүхий kds командын интерпретатор бүтээв. Вэб апп (Next.js) нь kds --json горимын гаралтыг шууд зурдаг тул бүх логик ганцхан C дотор байна. Kernel module нь color жагсаалт ба start параметртэй Collatz дарааллыг kernel дотор үүсгэж, устгана.</p>
+      <p>Жишээ скрипт, stress, 40 000 санамсаргүй команд, AVL/red-black/heap инвариантын тестүүд бүгд давсан (нийт 98 PASS). Хэрэглэгч өөрийн огноо, тоо, түлхүүр, процессоо оруулж турших боломжтой.</p>
+    </div>
+    <div class="sbox contact">
+      <h2>ХОЛБОО БАРИХ</h2>
+      <p><b>И-Мэйл:</b><br>nyamsurennyamod8@gmail.com</p>
+      <p><b>GitHub:</b> github.com/grl059/OS_BD1</p>
+      <p><b>Вэб:</b> npm run dev → localhost:3000</p>
+    </div>
+  </div>
+
+  <div class="col" id="c1">
+    <div class="box">
+      <h2>Төслийн танилцуулга</h2>
+      <ul>
+        <li>Сурах бичиг: Operating System Concepts, Chapter 1 §1.9 Kernel Data Structures (p. 36) ба Chapter 3 Programming Project «Kernel Data Structures».</li>
+        <li>Kernel-ийн list_head, bitmap, hash хүснэгт, мод зэрэг бүтцийг хэрэглэгчийн орчинд загварчилж, үйлдэл бүрийн дараах төлөвийг графаар харуулна.</li>
+        <li>CLI ба вэб хоёулаа нэг C программаас гаралтай тул дэлгэц дээрх зураг бодит тооцооноос зөрөхгүй.</li>
+        <li>«Хичээл» горимд Багш алхам бүрд монгол дуугаар тайлбарлаж, хэрэглэгч нэг командыг нэг удаа ажиллуулж дэвшинэ.</li>
+        <li>Буруу оролт бүр (огноо, индекс, түлхүүр, процесс) тодорхой ERR мессеж өгч, програм цааш үргэлжилнэ.</li>
+        <li>Есөн бүтэц: холбоост жагсаалт, queue, stack, bitmap, hash, BST/AVL, red-black, min-heap, PCB/scheduler (FCFS/RR).</li>
+        <li>Chapter 3-ийн Part I/II kernel module нь бодит Linux кернел дээр insmod/rmmod-оор баталгаажсан.</li>
+        <li>Script, stress, fuzz, AVL/red-black/heap тестүүд GitHub Actions дээр Ubuntu + macOS бүрд автоматаар давтагдана.</li>
+      </ul>
+      <div class="pipe">
+        <div class="pbox"><b>ВЭБ ДЭЛГЭЦ</b><span>Next.js • React<br>граф, дуут тайлбар</span></div>
+        <div class="arrow"></div>
+        <div class="pbox"><b>СЕРВЕР</b><span>/api/run<br>Node.js</span></div>
+        <div class="arrow"></div>
+        <div class="pbox"><b>C ЦӨМ</b><span>kds --json<br>9 бүтцийн логик</span></div>
+        <div class="arrow"></div>
+        <div class="pbox"><b>ТӨЛӨВ</b><span>JSON state<br>шууд зурагдана</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col" id="c2">
+    <div class="box">
+      <h2>Төслийн хүрээнд гүйцэтгэсэн ажлууд</h2>
+      <h3>1. C цөм (src/user/kds.c)</h3>
+      <ul>
+        <li>Жагсаалт, queue, stack, bitmap, hash map, BST/AVL, red-black, min-heap, PCB/scheduler — есөн бүтэц.</li>
+        <li>Hash-д hlist chaining, ачаалал 0.75-аас хэтрэхэд bucket автомат ×2; overflow/underflow, хязгаарын шалгалт.</li>
+      </ul>
+      <h3>2. Вэб апп (web/, Next.js)</h3>
+      <ul>
+        <li>Чөлөөт горим: бүтэц сонгож команд ажиллуулна, граф шууд зурагдана; түүх, буцаах, reset.</li>
+        <li>Хичээл: 7 шат, монгол дуут тайлбар, шат бүрд ойлголт шалгах асуулт.</li>
+      </ul>
+      <h3>3. Kernel module (src/kernel/)</h3>
+      <ul>
+        <li>Part I: color жагсаалт; Part II: Collatz start параметртэй (1..1 000 000).</li>
+        <li>birthday, kfifo, bitmap, Linux-ийн hashtable/rbtree толгой файл, /proc/kds интерфэйс.</li>
+      </ul>
+      <h3>4. Тест ба CI</h3>
+      <ul>
+        <li>8 скрипт + stress + fuzz + AVL/rb/heap шалгалт: нийт 98 PASS, FAIL 0.</li>
+        <li>GitHub Actions: Ubuntu + macOS дээр build/тест, автоматаар release.</li>
+      </ul>
+      <h3>5. Баримт бичиг</h3>
+      <ul>
+        <li>Report, Manual (LaTeX ба HTML эх), demo бичлэг, хөндлөнгийн шүүмж, постер.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h2>Төслийн үр дүн</h2>
+      <p>make check: 98 PASS (9 скрипт/stress + 9 текст==json + 8 fuzz + 32 AVL + 40 rb/heap). 40 000 санамсаргүй командад текст ба --json мессеж мөр мөрөөрөө ижил. AVL-ийн өндөр ≤ 1.44·log2(n+2), red-black-ийн өнгө/black-height, heap-ийн эс хазайх чанар бүх гүйлтэд хүчинтэй. Kernel module-ийн баталгаажсан хувилбар Ubuntu 24.04 (kernel 6.11.0-17) дээр insmod/rmmod-оор туршигдсан. Вэб аппын хуудсууд console алдаагүй, гаралт нь CLI-тай ижил.</p>
+    </div>
+  </div>
+
+  <div class="col" id="c3">
+    <div class="shots">
+      <figure><img src="img/ui_play_list.png"><figcaption>Холбоост жагсаалт: 5 огноо, find-ийн тодотгол</figcaption></figure>
+      <figure><img src="img/ui_play_hash.png"><figcaption>Hash: ab/ba/bob нэг bucket-д (collision)</figcaption></figure>
+      <figure><img src="img/ui_learn_tree.png"><figcaption>AVL мод: эргүүлэлтийн дараах тэнцвэр</figcaption></figure>
+      <figure><img src="img/ui_play_sched.png"><figcaption>Round Robin: running, ready queue, progress</figcaption></figure>
+    </div>
+    <div class="box">
+      <h2>Дүгнэлт</h2>
+      <ul>
+        <li>Удирдамжийн 1.9-д заасан бүх үндсэн бүтэц болон Chapter 3-ийн Part I/II kernel module даалгавар хоёулаа хэрэгжиж, тестээр нотлогдсон.</li>
+        <li>Нэмэлтээр red-black мод, min-heap-ийг хэрэгжүүлж, AVL-тэй өндөр/эргүүлэлтээр харьцуулсан.</li>
+        <li>Вэб нь логикийг давтдаггүй, зөвхөн C-ийн JSON төлөвийг зурдаг тул «зураг бодит ажиллагаанаас зөрөх» асуудал угаасаа байхгүй.</li>
+        <li>Цаашдын ажил: rb/heap-ийг вэб дэлгэцэнд нэмэх, kernel module-ийн шинэчлэгдсэн хэсгийг бодит Linux дээр insmod-оор баталгаажуулах.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
