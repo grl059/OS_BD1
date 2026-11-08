@@ -56,18 +56,11 @@ static int list_empty(const struct list_head *h) { return h->next == h; }
 /* ---------- hlist (include/linux/list.h): singly-headed hash-bucket list ----------
  * An hlist_head is ONE pointer (8 bytes) while a list_head is two (16 bytes),
  * which halves the memory of a big bucket array. The price: no O(1) tail
- * access (hlist_add_tail below walks the chain) - the kernel only adds at
- * the head (hlist_add_head), we walk to keep our printed chain order. */
+ * access - the kernel adds at the head, we walk the chain (hlist_add_tail
+ * below) to keep the printed order equal to the insertion order. */
 struct hlist_node { struct hlist_node *next, **pprev; };
 struct hlist_head { struct hlist_node *first; };
 static int hlist_empty(const struct hlist_head *h) { return !h->first; }
-static inline void hlist_add_head(struct hlist_node *n, struct hlist_head *h)
-{
-	n->next = h->first;
-	if (h->first) h->first->pprev = &n->next;
-	h->first = n;
-	n->pprev = &h->first;
-}
 static void hlist_add_tail(struct hlist_node *n, struct hlist_head *h)
 {
 	struct hlist_node **pp = &h->first;
@@ -181,6 +174,12 @@ static void list_cmd(const char *op, int na, char **a)
 	int addh = !strcmp(op, "add_head"), addt = !strcmp(op, "add_tail");
 	int del = !strcmp(op, "del"), find = !strcmp(op, "find");
 	if (!addh && !addt && !del && !find) { puts("ERR list: unknown op"); return; }
+	for (i = 0; i < na; i++) {
+		if (strchr(a[i], '/')) {
+			puts("ERR list: date must be 3 numbers <day> <month> <year>, not d/m/y");
+			return;
+		}
+	}
 	if (na != 3 || !is_int(a[0], &d) || !is_int(a[1], &m) || !is_int(a[2], &y)) {
 		puts("ERR list: usage <op> <day> <month> <year>");
 		return;

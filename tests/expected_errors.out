@@ -2,6 +2,10 @@ ERR list: day out of range for month
 ERR list: day out of range for month
 ERR list: month must be 1..12
 ERR list: year must be 1900..2100
+ERR list: date must be 3 numbers <day> <month> <year>, not d/m/y
+ERR list: date must be 3 numbers <day> <month> <year>, not d/m/y
+ERR list: day out of range for month
+ERR list: month must be 1..12
 ERR list: usage <op> <day> <month> <year>
 ERR list: 1/1/2000 not found
 LIST size=0: (empty)
