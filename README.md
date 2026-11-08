@@ -16,7 +16,7 @@ Linux kernel-ийн өгөгдлийн бүтцүүдийг хэрэгжүүлж
 | Red-black tree | Linux CFS scheduler-ийн мод; өнгө, black-height, эргүүлэлтийн тоо (AVL-тэй харьцуулах) | `insert` / `delete` / `find` / `print` |
 | Min-heap (priority queue) | массив дээрх хоёртын овоолго, хамгийн ихдээ 16; sift-ийн swap тоог харуулна | `push` / `pop` / `peek` / `print` |
 | Процесс ба scheduler | PCB + `list_head` ready queue, FCFS ба Round Robin | `proc new` / дуусах / `sched print` |
-| Kernel module | `struct color` жагсаалт, `start` параметртэй Collatz жагсаалт, birthday, kfifo, bitmap, `hashtable.h`, `rbtree.h`, `/proc/kds` | `insmod` / `rmmod` / `cat /proc/kds` |
+| Kernel module | `struct color` жагсаалт, `start` параметртэй Collatz жагсаалт, birthday, kfifo, bitmap, Linux-ийн `<linux/hashtable.h>`, `<linux/rbtree.h>` систем толгой файлууд, `/proc/kds` | `insmod` / `rmmod` / `cat /proc/kds` |
 
 ## Quick Start (Linux / macOS / WSL; gcc, make)
 ```sh
@@ -46,7 +46,7 @@ cd web && node scripts/gen-tts.mjs
 
 **Нэмэлт тест** (node ≥ 18, python3 хэрэгтэй):
 ```sh
-make check                  # make test + --json==текст (json_check.py) + fuzz (8 seed x 5000 команд) + AVL шалгалт
+make check                  # make test + --json==текст (json_check.py) + fuzz (8 seed x 5000 команд) + AVL, red-black/heap шалгалт: нийт 98 PASS
 cd web && npm test           # lib/model.ts, lib/levels.ts - сүүлийнх нь ./kds-г жинхэнээр ажиллуулж шалгадаг
 ```
 
@@ -80,14 +80,14 @@ sched  policy fcfs|rr <квант 1..10>  ·  sched tick|print|clear
 | `examples/` | textbook, all_structures, errors, search, scheduler, scheduler_full, hash_resize, rb_heap |
 | `tests/` | хүлээгдэх гаралт, `run_tests.sh`, `json_check.py`, `fuzz_json.py`, `avl_check.py`, `rb_check.py` (red-black ба heap-ийн инвариант) |
 | `.github/workflows/` | `ci.yml` (C цөм + веб апп build/тест, ubuntu+macos), `release.yml` (CI амжилттай болсон тутамд conventional-commit дүрмээр хувилбар нэмэгдүүлж release гаргадаг) |
-| `docs/` | `V-1-4_BD1_Report.pdf`, `V-1-4_Manual.pdf`; `report_src/img/ui_*.png` – веб UI-ийн бодит дэлгэцийн зураг |
-| `docs/latex/` | ижил тайлангуудын LaTeX эх (report.tex, manual.tex, kds-preamble.tex, build/V-1-4_*.pdf). Build: `sh docs/latex/build_latex.sh` (XeLaTeX) |
+| `docs/` | `V-1-4_BD1_Report.pdf`, `V-1-4_Manual.pdf`, `V-1-4_BD1_Demo.mp4` (demo бичлэг), `V-1-4_Review_II-4-9.pdf` (хөндлөнгийн шүүмж); `report_src/img/ui_*.png` – веб UI-ийн бодит дэлгэцийн зураг |
+| `docs/latex/` | Тайлан, Manual-ийн **албан ёсны эх** (report.tex, manual.tex, kds-preamble.tex; XeLaTeX + DejaVu фонт). Build: `sh docs/latex/build_latex.sh` – эцсийн PDF-үүдийг `docs/`-д хуулна. `docs/report_src/` нь HTML нөөц эх (`build_pdf.py`, playwright) |
 
 ## Known issues
-- Kernel module-ийг жинхэнэ Linux дээр build хийнэ (WSL, Docker дээр ачаалагдахгүй). Secure Boot идэвхтэй бол MOK түлхүүрээр гарын үсэг зурна (Manual 2.6).
+- Kernel module-ийг жинхэнэ Linux дээр build хийнэ (WSL, Docker дээр ачаалагдахгүй). Secure Boot идэвхтэй бол MOK түлхүүрээр гарын үсэг зурна (Manual 2.7).
 - Hash map-ийн автомат resize нь анхдагчаар **унтраастай** (`hash auto on`-оор асаана; хуучин жишээнүүдийн гаралт өөрчлөгдөхгүйн тулд). Дээд тал нь 64 bucket; queue, stack, процесс хамгийн ихдээ 8; hash 24 элемент.
 - `rb`, `heap` нь одоогоор зөвхөн C цөм ба `--json` state-д бий; вэб UI-д харуулах дэлгэц хараахан нэмээгүй.
-- `src/kernel/kds_module.c`-ийн `hashtable.h`, `rbtree.h`, `/proc/kds` хэсгийг жинхэнэ Linux дээр `run_module_test.sh`-ээр шалгана.
+- `src/kernel/kds_module.c`-ийн Linux-ийн `<linux/hashtable.h>`, `<linux/rbtree.h>` толгой файлд суурилсан хэсэг болон `/proc/kds`-ийг жинхэнэ Linux дээр `run_module_test.sh`-ээр шалгана.
 - Scheduler-т бүх процесс `proc new` хийсэн мөчид ирнэ; I/O ба priority байхгүй.
 - Веб апп нь C-г **дахин хэрэгжүүлдэггүй**: дэлгэц дээрх бүх зүйл `kds --json`-ийн гаргасан `state`-ээс шууд ирдэг (`tests/json_check.py`, `web` дотор `node --test` баталгаажуулна).
 

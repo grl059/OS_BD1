@@ -21,7 +21,7 @@
 <h1>1. Хэрэглэгчийн заавар</h1>
 
 <h2>1.1 Програмын зорилго</h2>
-<p>Linux kernel-ийн өгөгдлийн бүтцүүдийг загварчилж, элемент нэмэх, устгах, хайх үйлдэл бүрийн дараах бүтцийг график дээр харуулна. Бүтцүүд: холбоост жагсаалт (<code>list_head</code>, struct birthday), queue (FIFO), stack (LIFO), bitmap, hash map (collision-той), хайлтын мод (энгийн BST ба тэнцвэржсэн AVL), процесс ба CPU (PCB, ready queue, FCFS ба Round Robin). Kernel module нь <code>struct color</code> жагсаалт болон <code>start</code> параметртэй Collatz жагсаалтыг kernel дотор үүсгэнэ. Хэрэглэгч өөрийн огноо, тоо, түлхүүр, процессоо оруулж туршина.</p>
+<p>Linux kernel-ийн өгөгдлийн бүтцүүдийг загварчилж, элемент нэмэх, устгах, хайх үйлдэл бүрийн дараах бүтцийг график дээр харуулна. Бүтцүүд: холбоост жагсаалт (<code>list_head</code>, struct birthday), queue (FIFO), stack (LIFO), bitmap, hash map (collision-той), хайлтын мод (энгийн BST ба тэнцвэржсэн AVL), red-black мод, min-heap (priority queue), процесс ба CPU (PCB, ready queue, FCFS ба Round Robin). Kernel module нь <code>struct color</code> жагсаалт болон <code>start</code> параметртэй Collatz жагсаалтыг kernel дотор үүсгэнэ. Хэрэглэгч өөрийн огноо, тоо, түлхүүр, процессоо оруулж туршина.</p>
 
 <h2>1.2 Дэмжих орчин</h2>
 <table>
@@ -58,7 +58,7 @@
 
 <h2>1.5 Ажиллуулах, зогсоох, reset хийх</h2>
 <ul>
-  <li><b>Веб апп:</b> «Чөлөөт горим» хуудас дээр зүүн талаас бүтцээ сонгоно. «Үйлдэл сонгох» хэсгээс үйлдлээ дарж (жишээ нь <code>add_tail</code>), талбаруудад утга оруулаад <b>«Ажиллуулах»</b>-ыг дарна; команд яг юу болохыг хэсэг дээрх кодын мөрөд урьдчилан харуулна. «Ахисан түвшин: команд шууд бичих» хэсэгт команд (<code>list add_tail 2 8 1995</code>) гараар бичиж болно. «Юу болов?» ба «Түүх (n)» самбар хариу болон ажиллуулсан командуудаа харуулж, «Сүүлчийнхийг буцаах», «Команд хуулах», «Шинээр эхлэх» товч тусална. <b>«Хичээл»</b> хуудсанд Багш алхам бүрт тайлбар хэлнэ (🔊 товчоор монгол дуугаар сонсоно), чи нэг алхамыг нэг удаа ажиллуулж дэвшинэ; дууссан шат <b>✓</b>-ээр тэмдэглэгдэж браузерад хадгагдана. Хуудсыг дахин ачаалах нь бүх бүтцийг reset хийнэ, учир нь бүтцийн төлөв зөвхөн C программ дотор, дэвсгэр process бүрт шинээр эхэлдэг.</li>
+  <li><b>Веб апп:</b> «Чөлөөт горим» хуудас дээр зүүн талаас бүтцээ сонгоно. «Үйлдэл сонгох» хэсгээс үйлдлээ дарж (жишээ нь <code>add_tail</code>), талбаруудад утга оруулаад <b>«Ажиллуулах»</b>-ыг дарна; команд яг юу болохыг хэсэг дээрх кодын мөрөд урьдчилан харуулна. «Ахисан түвшин: команд шууд бичих» хэсэгт команд (<code>list add_tail 2 8 1995</code>) гараар бичиж болно. «Юу болов?» ба «Түүх (n)» самбар хариу болон ажиллуулсан командуудаа харуулж, «Сүүлчийнхийг буцаах», «Команд хуулах», «Шинээр эхлэх» товч тусална. <b>«Хичээл»</b> хуудсанд Багш алхам бүрт тайлбар хэлнэ (дууны товчоор монгол дуугаар сонсоно), чи нэг алхамыг нэг удаа ажиллуулж дэвшинэ; дууссан шат <b>✓</b>-ээр тэмдэглэгдэж браузерад хадгагдана. Хуудсыг дахин ачаалах нь бүх бүтцийг reset хийнэ, учир нь бүтцийн төлөв зөвхөн C программ дотор, дэвсгэр process бүрт шинээр эхэлдэг.</li>
   <li><b>CLI:</b> <code>./kds файл.txt</code> нь script ажиллуулна. <code>./kds</code> гэж ажиллуулаад команд бичиж болно. <b>Ctrl+D</b> дарж зогсооно (Ctrl+C мөн зогсооно). Програмыг дахин ажиллуулахад бүх бүтэц хоосон эхэлнэ (reset). Бүтэц тус бүрийг <code>list clear</code>, <code>hash clear</code>, <code>sched clear</code>-ээр цэвэрлэнэ. JSON горимоор ажиллуулахад <code>./kds --json</code> гэж нэмж бичнэ.</li>
   <li><b>Kernel module:</b> <code>sudo insmod</code> ачаална, <code>sudo rmmod kds_module</code> буулгана (2.7).</li>
 </ul>
@@ -131,7 +131,8 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7</pre>
 <table>
   <tr><th style="width:36%">Мессеж</th><th>Шалтгаан</th><th style="width:28%">Шийдэл</th></tr>
   <tr><td><code>ERR list: day out of range for month</code></td><td>Байхгүй огноо (31/4, 29/2/1900)</td><td>Зөв огноо оруулах</td></tr>
-  <tr><td><code>ERR list: usage &lt;op&gt; &lt;day&gt; &lt;month&gt; &lt;year&gt;</code></td><td>3 тоо биш (дутуу, үсэг, «2/8/1995» гэж налуу зураастай)</td><td><code>list add_tail 2 8 1995</code></td></tr>
+  <tr><td><code>ERR list: usage &lt;op&gt; &lt;day&gt; &lt;month&gt; &lt;year&gt;</code></td><td>3 тоо биш (дутуу, үсэг г.м.)</td><td><code>list add_tail 2 8 1995</code></td></tr>
+  <tr><td><code>ERR list: date must be 3 numbers &lt;day&gt; &lt;month&gt; &lt;year&gt;, not d/m/y</code></td><td>Огноог налуу зураастай бичсэн («2/8/1995»)</td><td>3 тусдаа тоогоор: <code>list add_tail 2 8 1995</code></td></tr>
   <tr><td><code>ERR queue: overflow (limit 8)</code></td><td>8-аас олон push</td><td>pop хийх</td></tr>
   <tr><td><code>ERR queue: underflow (empty)</code></td><td>Хоосон дээр pop</td><td>Эхлээд push</td></tr>
   <tr><td><code>ERR bitmap: index N out of range</code></td><td>Индекс хэтэрсэн</td><td>0..n−1 дотор оруулах</td></tr>
@@ -141,7 +142,7 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7</pre>
   <tr><td><code>ERR hash: full (limit 24)</code></td><td>24 элемент</td><td><code>hash del</code> эсвэл <code>hash clear</code></td></tr>
   <tr><td><code>ERR proc: name must be …</code></td><td>Нэр урт эсвэл тусгай тэмдэгттэй</td><td>Ж: A, job1</td></tr>
   <tr><td><code>ERR proc: too many processes</code></td><td>8-аас олон амьд процесс</td><td>Зарим нь дуустал tick хийх</td></tr>
-  <tr><td><code>ERR unknown structure 'x'</code></td><td>Бүтцийн нэр буруу</td><td>list, queue, stack, bitmap, hash, tree, proc, sched</td></tr>
+  <tr><td><code>ERR unknown structure 'x'</code></td><td>Бүтцийн нэр буруу</td><td>list, queue, stack, bitmap, hash, tree, rb, heap, proc, sched</td></tr>
   <tr><td><code>insmod: Key was rejected by service</code></td><td>Secure Boot, гарын үсэггүй модуль</td><td>MOK-оор гарын үсэг зурах (2.7)</td></tr>
   <tr><td><code>insmod: Invalid parameters</code></td><td><code>start</code> 1..1 000 000-аас гадуур</td><td>Ж: <code>start=27</code></td></tr>
   <tr><td><code>make: *** /lib/modules/…/build: No such file</code></td><td>Kernel header суугаагүй</td><td><code>sudo apt install linux-headers-$(uname -r)</code></td></tr>
@@ -160,7 +161,7 @@ git checkout v1.0.0        # 9-р долоо хоногт нийтэлсэн х�
   <tr><td>OS</td><td>Ubuntu 24.04 LTS</td><td>Linux / macOS / WSL (CLI); жинхэнэ Linux (module)</td></tr>
   <tr><td>gcc</td><td>13.3</td><td>≥ 9 (ASan/UBSan дэмжлэгтэй); clang мөн болно</td></tr>
   <tr><td>GNU make</td><td>4.3</td><td>—</td></tr>
-  <tr><td>Python</td><td>3.13</td><td>≥ 3.8 (fuzz, AVL тест)</td></tr>
+  <tr><td>Python</td><td>3.13</td><td>≥ 3.8 (fuzz, AVL, rb/heap тест)</td></tr>
   <tr><td>Node.js</td><td>22</td><td>≥ 18 (веб апп, text==json тест, CI)</td></tr>
   <tr><td>Linux kernel</td><td>6.11.0-17-generic</td><td>headers нь ажиллаж буй kernel-тэй ижил хувилбартай байх</td></tr>
 </table>
@@ -181,7 +182,12 @@ echo "queue push 5" | ./kds            # stdin-ээс
 make clean                             # build-ийн гаралтыг устгах
 
 # Веб апп (эхлээд дээрх make-ээр ./kds-г build хийсэн байх ёстой):
-cd web && npm install && npm run dev   # http://localhost:3000 дээр нээнэ</pre>
+cd web && npm install && npm run dev   # http://localhost:3000 дээр нээнэ
+
+# Тайлан/Manual PDF (албан ёсны эх: docs/latex, XeLaTeX + DejaVu фонт):
+sh docs/latex/build_latex.sh           # -> docs/V-1-4_BD1_Report.pdf, docs/V-1-4_Manual.pdf
+# Ubuntu-д: sudo apt install texlive-xetex texlive-fonts-extra fonts-dejavu-core
+# HTML нөөц эхээс: python3 docs/report_src/build_pdf.py  (playwright + chromium)</pre>
 
 <h2>2.5 Үндсэн тестийн өгөгдөл</h2>
 <pre>make test
@@ -196,7 +202,7 @@ python3 tests/rb_check.py              # red-black 30 seed (өнгө, black-heig
 <p>Хүлээгдэх гаралт <code>tests/expected_*.out</code>-д байна. Шинэ тест нэмэхдээ <code>examples/нэр.txt</code> үүсгээд <code>./kds examples/нэр.txt &gt; tests/expected_нэр.out</code> гэж хадгалж, гаралтыг гараар шалгаад <code>tests/run_tests.sh</code>-ийн жагсаалтад нэрийг нэмнэ.</p>
 
 <h2>2.6 Нэмэлт boundary/error test</h2>
-<p><code>examples/errors.txt</code>: буруу огноо (31/4, 29/2/1900), сар 13, жил 1800, үсэг бүхий аргумент, хоосон бүтцээс pop, bitmap size 0 ба 129, индекс −1 ба 99, давхардсан tree утга, байхгүй утга устгах. <code>examples/scheduler.txt</code>-ийн төгсгөл: урт нэр, ажил 0 ба 21, квант 0 ба 11, мэдэгдэхгүй бодлого. <code>examples/scheduler_full.txt</code>: 9 дэх процесс татгалзагдана. <code>examples/search.txt</code>: 13 тэмдэгттэй түлхүүр, «-» тэмдэгттэй түлхүүр, хоосон биш модны төрлийг солих. <code>examples/hash_resize.txt</code>: <code>rehash 65</code> (64-оос дээш), <code>rehash 0</code>, <code>auto maybe</code> мөрүүд ERR. <code>examples/rb_heap.txt</code>: давхардсан <code>rb insert</code>, байхгүй утгын <code>rb delete</code>, хоосон heap-ийн <code>pop</code> ба <code>peek</code> ERR. Эдгээрийн мөр бүр ойлгомжтой <code>ERR</code> мессеж өгч, програм үргэлжлэн ажиллах ёстой.</p>
+<p><code>examples/errors.txt</code>: буруу огноо (31/4, 29/2/1900), сар 13, жил 1800, налуу зураастай огноо (0/5/2000), өдөр/сар 0, үсэг бүхий аргумент, хоосон бүтцээс pop, bitmap size 0 ба 129, индекс −1 ба 99, давхардсан tree утга, байхгүй утга устгах. <code>examples/scheduler.txt</code>-ийн төгсгөл: урт нэр, ажил 0 ба 21, квант 0 ба 11, мэдэгдэхгүй бодлого. <code>examples/scheduler_full.txt</code>: 9 дэх процесс татгалзагдана. <code>examples/search.txt</code>: 13 тэмдэгттэй түлхүүр, «-» тэмдэгттэй түлхүүр, хоосон биш модны төрлийг солих. <code>examples/hash_resize.txt</code>: <code>rehash 65</code> (64-оос дээш), <code>rehash 0</code>, <code>auto maybe</code> мөрүүд ERR. <code>examples/rb_heap.txt</code>: давхардсан <code>rb insert</code>, байхгүй утгын <code>rb delete</code>, хоосон heap-ийн <code>pop</code> ба <code>peek</code> ERR. Эдгээрийн мөр бүр ойлгомжтой <code>ERR</code> мессеж өгч, програм үргэлжлэн ажиллах ёстой.</p>
 
 <h2>2.7 Kernel module</h2>
 <pre>sh src/kernel/run_module_test.sh
