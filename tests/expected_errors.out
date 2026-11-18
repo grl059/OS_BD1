@@ -21,3 +21,8 @@ ERR bitmap: index -1 out of range 0..31
 OK tree insert 5 (size=1)
 ERR tree: duplicate 5
 ERR tree: 9 not found
+ERR too many tokens (max 14 arguments)
+ERR queue: integer out of range -2147483647..2147483647 (got '99999999999')
+ERR tree: integer out of range -2147483647..2147483647 (got '-2147483648')
+ERR bitmap: integer out of range -2147483647..2147483647 (got '4294967296')
+OK hash put 12345678901 -> 7 (bucket=6, size=1)

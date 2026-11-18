@@ -63,6 +63,7 @@ inside the C program.*
 "tree":   {"avl": false, "size": 2, "height": 2,
            "node": {"v":7,"l":{"v":3,"l":null,"r":null},"r":null} }
 "sched":  {"quantum": 2, "time": 2, "done": 0,
+           "wait_total": 0, "turn_total": 0,   // sums over finished processes; avg wait = wait_total/done
            "running": {"pid":1,"name":"worker","rem":2,"burst":4} | null,
            "ready": [{"pid":1,"name":"worker","rem":2,"burst":4}, ...]}
 ```

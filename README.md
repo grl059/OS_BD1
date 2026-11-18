@@ -67,7 +67,7 @@ tree   mode bst|avl  ·  tree insert|delete|find <int>  ·  tree print|stats
 rb     insert|delete|find <int>  ·  rb print|clear        (red-black tree)
 heap   push <int>  ·  heap pop|peek|print|clear         (min-heap, багтаамж 16)
 proc   new <нэр> <ажил 1..20>
-sched  policy fcfs|rr <квант 1..10>  ·  sched tick|print|clear
+sched  policy fcfs|rr <квант 1..10>  ·  sched tick|print|stats|clear   (stats = дундаж хүлээлт, turnaround)
 ```
 `#`-ээс хойших хэсэг коммент. Буруу оролт бүр `ERR ...` мессеж өгнө.
 
@@ -86,7 +86,9 @@ sched  policy fcfs|rr <квант 1..10>  ·  sched tick|print|clear
 ## Known issues
 - Kernel module-ийг жинхэнэ Linux дээр build хийнэ (WSL, Docker дээр ачаалагдахгүй). Secure Boot идэвхтэй бол MOK түлхүүрээр гарын үсэг зурна (Manual 2.7).
 - Hash map-ийн автомат resize нь анхдагчаар **унтраастай** (`hash auto on`-оор асаана; хуучин жишээнүүдийн гаралт өөрчлөгдөхгүйн тулд). Дээд тал нь 64 bucket; queue, stack, процесс хамгийн ихдээ 8; hash 24 элемент.
-- `rb`, `heap` нь одоогоор зөвхөн C цөм ба `--json` state-д бий; вэб UI-д харуулах дэлгэц хараахан нэмээгүй.
+- Вэб UI одоо C цөмийн 9 бүтэц бүрийг (rb улаан-хар мод, heap овоо орно) зурна; `/learn`-д 9 шат бий. (Вэб `next build`-ийг энэ хувилбарт сэндбокс дотор ажиллуулж чадаагүй тул `cd web && npm install && npm run build`-ээр шалгана уу.)
+- Kernel module-ийн **одоогийн** хувилбарын insmod/rmmod нотолгоо (`docs/kernel_dmesg.txt`) хараахан commit хийгдээгүй; жинхэнэ Linux дээр `docs/KERNEL_EVIDENCE.md`-ийн алхмаар гаргана. Report-ын Зураг 7 нь өмнөх хувилбарынх.
+- Нэг мөрөнд хамгийн ихдээ 16 үг (команд, үйлдэл + 14 утга); int-ийн муж `-2147483647..2147483647`; `bitmap size` нь бүх битийг цэвэрлэнэ.
 - `src/kernel/kds_module.c`-ийн Linux-ийн `<linux/hashtable.h>`, `<linux/rbtree.h>` толгой файлд суурилсан хэсэг болон `/proc/kds`-ийг жинхэнэ Linux дээр `run_module_test.sh`-ээр шалгана.
 - Scheduler-т бүх процесс `proc new` хийсэн мөчид ирнэ; I/O ба priority байхгүй.
 - Веб апп нь C-г **дахин хэрэгжүүлдэггүй**: дэлгэц дээрх бүх зүйл `kds --json`-ийн гаргасан `state`-ээс шууд ирдэг (`tests/json_check.py`, `web` дотор `node --test` баталгаажуулна).

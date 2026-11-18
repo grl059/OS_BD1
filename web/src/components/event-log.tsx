@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import type { KdsEvent } from "@/lib/model";
+import { explainErr } from "@/lib/config";
 
 export function EventLog({ events }: { events: KdsEvent[] }) {
   return (
@@ -10,6 +11,7 @@ export function EventLog({ events }: { events: KdsEvent[] }) {
       {events.map((e) => (
         <div
           key={e.t}
+          title={e.msg}
           className={cn(
             "flex items-start gap-2 rounded px-1.5 py-0.5",
             !e.ok && "bg-destructive/10 text-destructive",
@@ -20,7 +22,14 @@ export function EventLog({ events }: { events: KdsEvent[] }) {
           <span className="shrink-0 font-semibold">
             {e.cmd} {e.op}
           </span>
-          <span className="truncate">{e.msg}</span>
+          <span className="min-w-0 break-words">
+            {e.msg}
+            {!e.ok && explainErr(e.msg) && (
+              <span className="mt-0.5 block font-sans text-[11px] font-normal text-foreground/80">
+                ↳ {explainErr(e.msg)}
+              </span>
+            )}
+          </span>
         </div>
       ))}
     </div>

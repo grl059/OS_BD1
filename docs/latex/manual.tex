@@ -43,6 +43,7 @@ Kernel module & Жинхэнэ Linux (VM эсвэл үндсэн машин; WSL
   \item Repository-г татна: \code{git clone https://github.com/grl059/OS_BD1.git} эсвэл GitHub-ийн «Code $\rightarrow$ Download ZIP»-ээр татаж задлана.
   \item \textbf{CLI (C цөм):} терминалд repository-ийн хавтсанд \code{make} ажиллуулна. Ингэснээр \code{./kds} (Windows дээр \code{kds.exe}) үүснэ. Веб аппд энэ алхам заавал хэрэгтэй.
   \item \textbf{Веб апп:} \code{cd web} $\rightarrow$ \code{npm install} (нэг удаа) $\rightarrow$ \code{npm run dev}. Терминал дээр гарсан хаягийг (жишээ нь \code{http://localhost:3000}) browser-т нээнэ.
+  \item \textbf{Windows дээр (шинэ хэрэглэгчид):} хамгийн хялбар нь WSL: PowerShell-д \code{wsl --install}, дахин асаасны дараа Ubuntu терминалд 2.3-ийн \code{sudo apt install build-essential python3 nodejs npm}, дээрх 1--3-ыг хийнэ. MSYS2/MinGW ашиглавал \code{pacman -S mingw-w64-ucrt-x86_64-gcc make}, дараа нь \code{make} (\code{kds.exe} үүснэ). Windows-д \textbf{kernel module ажиллахгүй} (2.9).
 \end{enumerate}
 
 \manualsubsection{1.4 Оролт ба тохиргоо}
@@ -59,11 +60,13 @@ Kernel module & Жинхэнэ Linux (VM эсвэл үндсэн машин; WSL
 \code{rb insert|delete|find}\newline\code{<тоо>}, \code{print|clear} & бүхэл тоо & red-black мод; давхардсан утга татгалзана, байхгүй утгыг устгавал ERR\\
 \code{heap push <тоо>},\newline\code{pop|peek}, \code{print|clear} & бүхэл тоо & min-heap: хамгийн бага утга түрүүлж гарна; багтаамж 16 (overflow/underflow мэдээлнэ)\\
 \code{proc new <нэр>}\newline\code{<ажил>} & нэр, ажлын тик & нэр 1--8 тэмдэгт, ажил 1--20 тик, амьд процесс $\le$ 8\\
-\code{sched policy}\newline\code{fcfs | rr <квант>},\newline\code{tick|print|clear} & бодлого, квант & квант 1--10; 1 tick = 1 нэгж цаг\\
+\code{sched policy}\newline\code{fcfs | rr <квант>},\newline\code{tick|print|stats|clear} & бодлого, квант & квант 1--10; 1 tick = 1 нэгж цаг; \code{stats} = дундаж хүлээлт ба turnaround\\
 \code{... print},\newline\code{... clear} & --- & бүтцийн төлөвийг хэвлэх / цэвэрлэх\\
 \code{insmod kds_module.ko}\newline\code{start=N} & Collatz-ийн эхний гишүүн & 1..1\,000\,000 (анхдагч 25)\\
 \end{longtable}
-\texttt{\#}-ээс хойших хэсэг коммент. Тоог \code{+5}, \code{-3}, \code{007} хэлбэрээр бичиж болно. \code{3x}, \code{1.5} хэлбэрийн утга эсвэл int-ийн мужаас хэтэрсэн тоо буруу оролтод тооцогдоно.
+\texttt{\#}-ээс хойших хэсэг коммент. Тоог \code{+5}, \code{-3}, \code{007} хэлбэрээр бичиж болно. \code{3x}, \code{1.5} хэлбэрийн утга буруу оролтод тооцогдоно (usage мессеж). Зөвшөөрөгдөх бүхэл тооны муж \textbf{$-2\,147\,483\,647 \ldots 2\,147\,483\,647$}: үүнээс хэтэрсэн (мөн $-2\,147\,483\,648$) тоо \code{ERR <бүтэц>: integer out of range} мессеж өгнө. Нэг мөрөнд хамгийн ихдээ 16 үг (команд, үйлдэл + 14 утга) байж болно, илүү бол \code{ERR too many tokens (max 14 arguments)}.
+
+\textbf{Анхаарах:} \code{bitmap size <n>} нь хэмжээг солихдоо \textbf{бүх битийг 0 болгож чимээгүй цэвэрлэнэ}, тиймээс \code{set} хийсний дараа \code{size} дахин дуудвал өмнөх бит арилна. \code{sched stats} нь дууссан процессуудын дундаж хүлээлт (avg wait) ба дундаж дуусах хугацаа (avg turnaround)-г хэвлэнэ; хүлээлт = дууссан цаг $-$ ирсэн цаг $-$ ажлын урт.
 
 \manualsubsection{1.5 Ажиллуулах, зогсоох, reset хийх}
 \begin{itemize}[leftmargin=20pt,itemsep=1pt,topsep=2pt]
@@ -111,7 +114,7 @@ LIST size=0: (empty)
 
 \textbf{Жишээ 2 (өөрийн оролт -- bitmap).} «Чөлөөт горим» хуудсанд «bitmap» бүтцийг сонгоод командаар \code{bitmap size 16}, \code{bitmap set 3}, \code{bitmap set 9} гэж оруулна. 16 нүдний 3 ба 9-р нүд тодотгогддог болно. \code{bitmap print} командын гаралт: \code{BITMAP n=16: 0001000001000000 (set=2)}. \code{bitmap set 16} гэвэл \code{ERR bitmap: index 16 out of range 0..15} гарна.
 
-\textbf{Жишээ 3 (процесс ба CPU).} «Чөлөөт горим» хуудсанд «sched»/«proc» бүтцийг сонгоод доорх командуудыг оруулна. Квант 2-той Round Robin-оор A (5 тик), B (3), C (2) ээлжилж ажиллана. C нь t=5, B нь t=8, A нь t=9 тик дээр дуусна, өөрөөр хэлбэл дуусах хугацаа 6, 9, 10 болно. Дундаж хүлээлт 5.00 гарна. Дараа нь «Шинээр эхлэх» дарж бодлогыг FCFS болгоод ижил процессуудыг дахин оруулж хүлээлтийг харьцуулна (FCFS: 4.33). Командаар: \code{./kds examples/scheduler.txt}
+\textbf{Жишээ 3 (процесс ба CPU).} «Чөлөөт горим» хуудсанд «sched»/«proc» бүтцийг сонгоод доорх командуудыг оруулна. Квант 2-той Round Robin-оор A (5 тик), B (3), C (2) ээлжилж ажиллана. C нь t=5, B нь t=8, A нь t=9 тик дээр дуусна, өөрөөр хэлбэл дуусах хугацаа 6, 9, 10 болно. Дундаж хүлээлт 5.00 гарна: \code{sched stats} командыг (веб дээр «Дундаж хүлээлт» товч) ажиллуулахад програм өөрөө \code{SCHED STATS finished=3 avg_wait=5.00 avg_turnaround=8.33} гэж тооцож хэвлэнэ. Дараа нь «Шинээр эхлэх» дарж бодлогыг FCFS болгоод ижил процессуудыг дахин оруулж хүлээлтийг харьцуулна (\code{avg_wait=4.33}). Командаар: \code{./kds examples/scheduler.txt}
 \begin{codeblock}
 OK sched policy rr q=2
 OK proc new P1 A burst=5 (alive=1)
@@ -130,6 +133,7 @@ TICK t=8 P2(B) remaining=0 finished
 TICK t=9 P1(A) remaining=0 finished
 TICK t=10 idle
 SCHED policy=rr(q=2) time=11 running=none ready=(empty) done=3
+SCHED STATS finished=3 avg_wait=5.00 avg_turnaround=8.33
 \end{codeblock}
 
 \textbf{Жишээ 4 (хэш хүснэгт ба мод).} «Чөлөөт горим» хуудсанд «hash» бүтцийг сонгоод «ab», «ba» зэрэг түлхүүр нэмэхэд тэд «bob»-той нэг bucket-д орж collision үүсэхийг харна. «tree» бүтцийг сонгоод эхлээд энгийн төрлөөр 1--7-г дараалуулан оруулна (өндөр 7). Дараа нь «Шинээр эхлэх» $\rightarrow$ төрөл «avl» болгож дахин 1--7-г оруулж харьцуулна (өндөр 3). Командаар: \code{./kds examples/search.txt}
@@ -146,6 +150,7 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7
 \end{codeblock}
 
 \manualsubsection{1.8 Түгээмэл алдаа ба шийдэл}
+Веб аппын «Юу болов?» самбар алдааны мөр бүрийн доор монгол тайлбарыг (юуг буруу оруулсан, яаж засах) автоматаар харуулна; доорх хүснэгт нь CLI-д гардаг англи мессежийн тайлбар юм.
 \begin{longtable}{@{}L{54mm}L{62mm}L{38mm}@{}}
 \rowcolor{headbg}\textbf{Мессеж} & \textbf{Шалтгаан} & \textbf{Шийдэл}\\
 \endfirsthead
@@ -154,6 +159,8 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7
 \code{ERR list: day out of range for month} & Байхгүй огноо (31/4, 29/2/1900) & Зөв огноо оруулах\\
 \code{ERR list: usage <op>}\newline\code{<day> <month> <year>} & 3 тоо биш (дутуу, үсэг г.м.) & \code{list add_tail 2 8 1995}\\
 \code{ERR list: date must be}\newline\code{3 numbers <day> <month>}\newline\code{<year>, not d/m/y} & Огноог налуу зураастай бичсэн («2/8/1995») & 3 тусдаа тоогоор: \code{list add\_tail 2 8 1995}\\
+\code{ERR <бүтэц>: integer out of}\newline\code{range -2147483647..2147483647} & int-ийн мужаас хэтэрсэн тоо & Мужийн доторх тоо\\
+\code{ERR too many tokens}\newline\code{(max 14 arguments)} & Нэг мөрөнд 16-аас олон үг & Мөрийг богиносгох\\
 \code{ERR queue: overflow}\newline\code{(limit 8)} & 8-аас олон push & pop хийх\\
 \code{ERR queue: underflow}\newline\code{(empty)} & Хоосон дээр pop & Эхлээд push\\
 \code{ERR bitmap: index N}\newline\code{out of range} & Индекс хэтэрсэн & 0..n$-$1 дотор оруулах\\
@@ -179,8 +186,9 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7
 \begin{codeblock}
 git clone https://github.com/grl059/OS_BD1.git kernel-data-structures
 cd kernel-data-structures
-git checkout v1.0.0        # 9-р долоо хоногт нийтэлсэн хувилбар (GitHub Release)
+git log -1 --format='%h %ad %s' --date=short    # шалгах хувилбар: main-ийн сүүлийн commit
 \end{codeblock}
+Энэ Manual нь \code{main} салбарын \textbf{сүүлийн} хувилбарыг тайлбарласан. Хуучин \code{v1.0.0} tag нь \code{rb}, \code{heap}, \code{hash auto|rehash|stats} командуудыг агуулаагүй тул \textbf{ашиглахгүй}; шинэ release/tag гарвал \code{git checkout <tag>} хийхээс өмнө тухайн tag дээр \code{make check} ажиллуулж 2.8-ийн тоотой тулгана.
 
 \manualsubsection{2.2 OS, compiler/runtime, version}
 \begin{longtable}{@{}L{45mm}L{50mm}L{58mm}@{}}
@@ -238,7 +246,7 @@ python3 tests/rb_check.py              # red-black 30 seed (өнгө, black-heig
 Хүлээгдэх гаралт \code{tests/expected_*.out}-д байна. Шинэ тест нэмэхдээ \code{examples/нэр.txt} үүсгээд \code{./kds examples/нэр.txt > tests/expected_нэр.out} гэж хадгалж, гаралтыг гараар шалгаад \code{tests/run_tests.sh}-ийн жагсаалтад нэрийг нэмнэ.
 
 \manualsubsection{2.6 Нэмэлт boundary/error test}
-\code{examples/errors.txt}: буруу огноо (31/4, 29/2/1900), сар 13, жил 1800, налуу зураастай огноо (0/5/2000), өдөр/сар 0, үсэг бүхий аргумент, хоосон бүтцээс pop, bitmap size 0 ба 129, индекс $-$1 ба 99, давхардсан tree утга, байхгүй утга устгах. \code{examples/scheduler.txt}-ийн төгсгөл: урт нэр, ажил 0 ба 21, квант 0 ба 11, мэдэгдэхгүй бодлого. \code{examples/scheduler_full.txt}: 9 дэх процесс татгалзагдана. \code{examples/search.txt}: 13 тэмдэгттэй түлхүүр, «-» тэмдэгттэй түлхүүр, хоосон биш модны төрлийг солих. \code{examples/hash_resize.txt}: \code{rehash 65} (64-оос дээш), \code{rehash 0}, \code{auto maybe} мөрүүд ERR. \code{examples/rb_heap.txt}: давхардсан \code{rb insert}, байхгүй утгын \code{rb delete}, хоосон heap-ийн \code{pop} ба \code{peek} ERR. Эдгээрийн мөр бүр ойлгомжтой \code{ERR} мессеж өгч, програм үргэлжлэн ажиллах ёстой.
+\code{examples/errors.txt}: буруу огноо (31/4, 29/2/1900), сар 13, жил 1800, налуу зураастай огноо (0/5/2000), өдөр/сар 0, үсэг бүхий аргумент, хоосон бүтцээс pop, bitmap size 0 ба 129, индекс $-$1 ба 99, давхардсан tree утга, байхгүй утга устгах, \textbf{17 үгтэй мөр} (\code{ERR too many tokens}) ба int-ээс том тоо (\code{99999999999}, $-2147483648$ $\rightarrow$ \code{integer out of range}). \code{tests/fuzz\_json.py} нь 14--40 үгтэй, 900 тэмдэгттэй нэг үгтэй, int-ээс том тоотой мөрүүдийг мөн санамсаргүй үүсгэнэ. \code{examples/scheduler.txt}-ийн төгсгөл: урт нэр, ажил 0 ба 21, квант 0 ба 11, мэдэгдэхгүй бодлого. \code{examples/scheduler_full.txt}: 9 дэх процесс татгалзагдана. \code{examples/search.txt}: 13 тэмдэгттэй түлхүүр, «-» тэмдэгттэй түлхүүр, хоосон биш модны төрлийг солих. \code{examples/hash_resize.txt}: \code{rehash 65} (64-оос дээш), \code{rehash 0}, \code{auto maybe} мөрүүд ERR. \code{examples/rb_heap.txt}: давхардсан \code{rb insert}, байхгүй утгын \code{rb delete}, хоосон heap-ийн \code{pop} ба \code{peek} ERR. Эдгээрийн мөр бүр ойлгомжтой \code{ERR} мессеж өгч, програм үргэлжлэн ажиллах ёстой.
 
 \manualsubsection{2.7 Kernel module}
 \begin{codeblock}
@@ -254,9 +262,11 @@ cd src/kernel && make
 sudo insmod kds_module.ko start=15 && sudo dmesg | grep kds:
 sudo rmmod kds_module && sudo dmesg | grep kds: | tail -30
 \end{codeblock}
+\textbf{Нотолгоо:} \code{run_module_test.sh} нь \code{docs/kernel\_build\_log.txt} ба \code{docs/kernel\_dmesg.txt}-г үүсгэдэг. Эдгээр файлыг \textbf{одоогийн} \code{kds\_module.c} дээр, жинхэнэ Linux-д ажиллуулж гарсан үр дүнгээр бөглөх ёстой (\code{docs/KERNEL\_EVIDENCE.md}-д алхмыг бичсэн); бөглөөгүй бол доорх «хүлээгдэх» мөрүүд нь зөвхөн кодын логикоос гаргасан \textbf{хүлээлт}, ажилласан нотолгоо биш гэдгийг анхаарна уу.
+
 \textbf{Хүлээгдэх dmesg} (\code{start=15}): «loading module (start=15)», 4 «color red=... blue=... green=...» мөр, 18 «collatz» мөр (15 46 23 70 35 106 53 160 80 40 20 10 5 16 8 4 2 1), «collatz start=15 terms=18», 5 «birthday d/m/y», «fifo out» 10, 20, 30, «bitmap weight=2, bit15=1». rmmod үед «removing color/collatz/birthday» мөрүүд болон «module unloaded» гарна. \code{start=0} үед «start must be 1..1000000 (got 0)» гарч, insmod амжилтгүй болно.
 
-\textbf{Secure Boot идэвхтэй үед} (\code{insmod: Key was rejected}\newline\code{by service}) дараах тохиргоог нэг удаа хийнэ:
+\textbf{Secure Boot идэвхтэй эсэхийг} \code{mokutil --sb-state} командаар шалгана («SecureBoot enabled» гарвал идэвхтэй; «disabled» бол доорх алхам хэрэггүй). \textbf{Идэвхтэй үед} (\code{insmod: Key was rejected}\newline\code{by service}) дараах тохиргоог нэг удаа хийнэ:
 \begin{codeblock}
 mkdir -p ~/mok && cd ~/mok
 openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der \
@@ -277,7 +287,7 @@ sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv 
 \code{make test} & 9 PASS (8 скрипт + stress), exit 0\\
 \code{make check} & Нийт 98 PASS (9 test + 9 text==json + 8 fuzz + 32 AVL + 40 rb/heap), FAIL 0\\
 Веб апп (\code{npm run dev}) & Browser-ийн console-д алдаа гарахгүй; «Чөлөөт горим» хуудасны гаралт CLI-тай ижил (хоёулаа нэг C программ ашигладаг)\\
-\code{run_module_test.sh} & 3 PASS, build log ба dmesg файл үүснэ\\
+\code{run_module_test.sh} & 3 PASS (жинхэнэ Linux дээр), build log ба dmesg файл үүснэ; эдгээрийг commit хийж Report-ын Хавсралт А-д иш татна\\
 \end{longtable}
 
 \manualsubsection{2.9 Known issues}

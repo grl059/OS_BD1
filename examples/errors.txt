@@ -22,3 +22,11 @@ bitmap set -1
 tree insert 5
 tree insert 5
 tree delete 9
+# 17 tokens (command + op + 15 arguments) must be rejected, not read past the token array
+list add_tail 1 1 2000 1 1 2000 1 1 2000 1 1 2000 1 1 2000 1
+# integer that does not fit in int: clear "out of range" message
+queue push 99999999999
+tree insert -2147483648
+bitmap set 4294967296
+# hash keys and process names are words, so a long digit string is still valid there
+hash put 12345678901 7

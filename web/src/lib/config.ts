@@ -1,5 +1,5 @@
 /**
- * Static catalogue of the seven kernel data structures this app visualizes,
+ * Static catalogue of the nine kernel data structures this app visualizes,
  * plus the command syntax `kds --json` understands for each one. Nothing
  * here is state - it only describes the UI (menu tiles, the friendly
  * action forms in /play, labels in /learn) so those pages don't hard-code
@@ -34,7 +34,7 @@ export interface StructureSpec {
   title: string; // Mongolian label shown on tiles/headers
   subtitle: string; // one-line English/technical gloss
   kernelRef: string; // the linux/*.h concept this mirrors
-  accent: "teal" | "emerald" | "cyan" | "lime" | "teal-dark" | "emerald-dark" | "cyan-dark";
+  accent: "teal" | "emerald" | "cyan" | "lime" | "teal-dark" | "emerald-dark" | "cyan-dark" | "red" | "amber";
   emoji: string;
   nickname: string; // playful, jargon-free name for someone who's never coded
   blurb: string; // one or two plain sentences: what is this, in everyday terms
@@ -309,6 +309,60 @@ export const STRUCTURE_SPECS: Record<StructureName, StructureSpec> = {
       { id: "print", cmdWord: "tree", verb: "Хэвлэх", fields: [], build: () => "print" },
     ],
   },
+  rb: {
+    id: "rb",
+    title: "Улаан-хар мод",
+    subtitle: "red-black tree",
+    kernelRef: "struct rb_root / rb_node (include/linux/rbtree.h)",
+    accent: "red",
+    emoji: "🔴",
+    nickname: "Өнгөөр тэнцвэржих мод",
+    blurb:
+      "Хайлтын мод, гэхдээ зангилаа бүр улаан эсвэл хар өнгөтэй. Өнгөний энгийн дүрмүүдийг сахисноор мод хэзээ ч хэт нэг тийш хазайхгүй (Linux кернел өөрөө үүнийг ашигладаг). Оруулах бүрт хэдэн эргүүлэлт хийснийг харж болно.",
+    demoScript: [
+      "rb insert 1",
+      "rb insert 2",
+      "rb insert 3",
+      "rb insert 4",
+      "rb insert 5",
+      "rb insert 6",
+      "rb print",
+    ].join("\n"),
+    ops: [
+      { id: "insert", cmdWord: "rb", verb: "Оруулах", fields: [intField("Тоо", "5")], build: (v) => `insert ${v.n}` },
+      { id: "delete", cmdWord: "rb", verb: "Устгах", fields: [intField("Тоо", "5")], build: (v) => `delete ${v.n}` },
+      { id: "find", cmdWord: "rb", verb: "Хайх", fields: [intField("Тоо", "5")], build: (v) => `find ${v.n}` },
+      { id: "print", cmdWord: "rb", verb: "Хэвлэх", fields: [], build: () => "print" },
+      { id: "clear", cmdWord: "rb", verb: "Цэвэрлэх", fields: [], build: () => "clear" },
+    ],
+  },
+  heap: {
+    id: "heap",
+    title: "Хамгийн бага овоо",
+    subtitle: "min-heap / priority queue",
+    kernelRef: "priority queue (array heap, parent i -> 2i+1, 2i+2)",
+    accent: "amber",
+    emoji: "⛰️",
+    nickname: "Тэргүүлэх ээлж",
+    blurb:
+      "Хамгийн бага тоо үргэлж оройд байдаг овоо. Шинэ тоо оруулахад бусадтайгаа харьцуулж 'дээш өөрөө гарна'; оройг авахад дараагийн хамгийн бага нь өөрөө орой руу гарч ирнэ. Ээлжийн тэргүүлэх дарааллыг ингэж гаргадаг.",
+    demoScript: [
+      "heap push 5",
+      "heap push 3",
+      "heap push 8",
+      "heap push 1",
+      "heap peek",
+      "heap pop",
+      "heap print",
+    ].join("\n"),
+    ops: [
+      { id: "push", cmdWord: "heap", verb: "Оруулах", fields: [intField("Тоо", "5")], build: (v) => `push ${v.n}` },
+      { id: "pop", cmdWord: "heap", verb: "Хамгийн багыг гаргах", fields: [], build: () => "pop" },
+      { id: "peek", cmdWord: "heap", verb: "Оройг харах", fields: [], build: () => "peek" },
+      { id: "print", cmdWord: "heap", verb: "Хэвлэх", fields: [], build: () => "print" },
+      { id: "clear", cmdWord: "heap", verb: "Цэвэрлэх", fields: [], build: () => "clear" },
+    ],
+  },
   sched: {
     id: "sched",
     title: "Процесс & хуваарилагч",
@@ -352,6 +406,7 @@ export const STRUCTURE_SPECS: Record<StructureName, StructureSpec> = {
       },
       { id: "tick", cmdWord: "sched", verb: "1 алхам явуулах", fields: [], build: () => "tick" },
       { id: "print", cmdWord: "sched", verb: "Хэвлэх", fields: [], build: () => "print" },
+      { id: "stats", cmdWord: "sched", verb: "Дундаж хүлээлт", fields: [], build: () => "stats" },
       { id: "clear", cmdWord: "sched", verb: "Цэвэрлэх", fields: [], build: () => "clear" },
     ],
   },
@@ -364,5 +419,59 @@ export const STRUCTURE_ORDER: StructureName[] = [
   "bitmap",
   "hash",
   "tree",
+  "rb",
+  "heap",
   "sched",
 ];
+
+/**
+ * Plain-Mongolian explanations for the English ERR lines the C core prints.
+ * The core's own wording is never changed (tests and the text/JSON
+ * equivalence check depend on it); the UI just shows this next to it, so a
+ * beginner learns *why* a command was refused and what to type instead.
+ */
+const ERR_RULES: [RegExp, (m: RegExpMatchArray) => string][] = [
+  [/^ERR too many tokens/, () => "Нэг мөрөнд хамгийн ихдээ 16 үг (команд, үйлдэл + 14 утга) байж болно. Мөрийг богиносгоно уу."],
+  [/^ERR line too long/, () => "Мөр хэт урт байна (1023 тэмдэгтээс бага байх ёстой)."],
+  [/^ERR unknown structure '(.*)'/, (m) => `«${m[1]}» гэдэг бүтэц байхгүй. Боломжтой нь: list, queue, stack, bitmap, hash, tree, rb, heap, proc, sched.`],
+  [/^ERR (\w+): missing operation/, (m) => `«${m[1]}»-ийн дараа үйлдлийн нэр бичнэ үү (жишээ нь: ${m[1]} print).`],
+  [/^ERR (\w+): unknown op/, (m) => `«${m[1]}» бүтэцэд ийм үйлдэл алга. Зүүн талын товчнуудаас сонгоно уу.`],
+  [/^ERR (\w+): integer out of range/, () => "Тоо хэт том байна. Зөвхөн -2147483647-оос 2147483647 хүртэлх бүхэл тоо оруулна."],
+  [/^ERR list: day out of range for month/, () => "Тухайн сард ийм өдөр байхгүй (жишээ нь 4 сард 31, 2 сард 30 өдөр байхгүй)."],
+  [/^ERR list: month must be/, () => "Сар 1-ээс 12 хооронд байна."],
+  [/^ERR list: year must be/, () => "Жил 1900-аас 2100 хооронд байна."],
+  [/^ERR list: date must be 3 numbers/, () => "Огноог «өдөр сар жил» гэж зайгаар тусгаарласан гурван тоогоор бичнэ (2 8 1995), «2/8/1995» гэж бичиж болохгүй."],
+  [/^ERR list: usage/, () => "Огноо гурван бүхэл тоо байх ёстой: өдөр, сар, жил (жишээ нь: list add_tail 2 8 1995)."],
+  [/^ERR list: \d+\/\d+\/\d+ not found/, () => "Жагсаалтад энэ огноо олдсонгүй."],
+  [/^ERR (queue|stack|heap): underflow|^ERR heap: empty/, () => "Хоосон байна - авах зүйл алга. Эхлээд push хийнэ үү."],
+  [/^ERR (queue|stack|heap): overflow/, () => "Бүтэц дүүрсэн (хязгаараа хүрсэн). Эхлээд pop хийж зай гаргана уу."],
+  [/^ERR (queue|stack|heap|tree|rb): usage/, () => "Энэ үйлдэлд нэг бүхэл тоо хэрэгтэй (жишээ нь: push 5)."],
+  [/^ERR bitmap: index/, () => "Битийн дугаар хүчинтэй хүрээнээс гарсан. Эхлээд «size»-аар хэмжээгээ өгч, 0..(size-1) дотор сонгоно уу."],
+  [/^ERR bitmap: size/, () => "Битийн тоо 1-ээс 128 хооронд байна."],
+  [/^ERR bitmap: usage/, () => "Битийн дугаар (бүхэл тоо) оруулна уу."],
+  [/^ERR hash: (key and value|key) must be/, () => "Түлхүүр, утга 1-12 тэмдэгт; зөвхөн латин үсэг, тоо, доогуур зураас (_). Кирилл, зай, тусгай тэмдэгт болохгүй."],
+  [/^ERR hash: key not found/, () => "Ийм түлхүүр хүснэгтэд алга."],
+  [/^ERR hash: full/, () => "Хэш хүснэгт дүүрсэн."],
+  [/^ERR hash: (rehash )?buckets must be/, () => "Сав (bucket)-ын тоо 1-ээс 16 (rehash-д 64) хооронд байна."],
+  [/^ERR hash: usage/, () => "Командын хэлбэр буруу. Жишээ: hash put bob 5678, hash get bob."],
+  [/^ERR (tree|rb): duplicate/, () => "Энэ утга модонд аль хэдийн байна - давхардсан утга оруулахгүй."],
+  [/^ERR (tree|rb): \S+ not found/, () => "Модонд ийм утга алга."],
+  [/^ERR tree: mode can only/, () => "BST/AVL горимыг зөвхөн мод хоосон үед солино. Эхлээд бүх утгыг устгана уу."],
+  [/^ERR tree: mode must/, () => "Горим нь bst эсвэл avl байна."],
+  [/^ERR proc: name must/, () => "Процессын нэр 1-8 тэмдэгт; латин үсэг, тоо, _ ."],
+  [/^ERR proc: burst must/, () => "Ажлын урт 1-ээс 20 хооронд байна."],
+  [/^ERR proc: too many/, () => "Нэгэн зэрэг амьд процесс хамгийн ихдээ 8. Зарим нь дуустал «1 алхам явуулах» дарна уу."],
+  [/^ERR proc: usage/, () => "Жишээ: proc new A 5 (нэр, ажлын урт)."],
+  [/^ERR sched: policy/, () => "Бодлого нь «fcfs» эсвэл «rr 1..10» (квант 1-ээс 10) байна."],
+  [/out of memory/, () => "Санах ой хүрэлцсэнгүй."],
+];
+
+/** Plain-Mongolian reason for an `ERR ...` message, or null for anything that is not an error. */
+export function explainErr(msg: string): string | null {
+  if (!msg.startsWith("ERR")) return null;
+  for (const [re, f] of ERR_RULES) {
+    const m = msg.match(re);
+    if (m) return f(m);
+  }
+  return "Команд хүлээн авагдсангүй. Үйлдлийн товчоор дахин оролдоно уу.";
+}

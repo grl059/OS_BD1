@@ -88,6 +88,23 @@ def command(r):
     return r.choice(['junk add', 'frob', '# comment only', '', '   '])
 
 
+def stress_command(r):
+    """Adversarial line shapes that the plain generator never makes: 14..40 tokens
+    (the C tokenizer keeps 16), a very long single token, and int-looking tokens
+    that do not fit in an int."""
+    kind = r.choice(['many_args', 'many_args', 'long_token', 'overflow', 'sched_stats'])
+    if kind == 'many_args':
+        s = r.choice(['list', 'queue', 'stack', 'bitmap', 'hash', 'tree', 'rb', 'heap', 'proc', 'sched'])
+        return f'{s} add_tail ' + ' '.join(str(r.randint(0, 9)) for _ in range(r.randint(12, 38)))
+    if kind == 'long_token':
+        return f'queue push {"9" * r.randint(30, 900)}'
+    if kind == 'overflow':
+        return r.choice(['queue push 99999999999', 'stack push -2147483648', 'tree insert 4294967296',
+                         'rb insert -99999999999', 'heap push 2147483648', 'bitmap set 99999999999',
+                         'list add_tail 1 1 99999999999'])
+    return 'sched stats'
+
+
 def run(args, script):
     p = subprocess.run([KDS, *args], input=script, capture_output=True, text=True)
     return p.returncode, p.stdout, p.stderr
@@ -102,7 +119,8 @@ def main():
     fail = 0
     for seed in range(1, seeds + 1):
         r = random.Random(seed)
-        lines = (['tree mode avl'] if seed % 2 == 0 else []) + [command(r) for _ in range(n)]
+        lines = (['tree mode avl'] if seed % 2 == 0 else []) + [
+            stress_command(r) if r.random() < 0.08 else command(r) for _ in range(n)]
         script = '\n'.join(lines) + '\n'
 
         rc_t, out_t, err_t = run([], script)

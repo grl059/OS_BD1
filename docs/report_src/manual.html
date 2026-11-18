@@ -50,11 +50,11 @@
   <tr><td><code>rb insert|delete|find &lt;тоо&gt;</code>, <code>print|clear</code></td><td>бүхэл тоо</td><td>red-black мод; давхардсан утга татгалзана, байхгүй утгыг устгавал ERR</td></tr>
   <tr><td><code>heap push &lt;тоо&gt;</code>, <code>pop|peek</code>, <code>print|clear</code></td><td>бүхэл тоо</td><td>min-heap: хамгийн бага утга түрүүлж гарна; багтаамж 16 (overflow/underflow мэдээлнэ)</td></tr>
   <tr><td><code>proc new &lt;нэр&gt; &lt;ажил&gt;</code></td><td>нэр, ажлын тик</td><td>нэр 1–8 тэмдэгт, ажил 1–20 тик, амьд процесс ≤ 8</td></tr>
-  <tr><td><code>sched policy fcfs | rr &lt;квант&gt;</code>, <code>tick|print|clear</code></td><td>бодлого, квант</td><td>квант 1–10; 1 tick = 1 нэгж цаг</td></tr>
+  <tr><td><code>sched policy fcfs | rr &lt;квант&gt;</code>, <code>tick|print|clear</code></td><td>бодлого, квант</td><td>квант 1–10; 1 tick = 1 нэгж цаг; <code>sched stats</code> нь дууссан процессуудын дундаж хүлээлт ба turnaround-ыг хэвлэнэ</td></tr>
   <tr><td><code>... print</code>, <code>... clear</code></td><td>—</td><td>бүтцийн төлөвийг хэвлэх / цэвэрлэх</td></tr>
   <tr><td><code>insmod kds_module.ko start=N</code></td><td>Collatz-ийн эхний гишүүн</td><td>1..1 000 000 (анхдагч 25)</td></tr>
 </table>
-<p><code>#</code>-ээс хойших хэсэг коммент. Тоог <code>+5</code>, <code>-3</code>, <code>007</code> хэлбэрээр бичиж болно. <code>3x</code>, <code>1.5</code> хэлбэрийн утга эсвэл int-ийн мужаас хэтэрсэн тоо буруу оролтод тооцогдоно.</p>
+<p><code>#</code>-ээс хойших хэсэг коммент. Тоог <code>+5</code>, <code>-3</code>, <code>007</code> хэлбэрээр бичиж болно. <code>3x</code>, <code>1.5</code> хэлбэрийн утга эсвэл int-ийн мужаас хэтэрсэн тоо буруу оролтод тооцогдоно. Зөвшөөрөгдөх муж <b>−2 147 483 647 … 2 147 483 647</b>; хэтэрвэл <code>ERR &lt;бүтэц&gt;: integer out of range</code>. Нэг мөрөнд хамгийн ихдээ 16 үг (команд, үйлдэл + 14 утга) байж болно, илүү бол <code>ERR too many tokens (max 14 arguments)</code>. <code>bitmap size</code> нь бүх битийг 0 болгоно.</p>
 
 <h2>1.5 Ажиллуулах, зогсоох, reset хийх</h2>
 <ul>
@@ -142,6 +142,8 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7</pre>
   <tr><td><code>ERR hash: full (limit 24)</code></td><td>24 элемент</td><td><code>hash del</code> эсвэл <code>hash clear</code></td></tr>
   <tr><td><code>ERR proc: name must be …</code></td><td>Нэр урт эсвэл тусгай тэмдэгттэй</td><td>Ж: A, job1</td></tr>
   <tr><td><code>ERR proc: too many processes</code></td><td>8-аас олон амьд процесс</td><td>Зарим нь дуустал tick хийх</td></tr>
+  <tr><td><code>ERR too many tokens (max 14 arguments)</code></td><td>Нэг мөрөнд 16-аас олон үг</td><td>Мөрийг хуваах</td></tr>
+  <tr><td><code>ERR &lt;бүтэц&gt;: integer out of range …</code></td><td>Тоо ±2 147 483 647-оос хэтэрсэн</td><td>Жижиг тоо оруулах</td></tr>
   <tr><td><code>ERR unknown structure 'x'</code></td><td>Бүтцийн нэр буруу</td><td>list, queue, stack, bitmap, hash, tree, rb, heap, proc, sched</td></tr>
   <tr><td><code>insmod: Key was rejected by service</code></td><td>Secure Boot, гарын үсэггүй модуль</td><td>MOK-оор гарын үсэг зурах (2.7)</td></tr>
   <tr><td><code>insmod: Invalid parameters</code></td><td><code>start</code> 1..1 000 000-аас гадуур</td><td>Ж: <code>start=27</code></td></tr>
@@ -153,7 +155,8 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7</pre>
 <h2>2.1 Repository clone хийх</h2>
 <pre>git clone https://github.com/grl059/OS_BD1.git kernel-data-structures
 cd kernel-data-structures
-git checkout v1.0.0        # 9-р долоо хоногт нийтэлсэн хувилбар (GitHub Release)</pre>
+git log -1                 # шалгах хувилбар = main-ийн сүүлийн commit</pre>
+<p>9-р долоо хоногт нийтэлсэн <code>v1.0.0</code> tag нь хуучин (rb, heap, hash auto/rehash/stats, sched stats байхгүй) тул шалгахад ашиглахгүй.</p>
 
 <h2>2.2 OS, compiler/runtime, version</h2>
 <table>
@@ -238,6 +241,7 @@ sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv 
 
 <h2>2.9 Known issues</h2>
 <ul>
+  <li>Windows дээр C цөмийг WSL эсвэл MSYS2/MinGW-ээр build хийнэ. Kernel module-ийн шинэчлэгдсэн хэсгийг жинхэнэ Linux дээр insmod-оор баталгаажуулах заавар <code>docs/KERNEL_EVIDENCE.md</code>-д бий.</li>
   <li>Kernel module WSL, Docker-т ачаалагдахгүй (kernel header ба insmod эрх байхгүй). Linux VM эсвэл үндсэн Linux ашиглана.</li>
   <li>Өөр kernel хувилбар дээр API өөрчлөгдсөн бол module-ийг дахин build хийнэ.</li>
   <li>CLI-д нэг мөр 1023 тэмдэгтээс урт бол «ERR line too long» гарна.</li>

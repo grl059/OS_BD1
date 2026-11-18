@@ -17,6 +17,8 @@ sched tick
 sched tick
 sched tick
 sched print
+# average waiting / turnaround time (expected: wait 5.00 for RR)
+sched stats
 # Same jobs under FCFS
 sched clear
 sched policy fcfs
@@ -36,6 +38,8 @@ sched tick
 sched tick
 sched tick
 sched print
+# expected: wait 4.33 for FCFS
+sched stats
 # error handling
 proc new name_too_long 3
 proc new X 0

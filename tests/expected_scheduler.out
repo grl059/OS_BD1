@@ -15,6 +15,7 @@ TICK t=8 P2(B) remaining=0 finished
 TICK t=9 P1(A) remaining=0 finished
 TICK t=10 idle
 SCHED policy=rr(q=2) time=11 running=none ready=(empty) done=3
+SCHED STATS finished=3 avg_wait=5.00 avg_turnaround=8.33
 OK sched clear
 OK sched policy fcfs
 OK proc new P1 A burst=5 (alive=1)
@@ -33,6 +34,7 @@ TICK t=8 P3(C) remaining=1
 TICK t=9 P3(C) remaining=0 finished
 TICK t=10 idle
 SCHED policy=fcfs time=11 running=none ready=(empty) done=3
+SCHED STATS finished=3 avg_wait=4.33 avg_turnaround=7.67
 ERR proc: name must be 1..8 letters, digits or _
 ERR proc: burst must be 1..20
 ERR proc: burst must be 1..20

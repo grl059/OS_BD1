@@ -46,6 +46,25 @@ export interface TreeState {
   node: TreeNode | null;
 }
 
+export interface RbNode {
+  v: number;
+  c: "r" | "b"; // red or black
+  l: RbNode | null;
+  r: RbNode | null;
+}
+
+export interface RbState {
+  size: number;
+  height: number;
+  rotations: number;
+  node: RbNode | null;
+}
+
+export interface HeapState {
+  size: number;
+  items: number[]; // array form: parent i -> children 2i+1, 2i+2
+}
+
 export interface Pcb {
   pid: number;
   name: string;
@@ -57,6 +76,9 @@ export interface SchedState {
   quantum: number;
   time: number;
   done: number;
+  /** sum over finished processes (waiting = turnaround - burst); divide by `done` for the averages */
+  wait_total?: number;
+  turn_total?: number;
   running: Pcb | null;
   ready: Pcb[];
 }
@@ -68,6 +90,8 @@ export interface KdsState {
   bitmap: BitmapState;
   hash: HashState;
   tree: TreeState;
+  rb: RbState;
+  heap: HeapState;
   sched: SchedState;
 }
 
@@ -94,7 +118,7 @@ export interface KdsEnd {
 
 export type KdsLine = KdsStart | KdsEvent | KdsEnd;
 
-/** The seven structure names, in the order every page lists them. */
+/** The nine structure names, in the order every page lists them. */
 export const STRUCTURES = [
   "list",
   "queue",
@@ -102,6 +126,8 @@ export const STRUCTURES = [
   "bitmap",
   "hash",
   "tree",
+  "rb",
+  "heap",
   "sched",
 ] as const;
 export type StructureName = (typeof STRUCTURES)[number];

@@ -88,7 +88,7 @@ static void hlist_del(struct hlist_node *n)
 struct birthday { int day, month, year; struct list_head list; };
 struct node { int val; struct list_head list; };                 /* queue / stack */
 struct hentry { char key[13], val[13]; struct hlist_node node; }; /* hash chain */
-struct pcb { int pid, rem, slice, burst; char name[9]; struct list_head list; };
+struct pcb { int pid, rem, slice, burst, arrive; char name[9]; struct list_head list; };
 struct tnode { int val, h; struct tnode *l, *r; };
 
 static struct list_head bdays, queue, stack;
@@ -107,6 +107,7 @@ static int heap[HEAP_MAX], nheap;
 static struct list_head ready;
 static struct pcb *running;
 static int quantum, now, ndone, nextpid = 1, nready;
+static int sum_wait, sum_turn;   /* over finished processes: waiting = turnaround - burst, turnaround = finish - arrival */
 
 /* ---------- helpers ---------- */
 static void free_nodes(struct list_head *h, size_t off)
@@ -127,6 +128,25 @@ static int is_int(const char *s, int *out)
 	if (errno || v > INT_MAX || v < -INT_MAX) return 0;
 	if (out) *out = (int)v;
 	return 1;
+}
+
+/* An integer-looking token ([+-]?digits) that does NOT fit in int: used to give a clear
+ * "out of range" message instead of the generic usage line. */
+static int int_overflow(const char *s)
+{
+	const char *p = s;
+	if (*p == '+' || *p == '-') p++;
+	if (!*p) return 0;
+	for (; *p; p++) if (!isdigit((unsigned char)*p)) return 0;
+	return !is_int(s, NULL);
+}
+
+/* Commands whose arguments are all integers (hash keys, process names and the scheduler
+ * policy are free-form words, so they are not checked here). */
+static int int_args_cmd(const char *c)
+{
+	return !strcmp(c, "list") || !strcmp(c, "queue") || !strcmp(c, "stack") ||
+	       !strcmp(c, "bitmap") || !strcmp(c, "tree") || !strcmp(c, "rb") || !strcmp(c, "heap");
 }
 
 /* 1..max characters from [A-Za-z0-9_] */
@@ -756,6 +776,7 @@ static void sched_reset(void)
 	free(running);
 	running = NULL;
 	quantum = now = ndone = nready = 0;
+	sum_wait = sum_turn = 0;
 	nextpid = 1;
 }
 
@@ -770,7 +791,7 @@ static void proc_cmd(const char *op, int na, char **a)
 	if (alive >= LIMIT) { printf("ERR proc: too many processes (limit %d)\n", LIMIT); return; }
 	struct pcb *p = malloc(sizeof *p);
 	if (!p) { puts("ERR proc: out of memory"); return; }
-	p->pid = nextpid++; p->rem = b; p->burst = b; p->slice = 0;
+	p->pid = nextpid++; p->rem = b; p->burst = b; p->slice = 0; p->arrive = now;
 	strcpy(p->name, a[0]);
 	list_add_tail(&p->list, &ready);         /* enqueue at the tail */
 	nready++;
@@ -803,7 +824,12 @@ static void sched_cmd(const char *op, int na, char **a)
 		const char *tag = "";
 		r->rem--; r->slice++;
 		printf("TICK t=%d P%d(%s) remaining=%d", now++, r->pid, r->name, r->rem);
-		if (r->rem == 0) { tag = " finished"; running = NULL; ndone++; free(r); }
+		if (r->rem == 0) {
+			tag = " finished"; running = NULL; ndone++;
+			sum_turn += now - r->arrive;                    /* now was already advanced: it is the finish time */
+			sum_wait += now - r->arrive - r->burst;
+			free(r);
+		}
 		else if (quantum && r->slice >= quantum) {   /* preempt: back to the tail */
 			tag = " preempted";
 			running = NULL;
@@ -827,6 +853,11 @@ static void sched_cmd(const char *op, int na, char **a)
 			first = 0;
 		}
 		printf(" done=%d\n", ndone);
+		return;
+	}
+	if (!strcmp(op, "stats")) {
+		if (!ndone) { puts("SCHED STATS finished=0 avg_wait=- avg_turnaround=- (no process has finished yet)"); return; }
+		printf("SCHED STATS finished=%d avg_wait=%.2f avg_turnaround=%.2f\n", ndone, (double)sum_wait / ndone, (double)sum_turn / ndone);
 		return;
 	}
 	if (!strcmp(op, "clear")) { sched_reset(); puts("OK sched clear"); return; }
@@ -935,6 +966,9 @@ static void emit_hot(const char *cmd, const char *op, int na, char **a, int ok, 
 	} else if (!strcmp(cmd, "rb")) {
 		if (!strcmp(op, "insert") && na == 1) { printf("{\"val\":%d}", atoi(a[0])); return; }
 		if (!strcmp(op, "find") && na == 1 && strstr(msg, "= yes")) { printf("{\"val\":%d}", atoi(a[0])); return; }
+	} else if (!strcmp(cmd, "heap")) {
+		if (!strcmp(op, "push") && na == 1) { printf("{\"val\":%d}", atoi(a[0])); return; }
+		if (!strcmp(op, "peek")) { printf("{\"idx\":0}"); return; }
 	} else if (!strcmp(cmd, "proc")) {
 		if (!strcmp(op, "new") && nready > 0) {
 			struct pcb *last = list_entry(ready.prev, struct pcb, list);
@@ -1031,7 +1065,7 @@ static void emit_state(void)
 	for (int i = 0; i < nheap; i++) printf("%s%d", i ? "," : "", heap[i]);
 	printf("]},");
 
-	printf("\"sched\":{\"quantum\":%d,\"time\":%d,\"done\":%d,\"running\":", quantum, now, ndone);
+	printf("\"sched\":{\"quantum\":%d,\"time\":%d,\"done\":%d,\"wait_total\":%d,\"turn_total\":%d,\"running\":", quantum, now, ndone, sum_wait, sum_turn);
 	if (running) printf("{\"pid\":%d,\"name\":\"%s\",\"rem\":%d,\"burst\":%d}", running->pid, running->name, running->rem, running->burst);
 	else printf("null");
 	printf(",\"ready\":[");
@@ -1089,6 +1123,10 @@ int main(int argc, char **argv)
 			for (char *t = strtok(line, " \t\r\n\v\f"); t; t = strtok(NULL, " \t\r\n\v\f"))
 				if (n < MAXTOK) tok[n++] = t; else { n = MAXTOK + 1; break; }
 			if (n == 0) continue;
+			if (n > MAXTOK) {   /* cmd + op + 14 arguments is the maximum: a[] would run past tok[] */
+				if (!json_mode) { puts("ERR too many tokens (max 14 arguments)"); continue; }
+				ok = 0; msg = "ERR too many tokens (max 14 arguments)";
+			}
 		}
 
 		const char *cmd = msg ? "" : tok[0];
@@ -1103,10 +1141,20 @@ int main(int argc, char **argv)
 			else { printf("ERR %s: missing operation\n", cmd); fflush(stdout); step++; continue; }
 		} else if (!msg) {
 			op = tok[1];
-			na = n > MAXTOK ? MAXTOK : n - 2;   /* > MAXTOK tokens: argument count is wrong anyway */
+			na = n - 2;
 			a = tok + 2;
-			int known = 1;
-			if (!strcmp(cmd, "list")) JSON_CAPTURE(list_cmd(op, na, a), msg);
+			int known = 1, handled = 0;
+			const char *bad = NULL;
+			if (int_args_cmd(cmd))
+				for (int i = 0; i < na && !bad; i++) if (int_overflow(a[i])) bad = a[i];
+			if (bad) {
+				snprintf(errbuf, sizeof errbuf, "ERR %s: integer out of range %d..%d (got '%.20s')",
+					 cmd, -INT_MAX, INT_MAX, bad);
+				if (!json_mode) { puts(errbuf); fflush(stdout); step++; continue; }
+				msg = errbuf; ok = 0; handled = 1;
+			}
+			if (handled) { /* error already reported above */ }
+			else if (!strcmp(cmd, "list")) JSON_CAPTURE(list_cmd(op, na, a), msg);
 			else if (!strcmp(cmd, "queue")) JSON_CAPTURE(seq_cmd("queue", &queue, &nq, 0, op, na, a), msg);
 			else if (!strcmp(cmd, "stack")) JSON_CAPTURE(seq_cmd("stack", &stack, &ns, 1, op, na, a), msg);
 			else if (!strcmp(cmd, "bitmap")) JSON_CAPTURE(bitmap_cmd(op, na, a), msg);
@@ -1117,7 +1165,9 @@ int main(int argc, char **argv)
 			else if (!strcmp(cmd, "proc")) JSON_CAPTURE(proc_cmd(op, na, a), msg);
 			else if (!strcmp(cmd, "sched")) JSON_CAPTURE(sched_cmd(op, na, a), msg);
 			else known = 0;
-			if (known) {
+			if (handled) {
+				msg_heap = 0;   /* msg points at errbuf */
+			} else if (known) {
 				msg_heap = msg != NULL;   /* JSON_CAPTURE only ever produces NULL or a malloc'd buffer */
 			} else if (json_mode) {
 				snprintf(errbuf, sizeof errbuf, "ERR unknown structure '%.40s'", cmd); msg = errbuf; ok = 0;

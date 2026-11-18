@@ -19,11 +19,13 @@ const ACCENT_DOT: Record<string, string> = {
   "teal-dark": "bg-teal-700",
   "emerald-dark": "bg-emerald-700",
   "cyan-dark": "bg-cyan-700",
+  red: "bg-red-500",
+  amber: "bg-amber-500",
 };
 
 /**
  * Home page: a slim top nav, a short hero with the single main call to
- * action, then the 7 structures as colorful tiles (each links straight
+ * action, then the 9 structures as colorful tiles (each links straight
  * into free play for that structure).
  */
 export function Menu() {
@@ -42,7 +44,7 @@ export function Menu() {
 
       <header className="anim-fade-up flex flex-col items-center gap-4 py-10 text-center">
         <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight text-foreground md:text-5xl">
-          Кернелийн <span className="text-primary">7 бүтэц</span>
+          Кернелийн <span className="text-primary">9 бүтэц</span>
         </h1>
         <p className="max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
           Багш нэг алхам тутамд тайлбарлана. Чи команд ажиллуулж, бүтэц өөрөө хэрхэн өөрчлөгдөж байгааг шууд харна.
@@ -56,12 +58,12 @@ export function Menu() {
         </Link>
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Sparkles className="size-3.5 text-primary" />
-          7 шат · алхам бүрд жинхэнэ кернел команд · шат бүрт шалгалт
+          9 шат · алхам бүрд жинхэнэ кернел команд · шат бүрт шалгалт
         </p>
       </header>
 
       <main>
-        <h2 className="mb-1 text-lg font-semibold">7 бүтэц, кернелийн зарчим бүрээр</h2>
+        <h2 className="mb-1 text-lg font-semibold">9 бүтэц, кернелийн зарчим бүрээр</h2>
         <p className="mb-6 text-sm text-muted-foreground">
           Картад дарахад тухайн бүтцийн чөлөөт горим нээгдэнэ - сурсан зүйлсээ шууд туршиж үзээрэй.
         </p>

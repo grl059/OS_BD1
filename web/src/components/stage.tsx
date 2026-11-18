@@ -2,7 +2,7 @@
 
 import { Fragment, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import type { HotLocator, KdsState, StructureName, TreeNode } from "@/lib/model";
+import type { HotLocator, KdsState, RbNode, StructureName, TreeNode } from "@/lib/model";
 import { isHotIdx, isHotKey, isHotVal, isHotPid } from "@/lib/model";
 
 /**
@@ -84,6 +84,19 @@ export function Stage({ structure, state, hot }: { structure: StructureName; sta
       );
     case "tree":
       return state.tree.node ? <TreeGraph root={state.tree.node} hot={hot} /> : <Empty />;
+    case "rb":
+      return state.rb.node ? (
+        <div className="flex flex-col gap-1">
+          <TreeGraph root={state.rb.node} hot={hot} />
+          <div className="text-[10px] text-muted-foreground">
+            size={state.rb.size} · өндөр={state.rb.height} · эргүүлэлт (rotations)={state.rb.rotations} · улаан = red, хар = black
+          </div>
+        </div>
+      ) : (
+        <Empty />
+      );
+    case "heap":
+      return <HeapView items={state.heap.items} hot={hot} />;
     case "sched":
       return (
         <div className="flex flex-col gap-3">
@@ -109,6 +122,17 @@ export function Stage({ structure, state, hot }: { structure: StructureName; sta
           </div>
           <div className="text-xs text-muted-foreground">
             time={state.sched.time} · done={state.sched.done} · quantum={state.sched.quantum || "fcfs"}
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {state.sched.done > 0 && state.sched.wait_total !== undefined && state.sched.turn_total !== undefined ? (
+              <>
+                Дундаж хүлээлт (avg wait) = <b>{(state.sched.wait_total / state.sched.done).toFixed(2)}</b> · дундаж
+                дуусах хугацаа (avg turnaround) = <b>{(state.sched.turn_total / state.sched.done).toFixed(2)}</b>
+                &nbsp;(хугацааны нэгж = 1 алхам; хүлээлт = дууссан цаг − ирсэн цаг − ажлын урт)
+              </>
+            ) : (
+              "Дундаж хүлээлт: ямар ч процесс дуусаагүй байна (дуусмагц энд гарна)."
+            )}
           </div>
         </div>
       );
@@ -195,29 +219,56 @@ function Pcb({ pid, name, rem, burst, active }: { pid: number; name: string; rem
   );
 }
 
-type LaidOutNode = { v: number; x: number; y: number };
+function HeapView({ items, hot }: { items: number[]; hot: HotLocator }) {
+  if (items.length === 0) return <Empty />;
+  const levels: number[][] = [];
+  for (let i = 0; i < items.length; i++) {
+    const d = Math.floor(Math.log2(i + 1));
+    (levels[d] ??= []).push(i);
+  }
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-col items-center gap-2">
+        {levels.map((idxs, d) => (
+          <div key={d} className="flex justify-center gap-3">
+            {idxs.map((i) => (
+              <Cell key={i} active={isHotVal(hot, items[i]) || isHotIdx(hot, i)}>
+                {items[i]}
+              </Cell>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div className="text-[10px] text-muted-foreground">
+        Массив хэлбэр: [{items.join(", ")}] · зангилаа i-ийн хүүхдүүд = 2i+1, 2i+2 · орой (индекс 0) = хамгийн бага
+      </div>
+    </div>
+  );
+}
+
+type LaidOutNode = { v: number; x: number; y: number; red?: boolean };
 
 /** In-order x, depth y - the usual BST drawing. Edges are parent→child lines. */
-function layoutTree(root: TreeNode) {
+function layoutTree(root: TreeNode | RbNode) {
   const nodes: LaidOutNode[] = [];
   const edges: { x1: number; y1: number; x2: number; y2: number }[] = [];
-  const pos = new Map<TreeNode, { x: number; y: number }>();
+  const pos = new Map<TreeNode | RbNode, { x: number; y: number }>();
   const X_GAP = 48;
   const Y_GAP = 64;
   let order = 0;
   let maxDepth = 0;
 
-  const inorder = (n: TreeNode | null, depth: number) => {
+  const inorder = (n: TreeNode | RbNode | null, depth: number) => {
     if (!n) return;
     inorder(n.l, depth + 1);
     const p = { x: order++ * X_GAP + 24, y: depth * Y_GAP + 24 };
     pos.set(n, p);
-    nodes.push({ v: n.v, x: p.x, y: p.y });
+    nodes.push({ v: n.v, x: p.x, y: p.y, red: "c" in n ? n.c === "r" : undefined });
     maxDepth = Math.max(maxDepth, depth);
     inorder(n.r, depth + 1);
   };
 
-  const walk = (n: TreeNode) => {
+  const walk = (n: TreeNode | RbNode) => {
     const p = pos.get(n)!;
     for (const c of [n.l, n.r]) {
       if (!c) continue;
@@ -237,7 +288,7 @@ function layoutTree(root: TreeNode) {
   };
 }
 
-function TreeGraph({ root, hot }: { root: TreeNode; hot: HotLocator }) {
+function TreeGraph({ root, hot }: { root: TreeNode | RbNode; hot: HotLocator }) {
   const { nodes, edges, width, height } = layoutTree(root);
   return (
     <div className="flex justify-center overflow-x-auto py-2">
@@ -259,7 +310,7 @@ function TreeGraph({ root, hot }: { root: TreeNode; hot: HotLocator }) {
                 cx={n.x}
                 cy={n.y}
                 r={18}
-                fill={active ? "var(--hot)" : "var(--card)"}
+                fill={n.red === undefined ? (active ? "var(--hot)" : "var(--card)") : n.red ? "#dc2626" : "#1f2937"}
                 stroke={active ? "var(--primary)" : "var(--border)"}
                 strokeWidth={active ? 3 : 1.5}
               />
@@ -270,7 +321,7 @@ function TreeGraph({ root, hot }: { root: TreeNode; hot: HotLocator }) {
                 dominantBaseline="central"
                 fontSize={13}
                 fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
-                fill="var(--foreground)"
+                fill={n.red === undefined ? "var(--foreground)" : "#ffffff"}
               >
                 {n.v}
               </text>
