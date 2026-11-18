@@ -12,7 +12,7 @@
 % ---------------------------------------------------------------------------
 {\fontsize{20}{24}\selectfont\bfseries Manual -- Kernel Data Structures\par}
 \vspace{2pt}
-{\fontsize{11.5}{14}\selectfont Хуваарилалтын код: V-1-4 · F.CSM302 Үйлдлийн систем · БД2 (Final, v2.0.0)\par
+{\fontsize{11.5}{14}\selectfont Хуваарилалтын код: V-1-4 · F.CSM302 Үйлдлийн систем · БД2 (Final, v1.1.0)\par
 Repository: github.com/grl059/OS\_BD1\par}
 \vspace{3pt}
 {\color{linkblue}\rule{\textwidth}{1.5pt}}
@@ -195,7 +195,7 @@ git clone https://github.com/grl059/OS_BD1.git kernel-data-structures
 cd kernel-data-structures
 git log -1 --format='%h %ad %s' --date=short    # шалгах хувилбар: main-ийн сүүлийн commit
 \end{codeblock}
-Энэ Manual нь \code{main} салбарын \textbf{сүүлийн} хувилбарыг тайлбарласан. Final release tag нь \code{v2.0.0} бөгөөд Final Report-той ижил commit дээр тавигдсан тул \code{git checkout v2.0.0} хийж болно, гэхдээ checkout хийсний дараа \code{make check} ажиллуулж 2.8-ийн тоотой тулгана. Хуучин \code{v1.0.0} tag нь \code{rb}, \code{heap}, \code{hash auto|rehash|stats} командуудыг агуулаагүй тул \textbf{ашиглахгүй}.
+Энэ Manual нь \code{main} салбарын \textbf{сүүлийн} хувилбарыг тайлбарласан. Final release tag нь \code{v1.1.0} бөгөөд Final Report-той ижил commit дээр тавигдсан тул \code{git checkout v1.1.0} хийж болно, гэхдээ checkout хийсний дараа \code{make check} ажиллуулж 2.8-ийн тоотой тулгана. Хуучин \code{v1.0.0} tag нь \code{rb}, \code{heap}, \code{hash auto|rehash|stats} командуудыг агуулаагүй тул \textbf{ашиглахгүй}.
 
 \manualsubsection{2.2 OS, compiler/runtime, version}
 Зааврыг давтан ажиллуулагч өөр хувилбарын хэрэгсэл ашиглаад зөрөхгүйн тулд бидний туршсан хувилбар ба доод шаардлагыг доор нэгтгэв.
@@ -216,7 +216,7 @@ Linux \term{kernel} & 6.11.0-17-generic & headers нь ажиллаж буй \te
 \manualsubsection{2.3 Dependency суулгах}
 \begin{codeblock}
 sudo apt update
-sudo apt install build-essential python3 nodejs     # CLI ба тест
+sudo apt install build-essential python3 nodejs npm # CLI, тест, веб апп
 sudo apt install linux-headers-$(uname -r)          # зөвхөн kernel module-д
 \end{codeblock}
 C цөм гадны сан (library) ашиглаагүй тул өөр dependency шаардлагагүй. Веб апп \code{web/package.json}-д заасан сангуудыг \code{npm install}-оор татна (интернэт шаардлагатай зөвхөн энэ алхамд).
