@@ -262,7 +262,7 @@ cd src/kernel && make
 sudo insmod kds_module.ko start=15 && sudo dmesg | grep kds:
 sudo rmmod kds_module && sudo dmesg | grep kds: | tail -30
 \end{codeblock}
-\textbf{Нотолгоо:} \code{run_module_test.sh} нь \code{docs/kernel\_build\_log.txt} ба \code{docs/kernel\_dmesg.txt}-г үүсгэдэг. Эдгээр файлыг \textbf{одоогийн} \code{kds\_module.c} дээр, жинхэнэ Linux-д ажиллуулж гарсан үр дүнгээр бөглөх ёстой (\code{docs/KERNEL\_EVIDENCE.md}-д алхмыг бичсэн); бөглөөгүй бол доорх «хүлээгдэх» мөрүүд нь зөвхөн кодын логикоос гаргасан \textbf{хүлээлт}, ажилласан нотолгоо биш гэдгийг анхаарна уу.
+\textbf{Нотолгоо:} \code{run_module_test.sh} нь \code{docs/kernel\_build\_log.txt} ба \code{docs/kernel\_dmesg.txt}-г үүсгэдэг. Скриптийг одоогийн \code{kds\_module.c} дээр жинхэнэ Linux (Ubuntu 24.04.2, kernel 6.11.0-17-generic, Secure Boot идэвхтэй, MOK гарын үсэгтэй) дээр ажиллуулж 9 PASS авсан; дэлгэцийн зургийг Report-ын Зураг 8--10-д оруулсан.
 
 \textbf{Хүлээгдэх dmesg} (\code{start=15}): «loading module (start=15)», 4 «color red=... blue=... green=...» мөр, 18 «collatz» мөр (15 46 23 70 35 106 53 160 80 40 20 10 5 16 8 4 2 1), «collatz start=15 terms=18», 5 «birthday d/m/y», «fifo out» 10, 20, 30, «bitmap weight=2, bit15=1». rmmod үед «removing color/collatz/birthday» мөрүүд болон «module unloaded» гарна. \code{start=0} үед «start must be 1..1000000 (got 0)» гарч, insmod амжилтгүй болно.
 
@@ -287,7 +287,7 @@ sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv 
 \code{make test} & 9 PASS (8 скрипт + stress), exit 0\\
 \code{make check} & Нийт 98 PASS (9 test + 9 text==json + 8 fuzz + 32 AVL + 40 rb/heap), FAIL 0\\
 Веб апп (\code{npm run dev}) & Browser-ийн console-д алдаа гарахгүй; «Чөлөөт горим» хуудасны гаралт CLI-тай ижил (хоёулаа нэг C программ ашигладаг)\\
-\code{run_module_test.sh} & 3 PASS (жинхэнэ Linux дээр), build log ба dmesg файл үүснэ; эдгээрийг commit хийж Report-ын Хавсралт А-д иш татна\\
+\code{run_module_test.sh} & 9 PASS (build, sign, insmod start=25/15, start=0 татгалзал, /proc/kds, Collatz 24/18 гишүүн); build log ба dmesg файл үүснэ\\
 \end{longtable}
 
 \manualsubsection{2.9 Known issues}

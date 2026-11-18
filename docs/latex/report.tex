@@ -380,6 +380,27 @@ Repository: \code{github.com/grl059/OS_BD1} (салбар \code{main}). Бүтэ
 \caption*{Зураг 5 -- Round Robin (q=2): running P3, ready queue P1 $\rightarrow$ P2, процесс бүрийн progress bar (rem/burst), time=5, done=0. Ready queue нь \code{list_head} тул сум нь дараагийн PCB-г заана.}
 \end{figure}
 
+\Needspace{15\baselineskip}
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth,height=0.42\textheight,keepaspectratio]{ui_home_9.png}
+\caption*{Зураг 5a -- Нүүр хуудас (шүүмжийн дараах хувилбар): C цөмийн \textbf{9} бүтэц бүгд карт болж гарна, гарчигт «9 бүтэц», «9 шат» гэж харагдана. Улаан-хар мод, min-heap карт нэмэгдсэн.}
+\end{figure}
+
+\Needspace{15\baselineskip}
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth,height=0.42\textheight,keepaspectratio]{ui_learn_9.png}
+\caption*{Зураг 5b -- Хичээл хуудас: зүүн талд 9 шатны жагсаалт (7. Улаан-хар мод, 8. Хамгийн бага овоо шинээр нэмэгдсэн). Багш алхам бүрийг тайлбарлаж, «Энэ алхмыг ажиллуулах» товчоор \code{kds --json}-д нэг командыг явуулна.}
+\end{figure}
+
+\Needspace{15\baselineskip}
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.0\textwidth,height=0.42\textheight,keepaspectratio]{ui_play_9.png}
+\caption*{Зураг 5c -- Чөлөөт горим: бүтэц сонгох жагсаалтад «Өнгөөр тэнцвэржих мод» (red-black) ба «Тэргүүлэх ээлж» (min-heap) шинээр нэмэгдсэн.}
+\end{figure}
+
 % ---------------------------------------------------------------------------
 % 7. Туршилтын арга
 % ---------------------------------------------------------------------------
@@ -409,7 +430,7 @@ avl\_check & tests/avl\_check.py: 30 санамсаргүй гүйлт (50--400 
 hash\_resize & examples/hash\_resize.txt -- ачаалал 0.75-аас хэтрэхэд bucket 4$\rightarrow$8$\rightarrow$16 auto resize, rehash/stats & Resize ба stats зөв; rehash 65/0, auto maybe мөрүүд ERR \\ \hline
 rb\_heap & examples/rb\_heap.txt -- red-black-д AVL-тэй ижил түлхүүр, heap push/pop/peek & Эргүүлэлтийн дараах өнгө/black-height, inorder зөв; heap-ийн дараалал, давхардал/underflow ERR \\ \hline
 rb\_check & tests/rb\_check.py: red-black 30 seed + min-heap 10 seed & Өнгө, black-height, inorder эрэмбэ, heap-ийн эс хазайх чанар бүх гүйлтэд хүчинтэй \\ \hline
-kernel module & src/kernel/run\_module\_test.sh: start=25, start=15, start=0 & 24 ба 18 гишүүнтэй Collatz, start=0 үед $-EINVAL$ \\ \hline
+kernel module & src/kernel/run_module_test.sh: start=25, start=15, start=0 & 24 ба 18 гишүүнтэй Collatz, start=0 үед $-EINVAL$ \\ \hline
 \end{tabular}
 \par}
 
@@ -436,9 +457,9 @@ fuzz text == json (8 seed × 5000 команд, тэгш seed-д AVL) & \textcol
 avl\_check (30 гүйлт + эрэмбэлсэн 1..15) & \textcolor{passgreen}{\textbf{PASS ×32 (BST өндөр 15, AVL өндөр 4)}} \\ \hline
 rb\_check (red-black 30 seed + min-heap 10 seed: өнгө, black-height, inorder/эс хазайх чанар) & \textcolor{passgreen}{\textbf{PASS ×40}} \\ \hline
 Kernel module, \textbf{өмнөх} хувилбар (birthday, kfifo, bitmap) & \textcolor{passgreen}{\textbf{PASS: Ubuntu 24.04, kernel 6.11.0-17, insmod/rmmod (Зураг 7)}} \\ \hline
-Kernel module, \textbf{одоогийн} хувилбар (color, Collatz, \code{start} параметр) & \textbf{compile OK} (Ubuntu 24.04, linux-headers-6.8.0-149 дээр \code{kds_module.ko} үүссэн); \textbf{insmod/rmmod ачаалалт одоогоор тэмдэглэгдээгүй} -- \code{docs/KERNEL\_EVIDENCE.md}-ийн алхмаар жинхэнэ Linux дээр гүйцэтгэж гарсан dmesg-ийг энд нэмнэ. Collatz-ийн гишүүдийн тоог (24, 18) хэрэглэгчийн орчинд Python-оор тооцож шалгасан. \\ \hline
+Kernel module, \textbf{одоогийн} хувилбар (color, Collatz, \code{start} параметр, hashtable, rbtree, \code{/proc/kds}) & \textcolor{passgreen}{\textbf{PASS: Ubuntu 24.04.2, kernel 6.11.0-17-generic, Secure Boot идэвхтэй (MOK гарын үсэгтэй); автомат тест скрипт 9 PASS (Зураг 8--10)}} \\ \hline
 CI (GitHub Actions) & \textcolor{passgreen}{\textbf{PASS: C цөм (Ubuntu+macOS) ба Next.js веб апп build+тест}} \\ \hline
-Kernel module-ийн шинэчлэгдсэн хэсэг (Linux-ийн hashtable.h, rbtree.h толгой файлууд, /proc/kds) & Жинхэнэ Linux дээр \code{run_module_test.sh}-ээр баталгаажуулна (CI Linux job build л хийнэ). Хүлээгдэх гаралтыг доор үзүүлэв. \\ \hline
+Kernel module-ийн шинэчлэгдсэн хэсэг (Linux-ийн hashtable.h, rbtree.h толгой файлууд, \code{/proc/kds}) & \textcolor{passgreen}{\textbf{PASS: жинхэнэ Linux дээр insmod/rmmod, \code{/proc/kds} уншилт (Зураг 8--9)}} \\ \hline
 \end{tabular}
 \par}
 
@@ -573,22 +594,28 @@ ERR queue: integer out of range -2147483647..2147483647 (got '99999999999')
 \caption*{Зураг 7 -- Kernel module-ийн өмнөх хувилбарын (birthday, kfifo, bitmap) бодит ачаалалт: Ubuntu 24.04, kernel 6.11.0-17-generic, MOK гарын үсэгтэй.}
 \end{figure}
 
-Part I/II нэмэгдсэн хувилбарын хүлээгдэх dmesg гаралт (\code{insmod kds_module.ko start=15}). Collatz гишүүдийг хэрэглэгчийн орчинд тооцоолж шалгасан: start=25 үед 24 гишүүн, start=15 үед 18 гишүүн.
+\textbf{Одоогийн хувилбар} (Part I/II, hashtable, rbtree, \code{/proc/kds}) жинхэнэ Linux дээр \code{src/kernel/run_module_test.sh}-ээр ачаалагдсан. Орчин: Ubuntu 24.04.2 LTS, kernel 6.11.0-17-generic, gcc 13.3.0, Secure Boot идэвхтэй тул модульд MOK түлхүүрээр гарын үсэг зурсан (\code{signer: kds module signing}). Скрипт \code{make exit=0} буюу build, sign, \code{start=25}, \code{start=15}, \code{start=0} гурван ачаалал, \code{/proc/kds} уншилт, rmmod-ыг дараалан шалгаж \textbf{9 PASS} өгсөн (Зураг 8). Build-ийн гаралтад зөвхөн kbuild-ийн мэдээллийн мөр (\code{the compiler differs...}, \code{Skipping BTF generation}) байгаа бөгөөд compiler warning алга. Collatz гишүүдийн тоо: start=25 үед 24, start=15 үед 18 -- хэрэглэгчийн орчинд Python-оор урьдчилан тооцсон утгатай таарсан.
 
-\begin{codeblock}
-kds: loading module (start=15)
-kds: color red=255 blue=0 green=0
-kds: color red=0 blue=255 green=0
-kds: color red=0 blue=0 green=255
-kds: color red=128 blue=64 green=32
-kds: collatz 15
-kds: collatz 46   23   70   35   106   53   160   80   40   20   10   5   16   8   4   2
-kds: collatz 1
-kds: collatz start=15 terms=18
-kds: birthday 2/8/1995 ... 30/12/2003, fifo out 10 20 30, bitmap weight=2, bit15=1
-(rmmod) kds: removing color ... / removing collatz 15 ... 1 / removing birthday ... / module unloaded
-(insmod start=0) kds: start must be 1..1000000 (got 0)   -> insmod: Invalid parameters
-\end{codeblock}
+\Needspace{18\baselineskip}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.80\textwidth,height=0.42\textheight,keepaspectratio]{kmod_pass.png}
+\caption*{Зураг 8 -- Тест скрипт: build (make exit=0), sign, \code{insmod} (start=25, start=15), \code{start=0}-ийн татгалзал, Collatz 24 ба 18 гишүүн -- бүгд PASS.}
+\end{figure}
+
+\Needspace{18\baselineskip}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth,height=0.55\textheight,keepaspectratio]{kmod_start15.png}
+\caption*{Зураг 9 -- \code{insmod kds_module.ko start=15}: \code{/proc/kds} (colors, collatz 18 гишүүн, birthdays, hashtable, rbtree, bitmap) ба dmesg-ийн \code{kds:} мөрүүд (rb 20..80, rb erase 30, hash get/del).}
+\end{figure}
+
+\Needspace{14\baselineskip}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth,height=0.30\textheight,keepaspectratio]{kmod_start0.png}
+\caption*{Зураг 10 -- rmmod-ын дараа \code{module unloaded}; \code{insmod kds_module.ko start=0} нь \code{Invalid parameters} гэж татгалзаж, dmesg-д \code{start must be 1..1000000 (got 0)} гарсан.}
+\end{figure}
 
 % ---------------------------------------------------------------------------
 % 9. Хэлэлцүүлэг
@@ -601,8 +628,7 @@ kds: birthday 2/8/1995 ... 30/12/2003, fifo out 10 20 30, bitmap weight=2, bit15
 \Needspace{3\baselineskip}\textbf{Хязгаарлалт:}
 
 \begin{enumerate}[leftmargin=22pt,itemsep=2pt,topsep=2pt]
-  \item Kernel module-ийн зөвхөн \textbf{өмнөх} хувилбарыг (birthday, kfifo, bitmap) нэг машин дээр (kernel 6.11.0-17) ачаалж туршсан; Part I/II-ийг агуулсан одоогийн хувилбар compile хийгддэг ч ачаалалтын нотолгоо хараахан байхгүй (дээрх Зураг 7 нь одоогийн хувилбарынх биш). Өөр kernel хувилбарт дахин build хийх шаардлагатай. Secure Boot идэвхтэй үед гарын үсэггүй модуль ачаалагдахгүй тул MOK түлхүүрээр гарын үсэг зурсан.
-  \item Kernel module-ийн шинэчлэгдсэн hashtable, rbtree, \code{/proc/kds} хэсгийг жинхэнэ Linux дээр \code{insmod}-оор хараахан баталгаажуулаагүй (CI-ийн Linux job зөвхөн build хийдэг); \code{run_module_test.sh}-ийг бодит Linux машин дээр ажиллуулж шалгана. Red-black мод C цөмд (\code{rb} горим), singly жагсаалт (hlist) hash-ийн bucket-д хэрэгжсэн.
+  \item Kernel module-ийг зөвхөн нэг машин дээр (Ubuntu 24.04.2, kernel 6.11.0-17-generic) ачаалж туршсан; өөр kernel хувилбарт дахин build хийх шаардлагатай. Secure Boot идэвхтэй үед гарын үсэггүй модуль ачаалагдахгүй тул MOK түлхүүрээр гарын үсэг зурсан. Red-black мод C цөмд (\code{rb} горим), singly жагсаалт (hlist) hash-ийн bucket-д хэрэгжсэн.
   \item Хэш функц нь энгийн нийлбэр тул «ab», «ba» шиг үсгийн байр солигдсон түлхүүрүүд үргэлж collision үүсгэнэ. Bucket-ийн тоо auto resize-ээр 64 хүртэл ихэсдэг ч элементийн хязгаар 24-өөр бүдүүн дүрслэл болгож тоог хязгаарласан.
   \item Scheduler-т бүх процесс үүсгэсэн мөчдөө ирнэ гэж үзсэн. I/O хүлээлт ба тэргүүлэх эрэмбэ байхгүй.
   \item Веб апп зөвхөн дэлгэц дээр зурдаг, өөрөө логик агуулдаггүй тул интернэт/сервер шаардлагатай (хуучин нэг файлтай UI-гээс ялгаатай нь, тэр нь browser дотроо бүх логикыг давтдаг байсан). Веб аппыг локал ажиллуулахад \code{make}-аар \code{kds}-г урьдчилан build хийх шаардлагатай.

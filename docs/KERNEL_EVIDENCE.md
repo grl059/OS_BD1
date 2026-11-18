@@ -1,4 +1,6 @@
-# Kernel module: жинхэнэ Linux дээрх нотолгоо (хийх алхам)
+# Kernel module: жинхэнэ Linux дээрх нотолгоо
+
+> **Төлөв: хийгдсэн (2026-11-18).** Ubuntu 24.04.2, kernel 6.11.0-17-generic, Secure Boot идэвхтэй, MOK гарын үсэгтэй; `run_module_test.sh` 9 PASS. Үр дүн Report-ын Зураг 8--10-д. Доорх нь давтах заавар.
 
 Review (II-4-13, P4) нь Report-ын Зураг 7 (dmesg) **өмнөх** хувилбарынх, харин одоогийн
 `src/kernel/kds_module.c` (Part I `struct color`, Part II Collatz + `start` параметр,
