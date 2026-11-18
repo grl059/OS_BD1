@@ -87,7 +87,7 @@ sched  policy fcfs|rr <квант 1..10>  ·  sched tick|print|stats|clear   (st
 - Kernel module-ийг жинхэнэ Linux дээр build хийнэ (WSL, Docker дээр ачаалагдахгүй). Secure Boot идэвхтэй бол MOK түлхүүрээр гарын үсэг зурна (Manual 2.7).
 - Hash map-ийн автомат resize нь анхдагчаар **унтраастай** (`hash auto on`-оор асаана; хуучин жишээнүүдийн гаралт өөрчлөгдөхгүйн тулд). Дээд тал нь 64 bucket; queue, stack, процесс хамгийн ихдээ 8; hash 24 элемент.
 - Вэб UI одоо C цөмийн 9 бүтэц бүрийг (rb улаан-хар мод, heap овоо орно) зурна; `/learn`-д 9 шат бий. (Вэб `next build`-ийг энэ хувилбарт сэндбокс дотор ажиллуулж чадаагүй тул `cd web && npm install && npm run build`-ээр шалгана уу.)
-- Kernel module-ийн одоогийн хувилбар жинхэнэ Linux дээр (Ubuntu 24.04.2, kernel 6.11.0-17-generic, Secure Boot, MOK гарын үсэгтэй) ачаалагдаж `run_module_test.sh` 9 PASS өгсөн; Report-ын Зураг 8--10, түүхий гаралт `docs/kernel_dmesg.txt`. Өөр kernel хувилбарт дахин build хийнэ.
+- Kernel module-ийн одоогийн хувилбар жинхэнэ Linux дээр (Ubuntu 24.04.2, kernel 6.11.0-17-generic, Secure Boot, MOK гарын үсэгтэй) ачаалагдаж `run_module_test.sh` 9 PASS өгсөн; Report-ын Зураг 7--9, түүхий гаралт `docs/kernel_dmesg.txt`. Өөр kernel хувилбарт дахин build хийнэ.
 - Нэг мөрөнд хамгийн ихдээ 16 үг (команд, үйлдэл + 14 утга); int-ийн муж `-2147483647..2147483647`; `bitmap size` нь бүх битийг цэвэрлэнэ.
 - Scheduler-т бүх процесс `proc new` хийсэн мөчид ирнэ; I/O ба priority байхгүй.
 - Веб апп нь C-г **дахин хэрэгжүүлдэггүй**: дэлгэц дээрх бүх зүйл `kds --json`-ийн гаргасан `state`-ээс шууд ирдэг (`tests/json_check.py`, `web` дотор `node --test` баталгаажуулна).
