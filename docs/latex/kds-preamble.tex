@@ -22,21 +22,12 @@
 \usepackage{needspace}
 \usepackage{amssymb}
 
-% DejaVu Serif/Sans Mono: монгол кирилл (Ү, Ө) дэмждэг, кросс-платформ фонт.
-% Эхлээд TeX Live-ийн dejavu багцаас файлаар, олдохгүй бол системийн
-% DejaVu фонтны нэрээр ачаална (Linux-д fonts-dejavu-core). Times New Roman,
-% Menlo нь зөвхөн macOS-д байдаг тул Linux дээр build унадаг байсан.
-\IfFontExistsTF{DejaVuSerif.ttf}{
-  \setmainfont{DejaVuSerif}[
-    Extension = .ttf,
-    UprightFont = *,
-    BoldFont = *-Bold,
-    ItalicFont = *-Italic,
-    BoldItalicFont = *-BoldItalic,
-  ]
-}{
-  \setmainfont{DejaVu Serif}
-}
+% Үндсэн фонт: Times New Roman. Кирилл (Ү, Ө) дэмждэг. Times New Roman суугаагүй
+% орчинд (Linux) метрикээрээ ижил Liberation Serif, түүнгүй бол TeX Gyre Termes,
+% хамгийн сүүлд DejaVu Serif ашиглана. Кодын фонт нь DejaVu Sans Mono.
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{%
+\IfFontExistsTF{Liberation Serif}{\setmainfont{Liberation Serif}}{%
+\IfFontExistsTF{TeX Gyre Termes}{\setmainfont{TeX Gyre Termes}}{\setmainfont{DejaVu Serif}}}}
 \IfFontExistsTF{DejaVuSansMono.ttf}{
   \setmonofont{DejaVuSansMono}[
     Extension = .ttf,
@@ -84,19 +75,19 @@
 \titlespacing*{\subsubsection}{0pt}{12pt}{4pt}
 
 \newcommand{\hthree}[1]{%
-  \par\Needspace{4\baselineskip}\addvspace{10pt}%
-  {\fontsize{12.5}{15}\selectfont\bfseries #1\par}%
+  \par\Needspace{10\baselineskip}\addvspace{10pt}%
+  {\fontsize{12.5}{15}\selectfont\bfseries #1\par}\nopagebreak[4]%
   \addvspace{3pt}%
 }
 
 \newcommand{\manualsection}[1]{%
-  \par\Needspace{5\baselineskip}\addvspace{18pt}%
-  {\fontsize{16}{19}\selectfont\bfseries\color{linkblue} #1\par}%
+  \par\Needspace{12\baselineskip}\addvspace{18pt}%
+  {\fontsize{16}{19}\selectfont\bfseries\color{linkblue} #1\par}\nopagebreak[4]%
   \addvspace{6pt}%
 }
 \newcommand{\manualsubsection}[1]{%
-  \par\Needspace{4\baselineskip}\addvspace{14pt}%
-  {\fontsize{13}{16}\selectfont\bfseries #1\par}%
+  \par\Needspace{10\baselineskip}\addvspace{14pt}%
+  {\fontsize{13}{16}\selectfont\bfseries #1\par}\nopagebreak[4]%
   \addvspace{4pt}%
 }
 
@@ -147,12 +138,18 @@
 \setlength{\LTpre}{4pt}
 \setlength{\LTpost}{8pt}
 
-\AddToHook{cmd/section/before}{\Needspace{4\baselineskip}}
+\AddToHook{cmd/section/before}{\Needspace{14\baselineskip}}
 
+
+% Догол мөр хуудас дамнахгүй (богино догол мөрийг хуваахгүй)
+\interlinepenalty=10000
+\widowpenalty=10000
+\clubpenalty=10000
+\raggedbottom
 % ---------------------------------------------------------------------------
 % Нүүр хуудасны нэгдсэн загвар (Final Report ба Manual)
 % ---------------------------------------------------------------------------
-\IfFontExistsTF{FreeSerif}{\newfontfamily\coverfont{FreeSerif}}{\newfontfamily\coverfont{DejaVu Serif}}
+\newcommand{\coverfont}{\normalfont}
 \newcommand{\kdscover}[2]{%
 \begin{titlepage}
 \thispagestyle{empty}
