@@ -1,0 +1,25 @@
+# date:   2026-11-19 04:05:12
+# host:   b241940001-server
+# kernel: 6.11.0-17-generic
+# os:     Ubuntu 24.04.2 LTS
+# gcc:    gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+# secure boot: SecureBoot enabled
+
+make -C /lib/modules/6.11.0-17-generic/build M=/home/gerel/OS_BD1/src/kernel modules
+make[1]: Entering directory '/usr/src/linux-headers-6.11.0-17-generic'
+warning: the compiler differs from the one used to build the kernel
+  The kernel was built by: x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
+  You are using:           gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+  CC [M]  /home/gerel/OS_BD1/src/kernel/kds_module.o
+  MODPOST /home/gerel/OS_BD1/src/kernel/Module.symvers
+  CC [M]  /home/gerel/OS_BD1/src/kernel/kds_module.mod.o
+  LD [M]  /home/gerel/OS_BD1/src/kernel/kds_module.ko
+  BTF [M] /home/gerel/OS_BD1/src/kernel/kds_module.ko
+Skipping BTF generation for /home/gerel/OS_BD1/src/kernel/kds_module.ko due to unavailability of vmlinux
+make[1]: Leaving directory '/usr/src/linux-headers-6.11.0-17-generic'
+make exit=0
+PASS sign (/home/gerel/mok)
+filename:       /home/gerel/OS_BD1/src/kernel/kds_module.ko
+vermagic:       6.11.0-17-generic SMP preempt mod_unload modversions 
+signer:         kds module signing
+parm:           start:First term of the Collatz sequence (1..1000000, default 25) (int)

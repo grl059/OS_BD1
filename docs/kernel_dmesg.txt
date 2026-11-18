@@ -1,0 +1,245 @@
+### insmod kds_module.ko 
+(lsmod: kds_module loaded)
+### cat /proc/kds
+start=25
+colors:
+  red=255 blue=0 green=0
+  red=0 blue=255 green=0
+  red=0 blue=0 green=255
+  red=128 blue=64 green=32
+collatz(terms=24): 25 76 38 19 58 29 88 44 22 11 34 17 52 26 13 40 20 10 5 16 8 4 2 1
+birthdays:
+  2/8/1995
+  17/3/1998
+  29/2/2000
+  5/11/2001
+  30/12/2003
+hashtable(buckets=8, entries=4):
+  bucket 0: carol=3
+  bucket 1: erin=5
+  bucket 6: alice=1
+  bucket 7: dave=4
+rbtree(nodes=6, in-order): 20 40 50 60 70 80
+bitmap(32): weight=2 bit15=1
+### rmmod kds_module
+[  222.865649] kds: loading module (start=25)
+[  222.865662] kds: color red=255 blue=0 green=0
+[  222.865667] kds: color red=0 blue=255 green=0
+[  222.865671] kds: color red=0 blue=0 green=255
+[  222.865674] kds: color red=128 blue=64 green=32
+[  222.865681] kds: collatz 25
+[  222.865684] kds: collatz 76
+[  222.865687] kds: collatz 38
+[  222.865689] kds: collatz 19
+[  222.865691] kds: collatz 58
+[  222.865693] kds: collatz 29
+[  222.865695] kds: collatz 88
+[  222.865698] kds: collatz 44
+[  222.865700] kds: collatz 22
+[  222.865702] kds: collatz 11
+[  222.865704] kds: collatz 34
+[  222.865706] kds: collatz 17
+[  222.865708] kds: collatz 52
+[  222.865710] kds: collatz 26
+[  222.865712] kds: collatz 13
+[  222.865715] kds: collatz 40
+[  222.865717] kds: collatz 20
+[  222.865719] kds: collatz 10
+[  222.865721] kds: collatz 5
+[  222.865723] kds: collatz 16
+[  222.865725] kds: collatz 8
+[  222.865728] kds: collatz 4
+[  222.865730] kds: collatz 2
+[  222.865732] kds: collatz 1
+[  222.865734] kds: collatz start=25 terms=24
+[  222.865738] kds: birthday 2/8/1995
+[  222.865742] kds: birthday 17/3/1998
+[  222.865746] kds: birthday 29/2/2000
+[  222.865748] kds: birthday 5/11/2001
+[  222.865752] kds: birthday 30/12/2003
+[  222.865755] kds: fifo out 10
+[  222.865757] kds: fifo out 20
+[  222.865759] kds: fifo out 30
+[  222.865762] kds: bitmap weight=2, bit15=1
+[  222.865766] kds: hash bucket=0 carol=3
+[  222.865770] kds: hash bucket=1 erin=5
+[  222.865773] kds: hash bucket=2 bob=2
+[  222.865776] kds: hash bucket=6 alice=1
+[  222.865779] kds: hash bucket=7 dave=4
+[  222.865782] kds: hash get bob = 2
+[  222.865785] kds: hash del bob (entries=4)
+[  222.865787] kds: hash get bob = not found
+[  222.865791] kds: rb 20
+[  222.865794] kds: rb 30
+[  222.865796] kds: rb 40
+[  222.865798] kds: rb 50
+[  222.865801] kds: rb 60
+[  222.865803] kds: rb 70
+[  222.865805] kds: rb 80
+[  222.865808] kds: rb erase 30 (nodes=6)
+[  222.865810] kds: rb find 40 = yes
+[  222.865820] kds: /proc/kds created
+[  222.918488] kds: removing hash carol=3
+[  222.918500] kds: removing hash erin=5
+[  222.918503] kds: removing hash alice=1
+[  222.918506] kds: removing hash dave=4
+[  222.918509] kds: removing rb 20
+[  222.918513] kds: removing rb 40
+[  222.918516] kds: removing rb 60
+[  222.918518] kds: removing rb 80
+[  222.918520] kds: removing rb 70
+[  222.918523] kds: removing rb 50
+[  222.918525] kds: removing color red=255 blue=0 green=0
+[  222.918531] kds: removing color red=0 blue=255 green=0
+[  222.918535] kds: removing color red=0 blue=0 green=255
+[  222.918539] kds: removing color red=128 blue=64 green=32
+[  222.918543] kds: removing collatz 25
+[  222.918546] kds: removing collatz 76
+[  222.918549] kds: removing collatz 38
+[  222.918551] kds: removing collatz 19
+[  222.918554] kds: removing collatz 58
+[  222.918556] kds: removing collatz 29
+[  222.918558] kds: removing collatz 88
+[  222.918561] kds: removing collatz 44
+[  222.918563] kds: removing collatz 22
+[  222.918565] kds: removing collatz 11
+[  222.918568] kds: removing collatz 34
+[  222.918570] kds: removing collatz 17
+[  222.918572] kds: removing collatz 52
+[  222.918575] kds: removing collatz 26
+[  222.918577] kds: removing collatz 13
+[  222.918580] kds: removing collatz 40
+[  222.918582] kds: removing collatz 20
+[  222.918584] kds: removing collatz 10
+[  222.918586] kds: removing collatz 5
+[  222.918589] kds: removing collatz 16
+[  222.918591] kds: removing collatz 8
+[  222.918594] kds: removing collatz 4
+[  222.918596] kds: removing collatz 2
+[  222.918598] kds: removing collatz 1
+[  222.918600] kds: removing birthday 2/8/1995
+[  222.918604] kds: removing birthday 17/3/1998
+[  222.918608] kds: removing birthday 29/2/2000
+[  222.918611] kds: removing birthday 5/11/2001
+[  222.918614] kds: removing birthday 30/12/2003
+[  222.918618] kds: module unloaded
+
+### insmod kds_module.ko start=15
+(lsmod: kds_module loaded)
+### cat /proc/kds
+start=15
+colors:
+  red=255 blue=0 green=0
+  red=0 blue=255 green=0
+  red=0 blue=0 green=255
+  red=128 blue=64 green=32
+collatz(terms=18): 15 46 23 70 35 106 53 160 80 40 20 10 5 16 8 4 2 1
+birthdays:
+  2/8/1995
+  17/3/1998
+  29/2/2000
+  5/11/2001
+  30/12/2003
+hashtable(buckets=8, entries=4):
+  bucket 0: carol=3
+  bucket 1: erin=5
+  bucket 6: alice=1
+  bucket 7: dave=4
+rbtree(nodes=6, in-order): 20 40 50 60 70 80
+bitmap(32): weight=2 bit15=1
+### rmmod kds_module
+[  223.041447] kds: loading module (start=15)
+[  223.041459] kds: color red=255 blue=0 green=0
+[  223.041464] kds: color red=0 blue=255 green=0
+[  223.041468] kds: color red=0 blue=0 green=255
+[  223.041472] kds: color red=128 blue=64 green=32
+[  223.041478] kds: collatz 15
+[  223.041481] kds: collatz 46
+[  223.041483] kds: collatz 23
+[  223.041485] kds: collatz 70
+[  223.041487] kds: collatz 35
+[  223.041489] kds: collatz 106
+[  223.041492] kds: collatz 53
+[  223.041494] kds: collatz 160
+[  223.041496] kds: collatz 80
+[  223.041499] kds: collatz 40
+[  223.041501] kds: collatz 20
+[  223.041503] kds: collatz 10
+[  223.041505] kds: collatz 5
+[  223.041507] kds: collatz 16
+[  223.041509] kds: collatz 8
+[  223.041512] kds: collatz 4
+[  223.041514] kds: collatz 2
+[  223.041516] kds: collatz 1
+[  223.041518] kds: collatz start=15 terms=18
+[  223.041523] kds: birthday 2/8/1995
+[  223.041527] kds: birthday 17/3/1998
+[  223.041530] kds: birthday 29/2/2000
+[  223.041533] kds: birthday 5/11/2001
+[  223.041537] kds: birthday 30/12/2003
+[  223.041540] kds: fifo out 10
+[  223.041542] kds: fifo out 20
+[  223.041544] kds: fifo out 30
+[  223.041547] kds: bitmap weight=2, bit15=1
+[  223.041552] kds: hash bucket=0 carol=3
+[  223.041555] kds: hash bucket=1 erin=5
+[  223.041558] kds: hash bucket=2 bob=2
+[  223.041561] kds: hash bucket=6 alice=1
+[  223.041564] kds: hash bucket=7 dave=4
+[  223.041567] kds: hash get bob = 2
+[  223.041570] kds: hash del bob (entries=4)
+[  223.041572] kds: hash get bob = not found
+[  223.041582] kds: rb 20
+[  223.041584] kds: rb 30
+[  223.041587] kds: rb 40
+[  223.041589] kds: rb 50
+[  223.041591] kds: rb 60
+[  223.041593] kds: rb 70
+[  223.041595] kds: rb 80
+[  223.041599] kds: rb erase 30 (nodes=6)
+[  223.041601] kds: rb find 40 = yes
+[  223.041609] kds: /proc/kds created
+[  223.093951] kds: removing hash carol=3
+[  223.093963] kds: removing hash erin=5
+[  223.093967] kds: removing hash alice=1
+[  223.093970] kds: removing hash dave=4
+[  223.093973] kds: removing rb 20
+[  223.093977] kds: removing rb 40
+[  223.093980] kds: removing rb 60
+[  223.093982] kds: removing rb 80
+[  223.093985] kds: removing rb 70
+[  223.093987] kds: removing rb 50
+[  223.093990] kds: removing color red=255 blue=0 green=0
+[  223.093995] kds: removing color red=0 blue=255 green=0
+[  223.093999] kds: removing color red=0 blue=0 green=255
+[  223.094003] kds: removing color red=128 blue=64 green=32
+[  223.094007] kds: removing collatz 15
+[  223.094037] kds: removing collatz 46
+[  223.094040] kds: removing collatz 23
+[  223.094043] kds: removing collatz 70
+[  223.094045] kds: removing collatz 35
+[  223.094047] kds: removing collatz 106
+[  223.094050] kds: removing collatz 53
+[  223.094053] kds: removing collatz 160
+[  223.094055] kds: removing collatz 80
+[  223.094057] kds: removing collatz 40
+[  223.094060] kds: removing collatz 20
+[  223.094063] kds: removing collatz 10
+[  223.094065] kds: removing collatz 5
+[  223.094068] kds: removing collatz 16
+[  223.094070] kds: removing collatz 8
+[  223.094072] kds: removing collatz 4
+[  223.094075] kds: removing collatz 2
+[  223.094077] kds: removing collatz 1
+[  223.094079] kds: removing birthday 2/8/1995
+[  223.094083] kds: removing birthday 17/3/1998
+[  223.094087] kds: removing birthday 29/2/2000
+[  223.094091] kds: removing birthday 5/11/2001
+[  223.094094] kds: removing birthday 30/12/2003
+[  223.094097] kds: module unloaded
+
+### insmod kds_module.ko start=0
+insmod: ERROR: could not insert module kds_module.ko: Invalid parameters
+[  223.214403] kds: loading module (start=0)
+[  223.214414] kds: start must be 1..1000000 (got 0)
+
