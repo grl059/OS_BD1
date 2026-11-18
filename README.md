@@ -1,7 +1,20 @@
 # Kernel Data Structures
 
-**F.CSM302 Үйлдлийн систем · БД1 · Хуваарилалтын код: V-1-4**
+**F.CSM302 Үйлдлийн систем · БД2 (Final, v1.1.0) · Хуваарилалтын код: V-1-4**
 Үзүүлэлт: **Kernel structure graph** · Бүлэг: **3 – Processes** · Сурах бичиг: Silberschatz, Galvin, Gagne, *Operating System Concepts* (Programming Project «Kernel Data Structures», онол нь **Chapter 1 Introduction, 1.9 Kernel Data Structures, p. 36**)
+
+## Үр дүн ба материал
+| Материал | Холбоос |
+|---|---|
+| GitHub final release | [v1.1.0](https://github.com/grl059/OS_BD1/releases/tag/v1.1.0) |
+| Final Report | [`docs/V-1-4_Final_Report.pdf`](docs/V-1-4_Final_Report.pdf) |
+| Manual | [`docs/V-1-4_Manual.pdf`](docs/V-1-4_Manual.pdf) |
+
+Веб апп (бодит дэлгэцийн зураг). Зүүн талд холбоост жагсаалт, баруун талд хэш хүснэгтийн *collision* гинж, доор *Round Robin* scheduler:
+
+![Холбоост жагсаалт](docs/report_src/img/ui_play_list.png)
+![Хэш хүснэгт](docs/report_src/img/ui_play_hash.png)
+![Scheduler](docs/report_src/img/ui_play_sched.png)
 
 ## Зорилго
 Linux kernel-ийн өгөгдлийн бүтцүүдийг хэрэгжүүлж, элемент **нэмэх, устгах, хайх** үйлдлийн дараах бүтцийг графаар харуулна:
@@ -23,7 +36,7 @@ Linux kernel-ийн өгөгдлийн бүтцүүдийг хэрэгжүүлж
 git clone https://github.com/grl059/OS_BD1.git kernel-data-structures
 cd kernel-data-structures
 make                        # src/user/kds.c -> ./kds (ASan + UBSan)
-make test                   # 8 жишээ + stress: бүгд PASS
+make test                   # 9 PASS (жишээ скриптүүд + stress)
 ./kds examples/textbook.txt
 ```
 **macOS 26 + Apple clang:** the bundled ASan runtime can hang while initializing
@@ -56,6 +69,9 @@ sh src/kernel/run_module_test.sh     # build, insmod (start=25, start=15, start=
                                      # -> docs/kernel_build_log.txt, docs/kernel_dmesg.txt
 ```
 
+## Туршсан орчин ба хамаарал
+Ubuntu 24.04 (gcc 13, GNU make, Python 3.13, Node.js 22). `make check`-ийн 98 шалгалт, веб аппын 17 тест (`cd web && npm test`) энэ орчинд PASS. Windows дээр туршаагүй, macOS дээр зөвхөн CI.
+
 ## Командууд
 ```
 list   add_head|add_tail|del|find <өдөр> <сар> <жил>  ·  list print|clear
@@ -80,14 +96,14 @@ sched  policy fcfs|rr <квант 1..10>  ·  sched tick|print|stats|clear   (st
 | `examples/` | textbook, all_structures, errors, search, scheduler, scheduler_full, hash_resize, rb_heap |
 | `tests/` | хүлээгдэх гаралт, `run_tests.sh`, `json_check.py`, `fuzz_json.py`, `avl_check.py`, `rb_check.py` (red-black ба heap-ийн инвариант) |
 | `.github/workflows/` | `ci.yml` (C цөм + веб апп build/тест, ubuntu+macos), `release.yml` (CI амжилттай болсон тутамд conventional-commit дүрмээр хувилбар нэмэгдүүлж release гаргадаг) |
-| `docs/` | `V-1-4_BD1_Report.pdf`, `V-1-4_Manual.pdf`, `V-1-4_BD1_Demo.mp4` (demo бичлэг), `V-1-4_Review_II-4-9.pdf` (хөндлөнгийн шүүмж); `report_src/img/ui_*.png` – веб UI-ийн бодит дэлгэцийн зураг |
+| `docs/` | `V-1-4_Final_Report.pdf`, `V-1-4_Manual.pdf`, `KERNEL_EVIDENCE.md` (kernel module-ийн нотолгооны тайлбар); `report_src/img/` – веб UI ба kernel module-ийн бодит дэлгэцийн зураг |
 | `docs/latex/` | Тайлан, Manual-ийн **албан ёсны эх** (report.tex, manual.tex, kds-preamble.tex; XeLaTeX + DejaVu фонт). Build: `sh docs/latex/build_latex.sh` – эцсийн PDF-үүдийг `docs/`-д хуулна. `docs/report_src/` нь HTML нөөц эх (`build_pdf.py`, playwright) |
 
 ## Known issues
 - Kernel module-ийг жинхэнэ Linux дээр build хийнэ (WSL, Docker дээр ачаалагдахгүй). Secure Boot идэвхтэй бол MOK түлхүүрээр гарын үсэг зурна (Manual 2.7).
 - Hash map-ийн автомат resize нь анхдагчаар **унтраастай** (`hash auto on`-оор асаана; хуучин жишээнүүдийн гаралт өөрчлөгдөхгүйн тулд). Дээд тал нь 64 bucket; queue, stack, процесс хамгийн ихдээ 8; hash 24 элемент.
-- Вэб UI одоо C цөмийн 9 бүтэц бүрийг (rb улаан-хар мод, heap овоо орно) зурна; `/learn`-д 9 шат бий. (Вэб `next build`-ийг энэ хувилбарт сэндбокс дотор ажиллуулж чадаагүй тул `cd web && npm install && npm run build`-ээр шалгана уу.)
-- Kernel module-ийн одоогийн хувилбар жинхэнэ Linux дээр (Ubuntu 24.04.2, kernel 6.11.0-17-generic, Secure Boot, MOK гарын үсэгтэй) ачаалагдаж `run_module_test.sh` 9 PASS өгсөн; Report-ын Зураг 7--9, түүхий гаралт `docs/kernel_dmesg.txt`. Өөр kernel хувилбарт дахин build хийнэ.
+- Вэб UI одоо C цөмийн 9 бүтэц бүрийг (rb улаан-хар мод, heap овоо орно) зурна; `/learn`-д 9 шат бий.
+- Kernel module-ийн одоогийн хувилбар жинхэнэ Linux дээр (Ubuntu 24.04.2, kernel 6.11.0-17-generic, Secure Boot, MOK гарын үсэгтэй) ачаалагдаж `run_module_test.sh` 9 PASS өгсөн; Нотолгоо: Final Report-ын Зураг 6.2--6.4 ба `docs/KERNEL_EVIDENCE.md`. Түүхий log нь `docs/kernel_build_log.txt`, `docs/kernel_dmesg.txt`-д. Өөр kernel хувилбарт дахин build хийнэ.
 - Нэг мөрөнд хамгийн ихдээ 16 үг (команд, үйлдэл + 14 утга); int-ийн муж `-2147483647..2147483647`; `bitmap size` нь бүх битийг цэвэрлэнэ.
 - Scheduler-т бүх процесс `proc new` хийсэн мөчид ирнэ; I/O ба priority байхгүй.
 - Веб апп нь C-г **дахин хэрэгжүүлдэггүй**: дэлгэц дээрх бүх зүйл `kds --json`-ийн гаргасан `state`-ээс шууд ирдэг (`tests/json_check.py`, `web` дотор `node --test` баталгаажуулна).

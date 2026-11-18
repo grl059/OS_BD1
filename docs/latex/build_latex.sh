@@ -31,8 +31,8 @@ build() {
   echo "OK build/$name.pdf"
 }
 
-build report V-1-4_BD1_Report
+build report V-1-4_Final_Report
 build manual V-1-4_Manual
-cp build/V-1-4_BD1_Report.pdf ../V-1-4_BD1_Report.pdf
+cp build/V-1-4_Final_Report.pdf ../V-1-4_Final_Report.pdf
 cp build/V-1-4_Manual.pdf ../V-1-4_Manual.pdf
-echo "OK docs/V-1-4_BD1_Report.pdf docs/V-1-4_Manual.pdf"
+echo "OK docs/V-1-4_Final_Report.pdf docs/V-1-4_Manual.pdf"
