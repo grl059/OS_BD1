@@ -148,3 +148,38 @@
 \setlength{\LTpost}{8pt}
 
 \AddToHook{cmd/section/before}{\Needspace{4\baselineskip}}
+
+% ---------------------------------------------------------------------------
+% Нүүр хуудасны нэгдсэн загвар (Final Report ба Manual)
+% ---------------------------------------------------------------------------
+\IfFontExistsTF{FreeSerif}{\newfontfamily\coverfont{FreeSerif}}{\newfontfamily\coverfont{DejaVu Serif}}
+\newcommand{\kdscover}[2]{%
+\begin{titlepage}
+\thispagestyle{empty}
+\coverfont
+\centering
+{\fontsize{13}{17}\selectfont\bfseries
+ШИНЖЛЭХ УХААН ТЕХНОЛОГИЙН ИХ СУРГУУЛЬ\\
+МЭДЭЭЛЭЛ, ХОЛБООНЫ ТЕХНОЛОГИЙН СУРГУУЛЬ\par}
+\vspace{12mm}
+\includegraphics[height=38mm]{logo.png}\par
+\vspace{20mm}
+{\fontsize{27}{33}\selectfont\bfseries БИЕ ДААЛТ 2\\[1pt] #1\par}
+\vspace{6mm}
+{\fontsize{12}{14}\selectfont\bfseries Үйлдлийн систем /F.CSM302/\par}
+\vspace{16mm}
+\raggedright
+\hspace*{-1mm}\begin{tabular}{@{}p{45mm}p{100mm}@{}}
+{\fontsize{12}{15}\selectfont\bfseries Сэдэв:} & {\fontsize{12}{15}\selectfont #2}\\[8pt]
+{\fontsize{12}{15}\selectfont\bfseries Хуваарилалтын код:} & {\fontsize{12}{15}\selectfont V-1-4}\\[10pt]
+{\fontsize{12}{15}\selectfont\bfseries Хичээл заасан багш:} & {\fontsize{12}{15}\selectfont Г.Ганбат /F.CS10/}\\[5pt]
+{\fontsize{12}{15}\selectfont\bfseries Гүйцэтгэсэн баг:} & {\fontsize{12}{15}\selectfont
+Н.Ням-Од /B222270805/\newline А.Гэрэл /B241940001/\newline А.Номин /B242270088/\newline Э.Мягмаршагай /B241910001/\newline О.Хүслэн /B241910020/\newline Ч.Түмэншагай /B160910830/}\\
+\end{tabular}
+\vfill
+\hspace*{-1mm}\begin{tabular}{@{}p{45mm}p{100mm}@{}}
+{\fontsize{12}{15}\selectfont\bfseries Огноо:} & {\fontsize{12}{15}\selectfont 2026 оны 11 дүгээр сарын 19}\\
+\end{tabular}
+\end{titlepage}
+\setcounter{page}{2}
+}
