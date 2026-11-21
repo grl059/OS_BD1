@@ -2,7 +2,7 @@
   "name": "kds-web",
   "version": "1.0.0",
   "private": true,
-  "description": "Web visualizer for the Kernel Data Structures programming project (F.CSM302 BD1). Talks to the ../kds C core over a JSON event stream (--json mode) - this app never recomputes structure state itself.",
+  "description": "Web visualizer for the Kernel Data Structures programming project (F.CSM302 БД2, V-1-4). Talks to the ../kds C core over a JSON event stream (--json mode) - this app never recomputes structure state itself.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

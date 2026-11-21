@@ -6,6 +6,13 @@
 # Run on a real Linux machine (not WSL/Docker) with linux-headers-$(uname -r):
 #   sh src/kernel/run_module_test.sh
 # Signing key (Secure Boot): ~/mok/MOK.priv + ~/mok/MOK.der, or set MOK_DIR.
+#
+# WARNING - this script changes the host it runs on:
+#   * `sudo dmesg -C` clears the kernel ring buffer before every load, so any
+#     log you wanted to keep (e.g. a reviewer's own run) is gone. Save it first.
+#   * a previously loaded kds_module is removed silently with `sudo rmmod`.
+#   * insmod/rmmod need root and, with Secure Boot on, a MOK-signed module.
+# Run it in a VM you control, not on someone else's machine.
 set -u
 cd "$(dirname "$0")" || exit 1
 DOCS=../../docs
@@ -46,13 +53,14 @@ modinfo kds_module.ko | grep -E '^(filename|parm|signer|vermagic)' | tee -a "$DO
 sudo rmmod kds_module 2>/dev/null
 : > "$DOCS/kernel_dmesg.txt"
 run() {   # $1 = insmod arguments, $2 = expected result (ok|fail)
-  echo "### insmod kds_module.ko $1" >> "$DOCS/kernel_dmesg.txt"
+  D="$DOCS/kernel_dmesg.txt"
+  echo "### insmod kds_module.ko $1" >> "$D"
   sudo dmesg -C
-  if sudo insmod kds_module.ko $1 2>>"$DOCS/kernel_dmesg.txt"; then
+  if sudo insmod kds_module.ko $1 2>>"$D"; then
     got=ok
-    lsmod | grep -q '^kds_module' && echo "(lsmod: kds_module loaded)" >> "$DOCS/kernel_dmesg.txt"
+    lsmod | grep -q '^kds_module' && echo "(lsmod: kds_module loaded)" >> "$D"
     if [ -r /proc/kds ]; then
-      { echo "### cat /proc/kds"; cat /proc/kds; } >> "$DOCS/kernel_dmesg.txt" 2>&1
+      { echo "### cat /proc/kds"; cat /proc/kds; } >> "$D" 2>&1
       if grep -q '^start=' /proc/kds && grep -q '^hashtable(' /proc/kds && grep -q '^rbtree(' /proc/kds; then
         echo "PASS /proc/kds ($1)"
       else
@@ -61,13 +69,19 @@ run() {   # $1 = insmod arguments, $2 = expected result (ok|fail)
     else
       echo "FAIL /proc/kds missing ($1)"; fail=1
     fi
+    echo "### dmesg: load" >> "$D"
+    sudo dmesg | grep 'kds:' >> "$D"
+    sudo dmesg -C
     sudo rmmod kds_module
-    echo "### rmmod kds_module" >> "$DOCS/kernel_dmesg.txt"
+    echo "### rmmod kds_module" >> "$D"
+    echo "### dmesg: unload" >> "$D"
+    sudo dmesg | grep 'kds:' >> "$D"
   else
     got=fail
+    echo "### dmesg: rejected load" >> "$D"
+    sudo dmesg | grep 'kds:' >> "$D"
   fi
-  sudo dmesg | grep 'kds:' >> "$DOCS/kernel_dmesg.txt"
-  echo >> "$DOCS/kernel_dmesg.txt"
+  echo >> "$D"
   if [ "$got" = "$2" ]; then echo "PASS insmod $1 ($got)"; else echo "FAIL insmod $1 (got $got, expected $2)"; fail=1; fi
 }
 run ""          ok      # default start=25 -> 24 Collatz terms

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- * kds_module.c - Kernel Data Structures (F.CSM302 BD1, topic 4, Chapter 3).
+ * kds_module.c - Kernel Data Structures (F.CSM302 БД2, хуваарилалтын код V-1-4, Chapter 3).
  *
  * Operating System Concepts, Chapter 3 Programming Project "Kernel Data
  * Structures" (Section 1.9 explains the structures themselves):
@@ -54,7 +54,8 @@ struct color {
 };
 
 struct collatz {
-	unsigned long value;
+	u64 value;	/* 3n+1 peaks above 2^32 for start <= 1000000 (max 56991483520),
+					 * so a 32-bit unsigned long would wrap on i386 */
 	struct list_head list;
 };
 
@@ -162,7 +163,10 @@ static int rb_insert_item(int val)
 	return 0;
 }
 
-static void free_all(void)
+/* Freeing is the same walk in both exit paths; `log` adds the pr_info lines
+ * that only the unload case wants (init-failure cleanup must not look like a
+ * successful load in dmesg). */
+static void free_all(bool log)
 {
 	struct color *c, *cn;
 	struct collatz *z, *zn;
@@ -173,23 +177,34 @@ static void free_all(void)
 	int bkt;
 
 	hash_for_each_safe(kds_hash, bkt, tmp, e, node) {
+		if (log)
+			pr_info("kds: removing hash %s=%d\n", e->key, e->value);
 		hash_del(&e->node);
 		kfree(e);
 	}
 	nhash = 0;
-	rbtree_postorder_for_each_entry_safe(ri, rin, &kds_rb, node)
+	rbtree_postorder_for_each_entry_safe(ri, rin, &kds_rb, node) {
+		if (log)
+			pr_info("kds: removing rb %d\n", ri->val);
 		kfree(ri);
+	}
 	kds_rb = RB_ROOT;
 	nrb = 0;
 	list_for_each_entry_safe(c, cn, &color_list, list) {
+		if (log)
+			pr_info("kds: removing color red=%d blue=%d green=%d\n", c->red, c->blue, c->green);
 		list_del(&c->list);
 		kfree(c);
 	}
 	list_for_each_entry_safe(z, zn, &collatz_list, list) {
+		if (log)
+			pr_info("kds: removing collatz %llu\n", (unsigned long long)z->value);
 		list_del(&z->list);
 		kfree(z);
 	}
 	list_for_each_entry_safe(b, bn, &birthday_list, list) {
+		if (log)
+			pr_info("kds: removing birthday %d/%d/%d\n", b->day, b->month, b->year);
 		list_del(&b->list);
 		kfree(b);
 	}
@@ -209,7 +224,7 @@ static int add_color(int r, int b, int g)
 	return 0;
 }
 
-static int build_collatz(unsigned long n, int *terms)
+static int build_collatz(u64 n, int *terms)
 {
 	struct collatz *z;
 	int count = 0;
@@ -246,7 +261,7 @@ static int kds_proc_show(struct seq_file *m, void *v)
 		seq_printf(m, "  red=%d blue=%d green=%d\n", c->red, c->blue, c->green);
 	seq_printf(m, "collatz(terms=%d):", collatz_terms);
 	list_for_each_entry(z, &collatz_list, list)
-		seq_printf(m, " %lu", z->value);
+		seq_printf(m, " %llu", (unsigned long long)z->value);
 	seq_puts(m, "\nbirthdays:\n");
 	list_for_each_entry(p, &birthday_list, list)
 		seq_printf(m, "  %d/%d/%d\n", p->day, p->month, p->year);
@@ -333,7 +348,7 @@ static int __init kds_init(void)
 		goto fail;
 	collatz_terms = terms;
 	list_for_each_entry(z, &collatz_list, list)
-		pr_info("kds: collatz %lu\n", z->value);
+		pr_info("kds: collatz %llu\n", (unsigned long long)z->value);
 	pr_info("kds: collatz start=%d terms=%d%s\n", start, terms,
 		terms >= COLLATZ_MAX_TERMS ? " (capped)" : "");
 
@@ -415,51 +430,19 @@ static int __init kds_init(void)
 fail:
 	/* module_exit() is not called when init fails, so clean up here */
 	pr_err("kds: init failed (%d)\n", ret);
-	free_all();
+	free_all(false);
 	return ret;
 }
 
 static void __exit kds_exit(void)
 {
-	struct color *c, *cn;
-	struct collatz *z, *zn;
-	struct birthday *p, *pn;
-	struct kv *e;
-	struct hlist_node *tmp;
-	struct rbitem *ri, *rin;
-	int bkt;
-
 	remove_proc_entry("kds", NULL);		/* first: no reader can touch the lists below */
-	hash_for_each_safe(kds_hash, bkt, tmp, e, node) {
-		pr_info("kds: removing hash %s=%d\n", e->key, e->value);
-		hash_del(&e->node);
-		kfree(e);
-	}
-	rbtree_postorder_for_each_entry_safe(ri, rin, &kds_rb, node) {
-		pr_info("kds: removing rb %d\n", ri->val);
-		kfree(ri);
-	}
-	kds_rb = RB_ROOT;
-	list_for_each_entry_safe(c, cn, &color_list, list) {
-		pr_info("kds: removing color red=%d blue=%d green=%d\n", c->red, c->blue, c->green);
-		list_del(&c->list);
-		kfree(c);
-	}
-	list_for_each_entry_safe(z, zn, &collatz_list, list) {
-		pr_info("kds: removing collatz %lu\n", z->value);
-		list_del(&z->list);
-		kfree(z);
-	}
-	list_for_each_entry_safe(p, pn, &birthday_list, list) {
-		pr_info("kds: removing birthday %d/%d/%d\n", p->day, p->month, p->year);
-		list_del(&p->list);
-		kfree(p);
-	}
+	free_all(true);
 	pr_info("kds: module unloaded\n");
 }
 
 module_init(kds_init);
 module_exit(kds_exit);
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("F.CSM302 BD1 team 4");
+MODULE_AUTHOR("V-1-4 (B222270805, B241940001, B242270088, B241910001, B241910020, B160910830)");
 MODULE_DESCRIPTION("Kernel data structures: list_head (color, Collatz, birthday), kfifo, bitmap, hashtable, rbtree, /proc/kds");
