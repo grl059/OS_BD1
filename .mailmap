@@ -1,0 +1,11 @@
+# Нэг гишүүн хэд хэдэн git идентификатор ашигласан тул нэр ба student ID-г нь холбосон.
+# Зөвхөн баталгаажсан холбоосыг оруулсан: А.Гэрэлийнх нь хувьд kernel module-ийн
+# docs/kernel_build_log.txt дэх host "b241940001-server", зам "/home/gerel/OS_BD1" болон
+# must.edu.mn/241940001 имэйлүүд нь ижил хүн болохыг нотолно.
+# Бусад бүртгэлийг (Nonaxannn, Claude) энд зориуд бичээгүй — тайлбарыг
+# docs/latex/report.tex файлын "Хавсралт C" хэсгээс уншина уу.
+# Шалгах: git shortlog -sne
+Н. Ням-Од <nyamsurennyamod8@gmail.com> thenemoooo <nyamsurennyamod8@gmail.com>
+А. Гэрэл <altangerelgerel059@gmail.com> Gerel <altangerelgerel059@gmail.com>
+А. Гэрэл <altangerelgerel059@gmail.com> B241940001 <b241940001@must.edu.mn>
+А. Гэрэл <altangerelgerel059@gmail.com> B241940001 <altangerelgerel059@gmail.com>
