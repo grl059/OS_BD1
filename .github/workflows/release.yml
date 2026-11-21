@@ -1,24 +1,32 @@
 name: Release
 
-# Runs only after CI has passed on main (workflow_run chaining), so a
-# release is never cut from a build that didn't pass make check / the web
-# build. Version bump follows Conventional Commits since the last tag:
+# Manual only since the BD2 hand-off (II-4-9 review, suggestion s-2).
+# This workflow used to chain on every successful CI run on main and cut a
+# conventional-commit release automatically. That broke the Manual's promise
+# that the final tag (v1.1.0) is the very commit the Final Report was built
+# from: any later "fix:" commit would have produced v1.1.1 and detached the
+# two again. Run it from Actions -> Release -> Run workflow when a release is
+# actually wanted; until then CI stays automatic and releases do not.
+#
+# Version bump still follows Conventional Commits since the last tag:
 #   feat: ...          -> minor bump
 #   fix: ...            -> patch bump
 #   BREAKING CHANGE     -> major bump (in body or with a "!" after the type)
 #   anything else       -> no release
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type "release" to cut a release from the current main
+        required: true
+        default: ''
 
 permissions:
   contents: write
 
 jobs:
   release:
-    if: github.event.workflow_run.conclusion == 'success'
+    if: github.event.inputs.confirm == 'release'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
