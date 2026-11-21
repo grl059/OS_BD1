@@ -95,6 +95,11 @@
 \newcommand{\term}[1]{\textit{#1}}
 \newcommand{\srccite}[1]{\hyperlink{ref#1}{[#1]}}
 
+% Хүснэгтийн нэрийг хүснэгтийн дээр италгаар бичнэ (ижил төрлийн тайлангуудын загвар)
+\newcommand{\tabcap}[1]{\par\vspace{3pt}{\centering\fontsize{10}{12}\selectfont\itshape #1\par}\vspace{4pt}}
+% Хүснэгтийн толгой эгнүүрт саармаг өнгөний суурь тавина
+\newcommand{\hdrow}{\rowcolor{headbg}}
+
 \captionsetup{font={footnotesize}, justification=centering, skip=3pt, labelformat=empty}
 
 \lstdefinestyle{kds}{
@@ -119,7 +124,8 @@
 \lstnewenvironment{codeblock}{\lstset{style=kds}}{}
 
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
-\AtBeginEnvironment{longtable}{\fontsize{10.5}{13}\selectfont}
+\newcommand{\kdsLTfont}{\fontsize{10.5}{13}\selectfont}
+\AtBeginEnvironment{longtable}{\kdsLTfont}
 \renewcommand{\arraystretch}{1.15}
 \setlength{\tabcolsep}{4pt}
 
@@ -150,7 +156,7 @@
 % Нүүр хуудасны нэгдсэн загвар (Final Report ба Manual)
 % ---------------------------------------------------------------------------
 \newcommand{\coverfont}{\normalfont}
-\newcommand{\kdscover}[2]{%
+\newcommand{\kdscover}[3]{%
 \begin{titlepage}
 \thispagestyle{empty}
 \coverfont
@@ -158,25 +164,27 @@
 {\fontsize{13}{17}\selectfont\bfseries
 ШИНЖЛЭХ УХААН ТЕХНОЛОГИЙН ИХ СУРГУУЛЬ\\
 МЭДЭЭЛЭЛ, ХОЛБООНЫ ТЕХНОЛОГИЙН СУРГУУЛЬ\par}
-\vspace{12mm}
-\includegraphics[height=38mm]{logo.png}\par
-\vspace{20mm}
-{\fontsize{27}{33}\selectfont\bfseries БИЕ ДААЛТ 2\\[1pt] #1\par}
-\vspace{6mm}
+\vspace{10mm}
+\includegraphics[height=34mm]{logo.png}\par
+\vspace{14mm}
+{\fontsize{26}{32}\selectfont\bfseries БИЕ ДААЛТ 2\\[1pt] #1\par}
+\vspace{5mm}
 {\fontsize{12}{14}\selectfont\bfseries Үйлдлийн систем /F.CSM302/\par}
-\vspace{16mm}
+\vspace{2mm}
+{\fontsize{11.5}{14}\selectfont 2026--2027 оны хичээлийн жилийн намар\par}
+\vspace{10mm}
 \raggedright
-\hspace*{-1mm}\begin{tabular}{@{}p{45mm}p{100mm}@{}}
-{\fontsize{12}{15}\selectfont\bfseries Сэдэв:} & {\fontsize{12}{15}\selectfont #2}\\[8pt]
-{\fontsize{12}{15}\selectfont\bfseries Хуваарилалтын код:} & {\fontsize{12}{15}\selectfont V-1-4}\\[10pt]
+\hspace*{-1mm}\begin{tabular}{@{}p{48mm}p{104mm}@{}}
+{\fontsize{12}{15}\selectfont\bfseries Сэдэв:} & {\fontsize{12}{15}\selectfont #2}\\[7pt]
+#3
+{\fontsize{12}{15}\selectfont\bfseries Хуваарилалтын код:} & {\fontsize{12}{15}\selectfont V-1-4}\\[7pt]
 {\fontsize{12}{15}\selectfont\bfseries Хичээл заасан багш:} & {\fontsize{12}{15}\selectfont Г.Ганбат /F.CS10/}\\[5pt]
 {\fontsize{12}{15}\selectfont\bfseries Гүйцэтгэсэн баг:} & {\fontsize{12}{15}\selectfont
-Н.Ням-Од /B222270805/\newline А.Гэрэл /B241940001/\newline А.Номин /B242270088/\newline Э.Мягмаршагай /B241910001/\newline О.Хүслэн /B241910020/\newline Ч.Түмэншагай /B160910830/}\\
+Н.Ням-Од /B222270805/\newline А.Гэрэл /B241940001/\newline А.Номин /B242270088/\newline Э.Мягмаршагай /B241910001/\newline О.Хүслэн /B241910020/\newline Ч.Түмэншагай /B160910830/}\\[7pt]
+{\fontsize{12}{15}\selectfont\bfseries Огноо:} & {\fontsize{12}{15}\selectfont 2026 оны 11 дүгээр сарын 21}\\
 \end{tabular}
 \vfill
-\hspace*{-1mm}\begin{tabular}{@{}p{45mm}p{100mm}@{}}
-{\fontsize{12}{15}\selectfont\bfseries Огноо:} & {\fontsize{12}{15}\selectfont 2026 оны 11 дүгээр сарын 19}\\
-\end{tabular}
+\centering{\fontsize{12}{15}\selectfont Улаанбаатар хот\\ 2026 он\par}
 \end{titlepage}
 \setcounter{page}{2}
 }

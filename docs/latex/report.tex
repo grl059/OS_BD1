@@ -1,30 +1,43 @@
 \input{kds-preamble}
 
+% Тайлангийн нягт тохиргоо: 15-20 хуудасны зорилгоор
+\renewcommand{\kdsLTfont}{\fontsize{8.5}{10.5}\selectfont}
+\linespread{1.1}
+\setlength{\parskip}{5pt plus 1pt}
+\renewcommand{\arraystretch}{1.02}
+\renewcommand{\hthree}[1]{%
+  \par\Needspace{6\baselineskip}\addvspace{8pt}%
+  {\fontsize{12.5}{15}\selectfont\bfseries #1\par}\nopagebreak[4]%
+  \addvspace{2pt}%
+}
+
 \begin{document}
 
 % ---------------------------------------------------------------------------
 % Нүүр хуудас
 % ---------------------------------------------------------------------------
-\kdscover{ЭЦСИЙН ТАЙЛАН}{"Kernel Data Structures. Chapter 1 Introduction, 1.9 Kernel Data Structures (p. 36), Kernel structure graph"}
+\kdscover{ЭЦСИЙН ТАЙЛАН}{"Kernel Data Structures. Chapter 1 Introduction, 1.9 Kernel Data Structures (p. 36), Kernel structure graph"}{
+{\fontsize{12}{15}\selectfont\bfseries Эцсийн хувилбар:} & {\fontsize{12}{15}\selectfont Final release v1.1.0, эцсийн код \texttt{main} салбарт}\\[7pt]
+{\fontsize{12}{15}\selectfont\bfseries Шүүмжлэгч баг:} & {\fontsize{12}{15}\selectfont II-4-13, II-4-9}\\[7pt]
+}
 
 % ---------------------------------------------------------------------------
 % Агуулга
 % ---------------------------------------------------------------------------
 \tableofcontents
 \thispagestyle{fancy}
-\clearpage
+\vspace{2mm}
 
 % ---------------------------------------------------------------------------
 % Хураангуй
-
 % ---------------------------------------------------------------------------
 \section*{Хураангуй}
 \phantomsection\addcontentsline{toc}{section}{Хураангуй}
 \noindent\rule{\textwidth}{1.2pt}\par\vspace{6pt}
 
-Энэхүү эцсийн тайланд БД1-ийн төслийг, өөрөөр хэлбэл Linux \term{kernel}-ийн өгөгдлийн бүтцүүдийг (холбоост жагсаалт, дараалал, стек, \term{bitmap}, хэш хүснэгт, \term{BST}, \term{AVL}, \term{red-black} мод, \term{min-heap}, процессын хуваарилагч) C хэл дээр хэрэгжүүлж, команд бүрийн дараах төлвийг веб дээр график хэлбэрээр харуулдаг \code{kds} хэрэгсэл ба \term{kernel module}-ийг албан ёсны II-4-13 шүүмжид тулгуурлан сайжруулсан ажлыг тайлагнав. Шүүмжээс гарсан 10 асуудал ба эхлэгчдэд зориулсан 4 саналыг Critical, Major, Minor, Suggestion гэж ангилж, 14 мөрт хүснэгтээр шийдвэрлэсэн. Гол сайжруулалт нь гурван чиглэлтэй. Эхнийх нь 16-аас олон үгтэй командад C цөм санах ойн алдаа гаргаж, веб дээр мэдэгдэлгүй гацдаг байсныг \code{ERR too many tokens} болгон засаж, муу мөрийг скриптээс буцаан, алдааг монголоор тайлбарласан явдал юм. Хоёр дахь нь \code{sched stats} командаар дундаж хүлээлтийг програм өөрөө тооцдог болгож, веб дээр \term{red-black} мод ба \term{min-heap}-ийг нэмж 9 бүтцийг бүрэн дүрсэлсэн явдал юм. Гурав дахь нь \term{kernel module}-ийн одоогийн хувилбарыг жинхэнэ Linux дээр ачаалж баталгаажуулсан явдал юм.
+Энэхүү эцсийн тайланд БД1-ийн төслийг, өөрөөр хэлбэл Linux \term{kernel}-ийн өгөгдлийн бүтцүүдийг (1.9-д заасан бүх үндсэн бүтэц + \term{red-black} мод, \term{min-heap}, процессын хуваарилагч) C хэл дээр хэрэгжүүлж, команд бүрийн дараах төлвийг веб дээр график хэлбэрээр харуулдаг \code{kds} хэрэгсэл ба \term{kernel module}-ийг II-4-13 ба II-4-9 хоёр багийн албан ёсны шүүмжид тулгуурлан сайжруулсан ажлыг тайлагнав. Шүүмжлэгч хоёр багаас гарсан санал бүрийг Critical, Major, Minor, Suggestion гэж ангилан, 4-р хэсгийн Хүснэгт 4.1 (14 мөр) ба Хүснэгт 4.2 (12 мөр)-т нийт 26 мөрөөр нэг нэгээр нь шийдвэрлэсэнээ харуулав. Гол сайжруулалт гурван чиглэлтэй. Эхнийх нь 16-аас олон үгтэй командад C цөм санах ойн алдаа гарч, веб дээр мэдэгдэлгүй гацдаг байсныг \code{ERR too many tokens} болгон засаж, муу мөрийг скриптээс буцаан, алдааг монголоор тайлбарласан явдал юм. Хоёр дахь нь \code{sched stats} командаар дундаж хүлээлтийг програм өөрөө тооцдог болгож, веб дээр \term{red-black} мод ба \term{min-heap}-ийг нэмж 9 бүтцийг бүрэн дүрсэлсэн явдал юм. Гурав дахь нь \term{kernel module}-ийг жинхэнэ Linux дээр ачаалж баталгаажуулсан явдал юм.
 
-Засварын өмнөх (II-4-13 шүүмжилсэн) болон дараах хувилбарыг ижил тестээр дахин ажиллуулж харьцуулав. Өмнө нь 19 үгтэй \code{list add_tail} мөрөнд \term{ASan} \code{stack-buffer-}\allowbreak\code{overflow} гарч байсан бол одоо \code{ERR too many tokens (max 14 arguments)} гарна. \code{make check}-ийн 98 шалгалт засварын өмнө ч, дараа ч бүгд PASS бөгөөд regression ажиглагдаагүй. Шинэ \code{sched stats} нь гараар бодсон 5.00 (\term{Round Robin}) ба 4.33 (\term{FCFS}) утгыг програмаас шууд гаргадаг. \term{Kernel module} нь Ubuntu 24.04.2 (\term{kernel} 6.11.0-17, \term{Secure Boot} идэвхтэй) дээр \term{MOK} түлхүүрээр гарын үсэг зурагдаж ачаалагдан, автомат тест скриптийн 9 шалгалт бүгд PASS боллоо.
+Засварын өмнөх (шүүмжилсэн) болон дараах хувилбарыг ижил тестээр дахин ажиллуулж харьцуулав. Өмнө нь 19 үгтэй \code{list add_tail} мөрөнд \term{ASan} \code{stack-buffer-}\allowbreak\code{overflow} гарч байсан бол одоо \code{ERR too many tokens (max 14 arguments)} гарна. \code{make check}-ийн 98 шалгалт засварын өмнө ч, дараа ч бүгд PASS бөгөөд regression ажиглагдаагүй. Шинэ \code{sched stats} нь гараар бодсон 5.00 (\term{Round Robin}) ба 4.33 (\term{FCFS}) утгыг програмаас шууд гаргадаг. \term{Kernel module} нь Ubuntu 24.04.2 (\term{kernel} 6.11.0-17, \term{Secure Boot} идэвхтэй) дээр \term{MOK} түлхүүрээр гарын үсэг зурагдаж ачаалагдан, автомат тест скриптийн 9 шалгалт бүгд PASS боллоо.
 
 % ---------------------------------------------------------------------------
 \section*{1. Төслийн тойм}
@@ -33,9 +46,9 @@
 
 Үйлдлийн системийн \term{kernel} нь процессын жагсаалт, \term{ready queue}, \term{bitmap} (нөөц чөлөөтэй эсэх), хэш хүснэгт (хурдан хайлт), модон бүтэц (\term{scheduler}, санах ой) зэргийг өгөгдлийн бүтцээр удирддаг. Эдгээр бүтэц нь зөвхөн онолын жишээ биш -- \term{kernel}-ийн найдвартай, хурдан ажиллах чадвар шууд тэдний зөв хэрэгжилтээс хамаардаг тул Үйлдлийн системийн чиглэлээр суралцаж буй оюутан эдгээрийг зөвхөн уншиж ойлгоход хязгаарлагдахгүй, өөрийн гараар хэрэгжүүлж, туршиж, зөв эсэхийг нотолж байж бүрэн эзэмшинэ гэж үзсэн.
 
-\textbf{Зорилго.} Төслийн зорилго нь сурах бичгийн 1.9 \term{Kernel} Data Structures-д заасан бүх үндсэн бүтцийг (холбоост жагсаалт, \term{stack}, \term{queue}, \term{BST}, тэнцвэржсэн мод, \term{hash map}, \term{bitmap}) болон 3-р бүлгийн Processes сэдвийн PCB/ready queue-г C хэлээр, Linux-ийн \code{list_head} семантиктай нийцүүлэн хэрэгжүүлэх явдал юм. Үүний зэрэгцээ элемент нэмэх, устгах, хайх үйлдэл бүрийн дараах бүтцийн төлөвийг график хэлбэрээр нүдэнд харагдуулж, абстракт онолыг бодит тоо, дүрсээр баталгаажуулна. Мөн хэрэгжилтийн зөв ажиллагааг санамсаргүй \term{stress} болон \term{fuzz} тестээр, ASan/UBSan ашиглан системтэй нотолж, сурах бичгийн Programming Project (3-р бүлэг)-ийн дагуу бодит Linux \term{kernel module} бичиж, жинхэнэ \term{kernel} орчинд ачаалан (insmod/rmmod) ажиллагааг нь баталгаажуулна.
+\textbf{Зорилго.} Сурах бичгийн 1.9-д заасан бүх үндсэн бүтцийг (холбоост жагсаалт, \term{stack}, \term{queue}, \term{BST}, тэнцвэржсэн мод, \term{hash map}, \term{bitmap}) болон 3-р бүлгийн Processes сэдвийн PCB/ready queue-г C хэлээр, Linux-ийн \code{list_head} семантиктай нийцүүлэн хэрэгжүүлэх, элемент нэмэх, устгах, хайх үйлдэл бүрийн дараах төлвийг график хэлбэрээр нүдэнд харагдуулах. Хэрэгжилтийн зөв ажиллагааг санамсаргүй \term{stress} болон \term{fuzz} тестээр, ASan/UBSan ашиглан системтэй нотолж, сурах бичгийн Programming Project (3-р бүлэг)-ийн дагуу бодит Linux \term{kernel module} бичиж, жинхэнэ \term{kernel} орчинд ачаалан (insmod/rmmod) баталгаажуулна.
 
-\textbf{Ач холбогдол.} \code{list_head} бол Linux \term{kernel}-ийн хамгийн их хэрэглэгддэг бүтэц бөгөөд \code{task_struct} (\term{PCB}), \term{ready queue} зэрэг нь түүн дээр суурилдаг \srccite{4}. Үүнийг ойлгох нь 3-р бүлгийн «Processes» сэдвийн суурь болно \srccite{1}. Практик талаас нь авч үзвэл, \term{kernel} дотор ашигладаг \term{intrusive} (өгөгдлийн \term{struct} дотроо холбоос агуулсан) жагсаалтын загвар нь хэрэглээний программ дээр (user-space) ердийн хэллэгт заадаг жагсаалтаас (жишээ нь зөвхөн утга хадгалдаг жагсаалт) бүтцийн хувьд ялгаатай тул оюутанд энэ ялгааг гараар хэрэгжүүлж үзэх нь ач холбогдолтой. Боловсролын талаас нь, график дүрслэл нь \term{тэнцвэржсэн} (balanced) ба \term{тэнцвэргүй} (unbalanced) модны хайлтын гүнзгийрэлтийн ялгааг, мөн хэш хүснэгтийн \term{collision}-ийн нөлөөг шууд нүдээр харуулдаг тул онолын хичээлээс гадна практик ойлголт бэхжүүлэх зорилготой.
+\textbf{Ач холбогдол.} \code{list_head} бол Linux \term{kernel}-ийн хамгийн их хэрэглэгддэг бүтэц бөгөөд \code{task_struct} (\term{PCB}), \term{ready queue} зэрэг нь түүн дээр суурилдаг \srccite{4}; үүнийг ойлгох нь 3-р бүлгийн «Processes» сэдвийн суурь болно \srccite{1}. \term{Kernel} дотор ашигладаг \term{intrusive} (өгөгдлийн \term{struct} дотроо холбоос агуулсан) жагсаалтын загвар нь user-space-ийн ердийн жагсаалтаас бүтцийн хувьд ялгаатай тул оюутанд энэ ялгааг гараар хэрэгжүүлж үзэх нь ач холбогдолтой. График дүрслэл нь \term{тэнцвэржсэн}/\term{тэнцвэргүй} модны хайлтын гүнзгийрэлтийн ялгааг, хэш хүснэгтийн \term{collision}-ийн нөлөөг шууд нүдээр харуулдаг.
 
 \textbf{Хамрах хүрээ.} Хэрэглэгчийн орчны загвар (C, \term{CLI}), түүн дээр суурилсан веб хуудас (Next.js), мөн нэг \term{kernel module}. Энэ төсөл нь Linux-ийн жинхэнэ \term{scheduler}-тэй холбогдоогүй. Төсөлд хэрэгжүүлсэн \term{FCFS} (ирсэн дарааллаараа ажиллуулах) ба \term{Round Robin} (процесс бүрт ээлжлэн тодорхой хугацаа өгөх) алгоритмууд нь Linux-ийн бодит CFS \term{scheduler}-ийг орлох зорилготой биш юм. Эдгээр нь зөвхөн сурах бичгийн энгийн загварыг ойлгомжтой харуулахад зориулагдсан.
 
@@ -49,27 +62,28 @@ Operating System Concepts-ийн 3-р бүлгийн Programming Project «\term
 
 \textbf{Part II:} module-д \code{start} параметр дамжуулж (\code{module_param}), \term{Collatz} дарааллыг (тэгш бол n/2, сондгой бол 3n+1, 1 хүртэл) холбоост жагсаалтад хадгалан хэвлэх, буулгахад устгах.
 
-Удирдамжийн шаардлага бүр хэрэгжсэн эсэхийг баталгаажуулах, мөн шалгагч хүн тус бүрийг хурдан хайж олох боломжтой байлгахын тулд Хүснэгт 1.1-д удирдамжийн заалт, хэрэгжүүлсэн файл/функц, туршсан үйлдэл, баталгаажуулсан тестийг нэг мөрөнд эгнүүлэн харуулав.
+Удирдамжийн шаардлага бүр хэрэгжсэн эсэхийг баталгаажуулах, мөн шалгагч хүн тус бүрийг хурдан хайж олох боломжтой байлгахын тулд Хүснэгт 1.1-д удирдамжийн заалт, хэрэгжүүлсэн файл/функц, туршиж үзсэн үйлдэл, баталгаажуулсан тестийг нэг мөрөнд эгнүүлэн харуулав.
+
+\tabcap{Хүснэгт 1.1 -- Удирдамжийн шаардлага ба хэрэгжилтийн харгалзаа}
 
 {\fontsize{9.5}{12}\selectfont
-\begin{tabular}{|L{0.21\textwidth}|L{0.22\textwidth}|L{0.27\textwidth}|L{0.22\textwidth}|}
+\begin{tabular}{|L{0.24\textwidth}|L{0.31\textwidth}|L{0.37\textwidth}|}
 \hline
-\textbf{Шаардлага} & \textbf{Хэрэгжилт} & \textbf{Нэмэх / устгах / хайх} & \textbf{Баталгаа} \\ \hline
-Ch.3 Part I: \term{struct} color жагсаалт & \code{kds_module.c}, \code{color_list} & \code{list_add_tail}, \code{list_del}, \code{list_for_each_entry} & \code{run_module_}\allowbreak\code{test.sh}, \term{dmesg} \\ \hline
-Ch.3 Part II: \term{Collatz}, \code{start} параметр & \code{kds_module.c}, \code{module_param}\allowbreak\code{(start)}, 1..1\,000\,000 & \code{list_add_tail}, \code{list_del} & start=25, 15, 0 (татгалзана) \\ \hline
-1.9.1 Холбоост жагсаалт (list\_head) & Давхар холбоост дугуй жагсаалт (\term{struct} birthday) & add\_head, add\_tail, del, find & textbook, search, веб «Чөлөөт горим» \\ \hline
-1.9.1 \term{Stack} (\term{LIFO}) & list\_head, дээд талаас нэмж авна & push, pop, find & all\_structures, search \\ \hline
-1.9.1 \term{Queue} (\term{FIFO}) & list\_head, төгсгөлд нэмж эхнээс авна & push, pop, find & all\_structures, search \\ \hline
-1.9.2 \term{Binary search tree} & Энгийн \term{BST} (хамгийн муу $O(n)$) & insert, delete, find & search: 1--5 $\rightarrow$ өндөр 5 \\ \hline
-1.9.2 Тэнцвэржсэн мод ($O(\lg n)$) & \term{AVL} (\code{tree mode avl}) & insert, delete, find & search, avl\_check: 1--7 $\rightarrow$ өндөр 3 \\ \hline
-1.9.3 Хэш функц ба \term{hash map} & Кодын нийлбэр mod n бөгөөд \term{collision}-д \term{bucket} доторх hlist\_head жагсаалт бөгөөд ачаалал > 0.75 бол \term{bucket} $\times$2 (\code{hash auto on}), гараар \code{rehash} & put, del, get, rehash, stats & search, \term{hash}\_resize \\ \hline
-Нэмэлт: \term{red-black} мод (CFS-ийн мод) & \code{rb} горим: өнгө, \term{black-height}, эргүүлэлтийн тоо & insert, delete, find & rb\_\term{heap}, rb\_check (30 seed) \\ \hline
-Нэмэлт: \term{min-heap} (\term{priority queue}) & массив дээрх овоолго, багтаамж 16, swap тоо & push, pop, peek & rb\_\term{heap}, rb\_check (10 seed) \\ \hline
-1.9.4 \term{Bitmap} & n = 1..128 бит & set, clear, test & all\_structures, errors \\ \hline
-«Processes» холбоос & \term{PCB} + list\_head \term{ready queue}, \term{FCFS}, \term{Round Robin} & proc new / дуусах / sched print & \term{scheduler}, \code{scheduler_full} \\ \hline
+\hdrow \textbf{Шаардлага} & \textbf{Хэрэгжилт} & \textbf{Үйлдэл ба баталгаа} \\ \hline
+Ch.3 Part I: \term{struct} color жагсаалт & \code{kds_module.c}, \code{color_list} & \code{list_add_tail}, \code{list_del}, \code{list_for_each_entry}; \code{run_module_}\allowbreak\code{test.sh}, \term{dmesg} \\ \hline
+Ch.3 Part II: \term{Collatz}, \code{start} параметр & \code{kds_module.c}, \code{module_param}\allowbreak\code{(start)}, 1..1\,000\,000 & \code{list_add_tail}, \code{list_del}; start=25, 15, 0 (татгалзана) \\ \hline
+1.9.1 Холбоост жагсаалт (\code{list_head}) & Давхар холбоост дугуй жагсаалт (\term{struct} birthday) & add\_head, add\_tail, del, find; textbook, search, веб «Чөлөөт горим» \\ \hline
+1.9.1 \term{Stack} (\term{LIFO}) & \code{list_head}, дээд талаас нэмж авна & push, pop, find; all\_structures, search \\ \hline
+1.9.1 \term{Queue} (\term{FIFO}) & \code{list_head}, төгсгөлд нэмж эхнээс авна & push, pop, find; all\_structures, search \\ \hline
+1.9.2 \term{Binary search tree} & Энгийн \term{BST} (хамгийн муу $O(n)$) & insert, delete, find; search: 1--5 $\rightarrow$ өндөр 5 \\ \hline
+1.9.2 Тэнцвэржсэн мод ($O(\lg n)$) & \term{AVL} (\code{tree mode avl}) & insert, delete, find; search, avl\_check: 1--7 $\rightarrow$ өндөр 3 \\ \hline
+1.9.3 Хэш функц ба \term{hash map} & Кодын нийлбэр mod n, \term{collision}-д \term{bucket} доторх \code{hlist_head} жагсаалт, ачаалал $>$ 0.75 бол \term{bucket} $\times$2 (\code{hash auto on}), гараар \code{rehash} & put, del, get, rehash, stats; search, \term{hash}\_resize \\ \hline
+Нэмэлт: \term{red-black} мод (CFS-ийн мод) & \code{rb} горим: өнгө, \term{black-height}, эргүүлэлтийн тоо & insert, delete, find; rb\_heap, rb\_check (30 seed) \\ \hline
+Нэмэлт: \term{min-heap} (\term{priority queue}) & Массив дээрх овоолго, багтаамж 16, swap тоо & push, pop, peek; rb\_heap, rb\_check (10 seed) \\ \hline
+1.9.4 \term{Bitmap} & n = 1..128 бит & set, clear, test; all\_structures, errors \\ \hline
+«Processes» холбоос & \term{PCB} + \code{list_head} \term{ready queue}, \term{FCFS}, \term{Round Robin} & proc new / дуусах / sched print; scheduler, scheduler\_full \\ \hline
 \end{tabular}
 \par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт 1.1 -- Удирдамжийн шаардлага ба хэрэгжилтийн харгалзаа\par}\vspace{4pt}
 
 Хүснэгтээс харахад удирдамжийн 1.9-д заасан бүх үндсэн бүтэц (жагсаалт, \term{stack}, \term{queue}, \term{BST}, тэнцвэржсэн мод, \term{hash map}, \term{bitmap}) болон «Processes» сэдвийн PCB/ready queue холбоос бүрэн хэрэгжсэн бөгөөд Ch.3-ийн Part I/II-ийн \term{kernel module} даалгавар хоёулаа тусдаа баталгаажуулалттай (\term{dmesg}, скрипт) байна. Нэмэлтээр хичээлийн агуулгыг гүнзгийрүүлэх зорилгоор \term{red-black} мод, \term{min-heap}-ийг мөн хэрэгжүүлж, тус тусдаа тестээр нотолсон.
 
@@ -79,9 +93,9 @@ Ch.3 Part II: \term{Collatz}, \code{start} параметр & \code{kds_module.c
 
 \textbf{Эх сурвалж:} Silberschatz, Galvin, Gagne, \textit{Operating System Concepts}, 10th ed., Chapter 1 Introduction, 1.9 \term{Kernel} Data Structures, p. 36 (1.9.1 жагсаалт/stack/queue, 1.9.2 мод, 1.9.3 \term{hash}, 1.9.4 \term{bitmap}) \srccite{1}.
 
-\textbf{list\_head} нь \term{intrusive} (өгөгдлийн \term{struct} дотроо холбогдох талбараа агуулсан), давхар холбоост, дугуй жагсаалт юм. Node нь өгөгдлийн \term{struct} дотор \code{list_head} талбар агуулж, \code{container_of} макро нь талбарын хаягаас эзэн \term{struct}-ийг сэргээнэ. Нэмэх, устгах үйлдэл $O(1)$, хайх нь $O(n)$ \srccite{4}. Зураг 1.1 нь гурван зангилаатай ийм жагсаалтын \code{next}/\code{prev} холбоосыг харуулав.
+\textbf{\code{list_head}} нь \term{intrusive} (өгөгдлийн \term{struct} дотроо холбогдох талбараа агуулсан), давхар холбоост, дугуй жагсаалт юм. Node нь өгөгдлийн \term{struct} дотор \code{list_head} талбар агуулж, \code{container_of} макро нь талбарын хаягаас эзэн \term{struct}-ийг сэргээнэ. Нэмэх, устгах үйлдэл $O(1)$, хайх нь $O(n)$ \srccite{4}. Зураг 1.1 нь гурван зангилаатай ийм жагсаалтын \code{next}/\code{prev} холбоосыг харуулав.
 
-\Needspace{14\baselineskip}
+\Needspace{6\baselineskip}
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
@@ -99,18 +113,19 @@ Ch.3 Part II: \term{Collatz}, \code{start} параметр & \code{kds_module.c
 \draw[arr] (c.north) .. controls +(0,10mm) and +(0,10mm) .. node[lbl, above]{next (head)} (a.north);
 \draw[arr] (a.south) .. controls +(0,-10mm) and +(0,-10mm) .. node[lbl, below]{prev (tail)} (c.south);
 \end{tikzpicture}
-\caption*{Зураг 1.1 -- list\_head: гурван зангилаа next/prev холбоосоор дугуй болж холбогдсон байдал.}
+\caption*{Зураг 1.1 -- \code{list_head}: гурван зангилаа next/prev холбоосоор дугуй болж холбогдсон байдал.}
 \end{figure}
 
-\textbf{\term{Queue} (\term{FIFO}, First-In-First-Out)} нь tail-д нэмж head-ээс авдаг. \term{Kernel}-ийн \term{ready queue} ийм зарчмаар ажилладаг. \textbf{\term{Stack} (\term{LIFO}, Last-In-First-Out)} нь head-д нэмж head-ээс авдаг \srccite{2}.
-
-\textbf{\term{Bitmap}}-д 1 бит нь 1 нөөцийг илэрхийлнэ. set/clear/test нь $O(1)$ бөгөөд Boolean массиваас 8 дахин бага зай эзэлнэ \srccite{1}.
+\textbf{\term{Queue} (\term{FIFO}, First-In-First-Out)} нь tail-д нэмж head-ээс авдаг. \term{Kernel}-ийн \term{ready queue} ийм зарчмаар ажилладаг. \textbf{\term{Stack} (\term{LIFO}, Last-In-First-Out)} нь head-д нэмж head-ээс авдаг \srccite{2}. \textbf{\term{Bitmap}}-д 1 бит нь 1 нөөцийг илэрхийлнэ. set/clear/test нь $O(1)$ бөгөөд Boolean массиваас 8 дахин бага зай эзэлнэ \srccite{1}.
 
 \textbf{\term{Binary search tree} (\term{BST})}-д зүүн $<$ үндэс $<$ баруун байна. Дундаж хайлт $O(\lg n)$, харин эрэмбэлсэн оролтод мод нэг шугам болж хамгийн муу тохиолдол $O(n)$ болно. \term{Тэнцвэржсэн} (\term{AVL}) мод n элементэд ойролцоогоор $\lg n$ түвшинтэй байдаг \srccite{2}. Linux \term{red-black} мод ашигладаг бол бид ижил зорилготой \term{AVL} модоор (өндрийн зөрүү $\le 1$, эргүүлэлт) загварчилсан -- \term{AVL} тэнцвэржилтийн анхны алгоритмыг Adelson-Velsky ба Landis тодорхойлсон \srccite{3}. Зураг 1.2 нь ижил 1--7 оролтод энгийн \term{BST} ба \term{AVL}-ийн өндрийн ялгааг, Зураг 1.3 нь \term{AVL}-ийн нэг зүүн эргүүлэлтийг харуулав.
 
-\Needspace{17\baselineskip}
+\Needspace{8\baselineskip}
 \begin{figure}[H]
 \centering
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
   node/.style={draw, circle, minimum size=7mm, font=\fontsize{12}{14.4}\selectfont},
   arr/.style={thick},
@@ -136,13 +151,12 @@ Ch.3 Part II: \term{Collatz}, \code{start} параметр & \code{kds_module.c
 \draw[arr] (a2) -- (a1); \draw[arr] (a2) -- (a3);
 \draw[arr] (a6) -- (a5); \draw[arr] (a6) -- (a7);
 \node[lbl, font=\fontsize{12}{14.4}\selectfont] at (6.55,0.9) {Тэнцвэржсэн AVL (өндөр 3)};
-\end{tikzpicture}
+\end{tikzpicture}}
 \caption*{Зураг 1.2 -- ижил 1--7 эрэмбэлсэн оролтод энгийн \term{BST} нэг шугам (өндөр 7) болдог бол \term{AVL} тэнцвэржилтээрээ өндрөө 3-т хадгална.}
-\end{figure}
-
-\Needspace{12\baselineskip}
-\begin{figure}[H]
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
 \centering
+\resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
   node/.style={draw, circle, minimum size=7mm, font=\fontsize{12}{14.4}\selectfont},
   lbl/.style={font=\fontsize{12}{14.4}\selectfont},
@@ -163,23 +177,25 @@ Ch.3 Part II: \term{Collatz}, \code{start} параметр & \code{kds_module.c
 \draw (y2) -- (y1); \draw (y2) -- (y3);
 \node[lbl] at (8.6,0.9) {эргүүлсний дараа};
 \node[lbl, align=center] at (8.6,-2.1) {өндөр 2, зөрүү 0\\(inorder 1, 2, 3 хэвээр)};
-\end{tikzpicture}
-\caption*{Зураг 1.3 -- \term{AVL}-ийн нэг зүүн эргүүлэлт (rotl): тэнцвэргүй болсон зангилааг доош буулгаж, дунд зангилаа (2)-г үндэс болгоно. \term{Inorder} дараалал өөрчлөгдөхгүй тул хайлтын дүрэм хэвээр хадгалагдана бөгөөд \code{bal()} нь ингэж зүүн (rotl) ба баруун (rotr) эргүүлэлтээр өндрийн зөрүүг $\le 1$ болгодог.}
+\end{tikzpicture}}
+\caption*{Зураг 1.3 -- \term{AVL}-ийн нэг зүүн эргүүлэлт (rotl): тэнцвэргүй зангилааг доош буулгаж, дунд зангилаа (2)-г үндэс болгоно. \term{Inorder} дараалал өөрчлөгдөхгүй тул \code{bal()} нь өндрийн зөрүүг $\le 1$ болгодог.}
+\end{minipage}
 \end{figure}
 
 \textbf{\term{Hash map}}-д хэш функц түлхүүрийг хүснэгтийн индекс болгож, ихэнх тохиолдолд $O(1)$ хайлт өгнө. Хоёр түлхүүр нэг индекст таарвал (\term{collision}) тухайн \term{bucket}-д жагсаалт залгана. \term{Collision} олшрох тусам хайлт $O(n)$ руу ойртоно \srccite{2}.
 
-\textbf{Процесс ба \term{scheduler}.} Процесс бүр \term{PCB} (Process Control Block)-тэй байдаг (Linux-д \code{task_struct}). Бэлэн процессууд \term{ready queue}-д зогсоно. \term{FCFS} (First-Come-First-Served) нь процессыг дуустал нь ажиллуулна. \term{Round Robin} нь процесс бүрд квант хугацаа өгч, дуусаагүй бол дарааллын төгсгөлд буцаана. Хүлээлтийн хугацааг нийт үргэлжилсэн хугацаанаас ажлын хугацааг хасаж олно \srccite{1}.
+\textbf{Процесс ба \term{scheduler}.} Процесс бүр \term{PCB} (Process Control Block)-тай байдаг (Linux-д \code{task_struct}). Бэлэн процессууд \term{ready queue}-д зогсоно. \term{FCFS} (First-Come-First-Served) нь процессыг дуустал нь ажиллуулна. \term{Round Robin} нь процесс бүрд квант хугацаа өгч, дуусаагүй бол дарааллын төгсгөлд буцаана. Хүлээлтийн хугацааг нийт үргэлжилсэн хугацаанаас ажлын хугацааг хасаж олно \srccite{1}.
 
 \textbf{\term{Kernel module} ба параметр.} \code{module_param(name, type, perm)} нь \code{insmod kds_module.ko start=15} хэлбэрээр утга дамжуулах боломж олгоно. Init амжилтгүй болбол \code{module_exit} дуудагдахгүй тул init өөрөө нөөцөө чөлөөлөх ёстой. Нийтлэг алдаанууд: \code{list_del}-ийн дараа pointer ашиглах, node чөлөөлөхгүй үлдээх (leak), гүйлгэж байхдаа устгах (энэ үед \code{_safe} хувилбар хэрэгтэй).
 
-\Needspace{16\baselineskip}
 Тайланд олон давтагддаг нэр томьёог шинэ уншигч бүр өөрөө хайж олох шаардлагагүй байлгахын тулд Хүснэгт 1.2-д тэдгээрийн энгийн тайлбарыг нэгтгэн оруулав.
+
+\tabcap{Хүснэгт 1.2 -- Нэр томьёоны энгийн тайлбар}
 
 {\fontsize{9.5}{12}\selectfont
 \begin{tabular}{|L{0.24\textwidth}|L{0.70\textwidth}|}
 \hline
-\textbf{Нэр томьёо} & \textbf{Энгийн тайлбар} \\ \hline
+\hdrow \textbf{Нэр томьёо} & \textbf{Энгийн тайлбар} \\ \hline
 \term{intrusive list} (\code{list_head}) & Жагсаалтын «next/prev» холбоос нь өгөгдлийн \term{struct}-ийн дотор байдаг бөгөөд нэг холбоосоор өөр төрлийн \term{struct}-үүдийг жагсаах боломжтой. \\ \hline
 \code{container_of} & Холбоосын хаягаас тэр холбоосыг агуулсан бүтэн \term{struct}-ийн хаягийг гаргаж авдаг макро. \\ \hline
 \code{hlist} & Нэг талт (зөвхөн next) жагсаалт бөгөөд \term{hash}-ийн \term{bucket} бүр нэг заагчтай тул санах ой хэмнэнэ. \\ \hline
@@ -192,10 +208,8 @@ Ch.3 Part II: \term{Collatz}, \code{start} параметр & \code{kds_module.c
 \term{MOK} & \term{Secure Boot}-той машинд өөрийн \term{kernel module}-д гарын үсэг зурахад хэрэглэх түлхүүр. \\ \hline
 \end{tabular}
 \par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт 1.2 -- Нэр томьёоны энгийн тайлбар\par}\vspace{4pt}
 
 Хүснэгтээс харахад нэр томьёо гурван бүлэгт хуваагдана: өгөгдлийн бүтэц (\code{list_head}, \code{hlist}, мод, \term{heap}), үйлдлийн системийн ойлголт (\term{PCB}, \term{ready queue}, \term{turnaround}) ба шалгалтын арга хэрэгсэл (\term{ASan}, \term{UBSan}, \term{differential fuzz}, \term{MOK}). Дараагийн хэсгүүдэд эдгээр нэр томьёо налуу фонтоор бичигдсэн байна.
-
 % ---------------------------------------------------------------------------
 \section*{2. Эцсийн архитектур}
 \phantomsection\addcontentsline{toc}{section}{2. Эцсийн архитектур}
@@ -203,17 +217,15 @@ Ch.3 Part II: \term{Collatz}, \code{start} параметр & \code{kds_module.c
 
 \textbf{Компонентууд.} Төсөл дөрвөн хэсгээс бүрдэнэ.
 
-\textbf{src/user/kds.c} -- командын интерпретатор ба 9 бүтэц (жагсаалт, \term{queue}, \term{stack}, \term{bitmap}, \term{hash}, BST/AVL мод, \term{red-black} мод, \term{min-heap}, процесс/хуваарилагч). Жагсаалт, \term{queue}, \term{stack}, \term{hash}-ийн \term{bucket}, \term{ready queue} бүгд нэг \code{list_head} хэрэгжилтийг ашиглана. Энэ файл дотор ердийн текст мессеж гаргадаг горимоос гадна \code{--json} горим бий: команд тус бүрийн дараа бүтцийн бүх төлөвийг нэг \term{JSON} мөр болгож бичдэг.
+\textbf{src/user/kds.c} -- командын интерпретатор ба 9 бүтэц (жагсаалт, \term{queue}, \term{stack}, \term{bitmap}, \term{hash}, BST/AVL мод, \term{red-black} мод, \term{min-heap}, процесс/хуваарилагч). Жагсаалт, \term{queue}, \term{stack}, \term{hash}-ийн \term{bucket}, \term{ready queue} бүгд нэг \code{list_head} хэрэгжилтийг ашиглана. Файл дотор ердийн текст гаргадаг горимоос гадна \code{--json} горим бий: команд тус бүрийн дараа бүтцийн бүх төлөвийг нэг \term{JSON} мөр болгож бичдэг.
 
-\textbf{web/} -- Next.js (React, TypeScript) дээр бичигдсэн веб апп. Хэрэглэгч товч дарах эсвэл команд бичих үед веб апп сервер талд \code{kds --json}-ыг ажиллуулж, буцаж ирсэн \term{JSON} мөр бүрийг дэлгэц дээр график болгож зурна. Веб апп өөрөө ямар ч бүтцийн логик (нэмэх, устгах, хайх дүрэм) агуулдаггүй -- зөвхөн C программаас ирсэн төлөвийг дүрсэлж харуулна. Нүүр (9 бүтцийн жагсаалт ба дээд цэс), «Чөлөөт горим» (бүтэц сонгож, үйлдлийн товчоор турших), «Хичээл» (9 шат: алхам бүрт Багшийн тайлбар ба монгол дуу, асуулттай тест), «Тухай» хуудастай.
+\textbf{web/} -- Next.js (React, TypeScript) веб апп. Хэрэглэгч товч дарах эсвэл команд бичих үед серверийн тал \code{kds --json}-ыг ажиллуулж, буцаж ирсэн \term{JSON} мөр бүрийг дэлгэц дээр график болгож зурна. Веб апп өөрөө ямар ч бүтцийн логик агуулдаггүй -- зөвхөн C программаас ирсэн төлөвийг дүрсэлнэ. Нүүр, «Чөлөөт горим», «Хичээл» (9 шат), «Тухай» хуудастай.
 
-\textbf{\texttt{src/kernel/kds\_module.c}} -- \term{kernel} орчинд ажиллах хувилбар: color, \term{Collatz}, birthday жагсаалт, kfifo, \term{bitmap}, мөн Linux-ийн \code{<linux/hashtable.h>}, \code{<linux/rbtree.h>} систем толгой файлуудыг ашигласан \term{hash} хүснэгт, \term{red-black} мод ба \code{/proc/kds} интерфэйс.
+\textbf{src/kernel/kds\_module.c} -- \term{kernel} орчинд ажиллах хувилбар: color, \term{Collatz}, birthday жагсаалт, kfifo, \term{bitmap}, мөн Linux-ийн \code{<linux/hashtable.h>}, \code{<linux/rbtree.h>} систем толгой файлуудыг ашигласан \term{hash} хүснэгт, \term{red-black} мод ба \code{/proc/kds} интерфэйс. \textbf{tests/} -- C-ийн текст гаралт ба \code{--json} гаралтыг хооронд нь, мөн хүлээгдэх гаралттай харьцуулдаг тестүүд.
 
-\textbf{tests/} -- C-ийн текст гаралт ба \code{--json} гаралтыг хооронд нь, мөн хүлээгдэх гаралттай харьцуулдаг тестүүд.
-
-\Needspace{20\baselineskip}
 \textbf{Өгөгдлийн урсгал:} хэрэглэгчийн команд (товч, командын мөр эсвэл script) $\rightarrow$ веб апп серверийн тал нь командыг \code{kds --json}-д дамжуулна $\rightarrow$ C программ бүтцийн төлөвийг шинэчилж, нэг \term{JSON} мөр болгож буцаана $\rightarrow$ веб апп тэр \term{JSON}-оос шууд график зурна (Зураг 2.1). Тооцоолол бүгд C дотор хийгддэг.
 
+\Needspace{8\baselineskip}
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
@@ -235,315 +247,268 @@ Ch.3 Part II: \term{Collatz}, \code{start} параметр & \code{kds_module.c
 
 \hthree{2.2 Final-д өөрчлөгдсөн компонент}
 
-Шүүмжийн дараа архитектурын бүтэц (C цөм, веб апп, \term{kernel module}, тест) өөрчлөгдөөгүй бөгөөд зөвхөн дор дурдсан компонентууд засагдаж, нэмэгдсэн. Хүснэгт 2.1-д засварын өмнөх (II-4-13 шүүмжилсэн, \code{2964225}) болон эцсийн байдлыг компонент тус бүрээр нь харьцуулж, аль хэсэгт юу өөрчлөгдсөнийг нэг дороос олж харахаар оруулав.
+Шүүмжийн дараа архитектурын бүтэц (C цөм, веб апп, \term{kernel module}, тест) өөрчлөгдөөгүй бөгөөд зөвхөн дор дурдсан компонентууд засагдаж, нэмэгдсэн. Хүснэгт 2.1-д засварын өмнөх (II-4-13 шүүмжилсэн, \code{2964225}) болон эцсийн байдлыг харьцуулав.
 
+\tabcap{Хүснэгт 2.1 -- Final-д өөрчлөгдсөн компонентууд}
 {\fontsize{9.5}{12}\selectfont\setlength{\tabcolsep}{3pt}
 \begin{tabular}{|L{0.20\textwidth}|L{0.34\textwidth}|L{0.40\textwidth}|}
 \hline
-\textbf{Компонент} & \textbf{Засварын өмнө} & \textbf{Final} \\ \hline
+\hdrow \textbf{Компонент} & \textbf{Засварын өмнө} & \textbf{Final} \\ \hline
 C цөм (\code{src/user/kds.c}) & Үгийн массивын хязгаарыг шалгадаггүй, int-ийн мужийн мессеж ерөнхий, \code{sched}-д дундаж хүлээлт байхгүй & 14-өөс олон аргументыг \code{ERR too many tokens} болгоно, int-ийн мужид тодорхой ERR өгнө, \code{sched stats} нэмсэн \\ \hline
-Тест ба жишээ (\code{tests/}, \code{examples/}) & \term{fuzz} 16-аас олон үгтэй мөр үүсгэдэггүй, \code{errors.txt}-д ийм мөр байхгүй & \term{fuzz}-д 14--40 үгтэй, маш урт, int халилттай мөр нэмсэн, \code{errors.txt} ба \code{scheduler.txt}-д шинэ мөр, \code{expected_*.out} шинэчлэгдсэн \\ \hline
+Тест ба жишээ (\code{tests/}, \code{examples/}) & \term{fuzz} 16-аас олон үгтэй мөр үүсгэдэггүй, \code{errors.txt}-д ийм мөр байхгүй & \term{fuzz}-д 14--40 үгтэй, маш урт, int халилттай, муу \term{UTF-8} мөр нэмсэн, \code{errors.txt} ба \code{scheduler.txt}-д шинэ мөр, \code{expected_*.out} шинэчлэгдсэн \\ \hline
 Веб апп: алдаа (\code{use-run.ts}, \code{event-log.tsx}, \code{config.ts}) & Цөм унасныг мэдэгдэхгүй, муу мөр скриптэд үлддэг, ERR англи бөгөөд таслагддаг & Муу мөрийг скриптээс буцааж монгол мэдэгдэл харуулна, ERR-д монгол тайлбар, \code{title}, мөр таслалт нэмсэн \\ \hline
 Веб апп: дүрслэл (\code{stage.tsx}, \code{menu.tsx}, \code{levels.ts}) & 7 бүтэц, 7 шат & 9 бүтэц (\term{red-black}, \term{min-heap} орсон), 9 шат \\ \hline
 \term{Kernel module} & Зөвхөн compile хийж шалгасан & Ubuntu 24.04.2 дээр ачаалж автомат тестийн 9 шалгалт PASS \\ \hline
 Баримт (README, Manual, Report) & Manual нь хуучин \code{v1.0.0} tag татуулдаг, Report-д тоон зөрүү & Manual нь \code{main}-тай нийцсэн, Report-д нэр томьёоны хүснэгт ба 3 онолын диаграм орсон \\ \hline
 \end{tabular}
 \par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт 2.1 -- Final-д өөрчлөгдсөн компонентууд\par}\vspace{4pt}
 
-Хүснэгтээс харахад өөрчлөлтийн ихэнх нь хоёр хэсэгт төвлөрсөн. Нэг нь C цөмийн оролтын хамгаалалт, нөгөө нь веб аппын алдааны боловсруулалт юм. Ингэснээр хэрэглэгчийн буруу оролт хоёр түвшинд (цөм ба дэлгэц) хоёуланд нь зөв, ойлгомжтой гарна.
+Хүснэгтээс харахад өөрчлөлтийн ихэнх нь хоёр хэсэгт төвлөрсөн: C цөмийн оролтын хамгаалалт ба веб аппын алдааны боловсруулалт. Ингэснээр хэрэглэгчийн буруу оролт хоёр түвшинд (цөм ба дэлгэц) хоёуланд нь зөв, ойлгомжтой гарна.
 
 \hthree{2.3 Хэрэгжилтийн гол шийдлүүд}
 
-\textbf{Хэл ба хэрэгсэл:} C (gcc, \code{-Wall -Wextra -fsanitize=address,undefined}), JavaScript (HTML/SVG, сан ашиглаагүй), \term{kernel} C (Kbuild), туршилтад Python 3 ба Node.js.
+\textbf{Хэл ба хэрэгсэл:} C (gcc, \code{-Wall -Wextra -fsanitize=address,undefined}), JavaScript (HTML/SVG, сан ашиглаагүй), \term{kernel} C (Kbuild), туршилтад Python 3 ба Node.js. Гол шийдлүүдийг доор тайлбарлав.
 
-\textbf{Гол шийдлүүд.} Хэрэгжилтийн гол шийдлийг доор нэг бүрчлэн тайлбарлав.
+\textbf{list.h ба огноо.} \code{list_add(_tail)}, \code{list_del}, \code{list_for_each(_safe)}, \code{container_of}-ийг өөрсдөө бичсэн; \term{queue} ба \term{stack} ижил \code{list_head}-ийг хуваалцаж зөвхөн нэмэх талаараа ялгарна (багтаамж 8). Өндөр жилийг 4-т хуваагдаж 100-д хуваагдахгүй, эсвэл 400-д хуваагддаг дүрмээр шалгана.
 
+\textbf{Мод ба hash.} Хоёр хүүтэй node-ийг баруун дэд модны хамгийн бага утгаар орлуулна; \term{AVL} горимд буцах замдаа \code{bal()} нь rotl/rotr эргүүлэлтээр тэнцвэржүүлнэ, модны төрлийг зөвхөн хоосон үед солино. Hash-д 1--16 \term{bucket}, хэш функц нь тэмдэгтийн кодын нийлбэр mod n; \term{collision}-ийг \term{bucket} доторх \code{hlist_head} жагсаалтаар (chaining) шийдэж, ачаалал 0.75-аас хэтэрбэл \term{bucket} $\times$2 auto resize хийнэ (элементийг 24-өөр хязгаарласан).
 
-\code{list.h}-ийн \code{__list_add}, \code{list_add}, \code{list_add_tail}, \code{list_del}, \code{list_for_each(_safe)}, \code{container_of}-ийг өөрсдөө бичсэн.
+\textbf{Scheduler ба \term{kernel module}.} \term{PCB} нь \code{struct pcb {pid, name, rem, burst, slice, arrive, list_head}} бүтэцтэй; \term{ready queue}-д \code{list_add_tail}-аар нэмж, эхний элементийг \code{list_del}-ээр авч CPU-д өгнө, RR-д квант дуусвал төгсгөлд буцна (амьд процесс 8 хүртэл). Init дотор color (4 элемент), \term{Collatz} (хамгаалалтын хязгаар 1000 гишүүн), birthday, kfifo, \term{bitmap}-ийг үүсгэнэ; \code{start} нь 1..1\,000\,000 мужаас гадуур бол \code{-EINVAL} буцааж ачаалагдахгүй, \code{kmalloc} алдаа гарвал \code{goto fail}-аар бүх жагсаалтыг цэвэрлэнэ, exit дотор \code{list_for_each_entry_safe}-ээр элемент бүрийг хэвлэж устгана.
 
-\term{Queue} ба \term{stack} нь ижил list\_head-ийг хуваалцах бөгөөд зөвхөн нэмэх талаараа ялгарна. Багтаамж нь 8.
+\hthree{2.4 GitHub репозитори ба бүтээгдэхүүн}
 
-Огноо шалгахдаа өндөр жилийг тооцно: 4-т хуваагддаг ба 100-д хуваагддаггүй, эсвэл 400-д хуваагддаг.
+Repository: \code{github.com/grl059/OS_BD1} (салбар \code{main}). Бүтэц нь удирдамжийн 6-р хэсгийн дагуу: \code{README.md} (нэр, код, зорилго, Quick Start, AI тэмдэглэл), \code{src/}, \code{tests/}, \code{examples/}, \code{docs/} (Manual, Report, постер, тайлангийн эх LaTeX). Build-ийн гаралт болон гарын үсгийн түлхүүрийг \code{.gitignore}-оор хассан. Эцсийн бүтээгдэхүүн: \code{V-1-4_Final_Report.pdf} (энэ тайлан), \code{V-1-4_Manual.pdf} (хэрэглэгчийн гарын авлага), \code{V-1-4_Poster.pdf} (A3 постер, тусдаа файл).
 
-Модноос хоёр хүүтэй node устгахдаа баруун дэд модны хамгийн бага утгаар орлуулна. \term{AVL} горимд буцах замдаа \code{bal()} нь rotl/rotr эргүүлэлтээр тэнцвэржүүлнэ. Модны төрлийг зөвхөн хоосон үед солино.
-
-\term{Hash map} нь 1--16 \term{bucket}-тэй. Хэш функц нь тэмдэгтүүдийн кодын нийлбэр mod n. \term{Collision}-ийг \term{bucket} доторх hlist\_head (singly холбоост) жагсаалтаар шийднэ (chaining). Нийт 24 элементээр хязгаарласан. \code{get} үйлдэл хайлтын алхмын тоог мэдээлнэ.
-
-\term{PCB} нь \code{struct pcb {pid, name, rem, burst, slice, arrive, list_head}} бүтэцтэй (\code{arrive} = үүссэн цаг бөгөөд дуусахад дундаж хүлээлтийг тооцоход ашиглана). \term{Ready queue}-д \code{list_add_tail}-аар нэмж, эхний элементийг \code{list_del}-ээр авч CPU-д өгнө. \code{sched tick} бүрд CPU 1 тик ажиллана. \term{FCFS} нь процессыг дуустал ажиллуулна. RR-д квант дуусвал процесс дарааллын төгсгөлд буцна (preempt). Амьд процессын тоо 8 хүртэл.
-
-Хайх үйлдэл бүх бүтцэд байна: list find (индекс), queue/stack find (байрлал), tree find, \term{bitmap} test, \term{hash} get.
-
-\textbf{\term{Kernel module}:} init дотор color (4 элемент), \term{Collatz} (start-аас 1 хүртэл, хамгаалалтын хязгаар 1000 гишүүн), birthday, kfifo, \term{bitmap}-ийг үүсгэнэ. \code{start} нь 1..1\,000\,000 мужаас гадуур бол \code{-EINVAL} буцааж module ачаалагдахгүй. \code{kmalloc} алдаа гарвал \code{goto fail}-аар бүх жагсаалтыг цэвэрлэнэ. Exit дотор \code{list_for_each_entry_safe}-ээр элемент бүрийг хэвлэж устгана.
-
-
-\hthree{2.4 GitHub репозитори}
-
-Repository: \code{github.com/grl059/OS_BD1} (салбар \code{main}). Бүтэц нь удирдамжийн 6-р хэсгийн дагуу: \code{README.md} (нэр, код, зорилго, Quick Start, AI тэмдэглэл), \code{src/}, \code{tests/}, \code{examples/}, \code{docs/} (Manual, Report, screenshot, тайлангийн эх LaTeX ба HTML). Build-ийн гаралт болон гарын үсгийн түлхүүрийг \code{.gitignore}-оор хассан.
-
-v1.1.0 tag тавигдах үед репозиторид 72 commit байсан (II-4-13 шүүмжийн засварууд дараа), одоо \code{main}-д 81 бөгөөд II-4-9 шүүмжийн засвар энэ тайлангийн хамт орно. Яг тоог \code{git rev-list --count HEAD}-ээр, гишүүн тус бүрийнх нь дэлгэрэнгүйг \code{git shortlog -sne}-ээр (реpod буй \code{.mailmap}-ыг ашиглана) шалгана. Эдгээр commit нь C цөм, веб апп, \term{kernel module}, тестийн скрипт, тайлан ба Manual-ийн өөрчлөлтүүдийг агуулсан бөгөөд төсөл нэг удаагийн хуулбар бус, шат шатаар хөгжсөнийг харуулна. Гишүүн бүрийн хариуцсан ажил, түүний үр дүнгийн файлыг Хавсралт C-д үзүүлэв.
+v1.1.0 tag тавигдах үед репозиторид 72 commit байсан (II-4-13 шүүмжийн засварууд дараа); энэ тайлан бэлдэгдсэн өдрийн байдлаар (2026-11-21, \code{main}) 81 commit бөгөөд II-4-9 шүүмжийн засварууд бас орно. Яг тоог \code{git rev-list --count HEAD}-ээр, гишүүн тус бүрийнхийг \code{git shortlog -sne}-ээр (репод буй \code{.mailmap} ашиглана) шалгаж болно. Гишүүн бүрийн хариуцсан ажил, түүний үр дүнгийн файлыг Хавсралт A-д үзүүлэв.
 
 % ---------------------------------------------------------------------------
 \section*{3. Туршилт ба дүрслэл}
 \phantomsection\addcontentsline{toc}{section}{3. Туршилт ба дүрслэл}
 \hthree{3.1 Туршилтын орчин ба тестийн төлөвлөгөө}
 
-\textbf{Орчин:} Ubuntu 24.04, gcc 13, GNU make, Node.js 22 (веб апп, CI), Python 3.13 (тест скрипт). \term{Kernel module}-д Ubuntu 24.04, \term{kernel} 6.11.0-17-generic, linux-headers.
+\textbf{Орчин:} Ubuntu 24.04, gcc 13, GNU make, Node.js 22 (веб апп, CI), Python 3.13 (тест скрипт). \term{Kernel module}-д Ubuntu 24.04, \term{kernel} 6.11.0-17-generic, linux-headers. Хүснэгт 3.1 нь тест бүрийн оролт/нөхцөлийг хүлээгдэх үр дүнтэй хослуулж, аль тест аль бүтэц/шаардлагыг хамгаалж байгааг ил харуулахын тулд оруулав.
 
-\textbf{Хүснэгтийн зорилго:} Хүснэгт 3.1 нь тест бүрийн оролт/нөхцөлийг хүлээгдэх үр дүнтэй хослуулж, аль тест аль бүтэц/шаардлагыг хамгаалж байгааг (жишээ нь \code{errors} -- буруу оролт, \code{fuzz} -- санамсаргүй довтолгоо, \code{avl_check} -- тэнцвэржилтийн инвариант) ил харуулахын тулд оруулсан. Нэг мөр бүр тусдаа, давтагдахгүй шалгуур учраас тестийн хамрах хүрээг энгийн тоймлолоос илүү нарийн нотолно.
-
-\textbf{Өгөгдөл ба хүлээгдэх үр дүн} (хүлээгдэх гаралт \code{tests/expected_*.out}-д хадгалагдсан):
-
-{\fontsize{9.5}{12}\selectfont
-\begin{tabular}{|L{0.16\textwidth}|L{0.40\textwidth}|L{0.37\textwidth}|}
+\tabcap{Хүснэгт 3.1 -- Тест бүрийн оролт ба хүлээгдэх үр дүн}
+{\fontsize{9}{11.5}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|L{0.16\textwidth}|L{0.40\textwidth}|L{0.37\textwidth}|}
 \hline
-\textbf{Тест} & \textbf{Оролт / нөхцөл} & \textbf{Хүлээгдэх үр дүн} \\ \hline
+\hdrow \textbf{Тест} & \textbf{Оролт / нөхцөл} & \textbf{Хүлээгдэх үр дүн} \\ \hline
+\endfirsthead
+\hline
+\hdrow \textbf{Тест} & \textbf{Оролт / нөхцөл} & \textbf{Хүлээгдэх үр дүн} \\ \hline
+\endhead
 textbook & examples/textbook.txt -- сурах бичгийн 5 төрсөн өдөр, гүйлгэх, бүгдийг устгах & Оруулсан дарааллаар жагсаж, эцэст нь хоосон \\ \hline
 all\_structures & \term{queue}, \term{stack}, \term{bitmap}, tree & FIFO/LIFO дараалал, \term{bitmap} 1000000000000001, \term{inorder} 20, 40, 50, 70 \\ \hline
-errors & 31/4, 29/2/1900, сар 13, жил 1800, налуу зураастай огноо (0/5/2000), өдөр/сар 0, хоосноос pop, size 0/129, индекс $-1$/99, давхардсан утга, \textbf{17+ token-той мөр}, \textbf{int-ээс том тоо} ($99999999999$, $-2147483648$) & Мөр бүр ойлгомжтой ERR (\code{too many tokens}, \code{integer out of range}), програм унахгүй \\ \hline
+errors & 31/4, 29/2/1900, сар 13, жил 1800, өдөр/сар 0, хоосноос pop, size 0/129, индекс $-1$/99, давхардсан утга, \textbf{17+ token мөр}, \textbf{int-ээс том тоо} & Мөр бүр ойлгомжтой ERR (\code{too many tokens}, \code{integer out of range}), програм унахгүй \\ \hline
 search & Бүх бүтцэд хайлт, \term{hash} \term{collision}, \term{BST} 1--5, \term{AVL} 1--7 & index/position/steps, \term{BST} өндөр 5, \term{AVL} өндөр 3 \\ \hline
-\term{scheduler} & RR q=2 ба \term{FCFS}: A=5, B=3, C=2, мөн буруу нэр, ажил, бодлогын оролт ба \code{sched stats} & Гараар тооцсон хуваарьтай таарна (6-р хэсэг) бөгөөд програм өөрөө \code{avg_wait=5.00} (RR), \code{4.33} (\term{FCFS}) гаргана \\ \hline
+\term{scheduler} & RR q=2 ба \term{FCFS}: A=5, B=3, C=2, мөн буруу нэр, ажил, бодлогын оролт ба \code{sched stats} & Гараар тооцсон хуваарьтай таарна (6-р хэсэг); програм өөрөө \code{avg_wait=5.00} (RR), \code{4.33} (\term{FCFS}) гаргана \\ \hline
 \code{scheduler_full} & 9 процесс үүсгэх & 9 дэх нь татгалзагдана, нэг нь дууссаны дараа зөвшөөрөгдөнө \\ \hline
 \term{stress} & 5000 × (queue/stack push+pop, \term{hash} put+del, proc new+tick) & ERR 0, ASan/UBSan мэдээлэлгүй \\ \hline
-text == --json & tests/json\_check.py: 8 скриптийг текст горим ба \code{--json} горимоор зэрэг ажиллуулах & Мессеж бүр мөр мөрөөрөө ижил, state бүр 9 бүтцийг агуулна \\ \hline
-\term{fuzz} & tests/fuzz\_json.py: 8 seed × 5000 санамсаргүй команд (буруу огноо, том индекс, 8-аас олон процесс, урт түлхүүр, \textbf{14--40 token-той мөр, 900 орчим тэмдэгттэй нэг token, int-ээс том тоо} г.м.) & Текст ба \code{--json} горимын мессеж ижил бөгөөд санах ойн алдаа гарахгүй \\ \hline
-avl\_check & tests/avl\_check.py: 30 санамсаргүй гүйлт (50--400 insert/delete) & \term{Inorder} = эрэмбэлсэн олонлог, өндөр $\le 1.44\cdot\log_2(n+2)$ \\ \hline
-\term{hash}\_resize & examples/hash\_resize.txt -- ачаалал 0.75-аас хэтрэхэд \term{bucket} 4$\rightarrow$8$\rightarrow$16 auto resize, rehash/stats & Resize ба stats зөв бөгөөд rehash 65/0, auto maybe мөрүүд ERR \\ \hline
-rb\_\term{heap} & examples/rb\_\term{heap}.txt -- \term{red-black}-д \term{AVL}-тэй ижил түлхүүр, \term{heap} push/pop/peek & Эргүүлэлтийн дараах өнгө/black-height, \term{inorder} зөв бөгөөд \term{heap}-ийн дараалал, давхардал/underflow ERR \\ \hline
-rb\_check & tests/rb\_check.py: \term{red-black} 30 seed + \term{min-heap} 10 seed & Өнгө, \term{black-height}, \term{inorder} эрэмбэ, \term{heap}-ийн эс хазайх чанар бүх гүйлтэд хүчинтэй \\ \hline
+text == --json & \code{json_check.py}: 8 скриптийг текст ба \code{--json} горимоор зэрэг ажиллуулах & Мессеж бүр мөр мөрөөрөө ижил, state бүр 9 бүтцийг агуулна \\ \hline
+\term{fuzz} & \code{fuzz_json.py}: 8 seed × 5000 санамсаргүй команд (буруу огноо, том индекс, урт түлхүүр, \textbf{14--40 token мөр, ~900 тэмдэгттэй token, int халилт, муу \term{UTF-8}}) & Текст ба \code{--json} горимын мессеж ижил бөгөөд санах ойн алдаа, хүчингүй \term{JSON} гарахгүй \\ \hline
+avl\_check & \code{avl_check.py}: 30 санамсаргүй гүйлт (50--400 insert/delete) & \term{Inorder} = эрэмбэлсэн олонлог, өндөр $\le 1.44\cdot\log_2(n+2)$ \\ \hline
+\code{hash_resize} & examples/hash\_resize.txt -- ачаалал 0.75-аас хэтрэхэд \term{bucket} 4$\rightarrow$8$\rightarrow$16 auto resize, rehash/stats & Resize ба stats зөв; rehash 65/0, auto maybe мөрүүд ERR \\ \hline
+\code{rb_heap} & examples/rb\_heap.txt -- \term{red-black}-д \term{AVL}-тэй ижил түлхүүр, \term{heap} push/pop/peek & Эргүүлэлтийн дараах өнгө/black-height, \term{inorder} зөв; давхардал/underflow ERR \\ \hline
+\code{rb_check} & \code{rb_check.py}: \term{red-black} 30 seed + \term{min-heap} 10 seed & Өнгө, \term{black-height}, \term{inorder} эрэмбэ, \term{heap}-ийн эс хазайх чанар бүх гүйлтэд хүчинтэй \\ \hline
 \term{kernel module} & \code{src/kernel/run_module_test.sh}: start=25, start=15, start=0 & 24 ба 18 гишүүнтэй \term{Collatz}, start=0 үед $-EINVAL$ \\ \hline
-\end{tabular}
+\end{longtable}
 \par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт 3.1 -- Тест бүрийн оролт ба хүлээгдэх үр дүн\par}\vspace{4pt}
 
-Хүснэгтээс харахад 14 тест нь нэг бол оролтын (errors, search) эсвэл алгоритмын (\term{scheduler}, avl\_check) зөв ажиллагааг, эсвэл веб ба C-ийн гаралтын нийцлийг (text == --json, \term{fuzz}) тус тус баталгаажуулж, хоорондоо давхцдаггүй тул 7-р хэсгийн тестийн хамрах хүрээ бүрэн, холбогдох бүх шаардлагад тулгуурласан болохыг харуулж байна. \term{Fuzz} тест алдааг илрүүлж чадаж байгаа эсэхийг шалгахын тулд C-ийн \term{AVL}-ийн давхар эргүүлэлтийг зориуд устгаж туршсан. Ингэхэд seed 2 ба 4 нь модны өндрийн зөрүүг шууд илрүүлсэн тул тест үр дүнтэй болох нь батлагдсан.
+Хүснэгтээс харахад 14 тест нь оролтын (errors, search), алгоритмын (\term{scheduler}, \code{avl_check}), веб ба C-ийн гаралтын нийцлийн (text == --json, \term{fuzz}) тусдаа шалгуур бөгөөд хоорондоо давхцдаггүй. \term{Fuzz} тест алдааг илрүүлж чадаж байгааг шалгахын тулд C-ийн \term{AVL}-ийн давхар эргүүлэлтийг зориуд устгаж туршсан: seed 2 ба 4 нь модны өндрийн зөрүүг шууд илрүүлсэн тул тест үр дүнтэй нь батлагдсан.
 
-\hthree{3.2 Веб аппын дүрслэл ба ажиглалтын урсгал}
+\hthree{3.2 Веб аппын дүрслэл}
 
-Веб апп (\code{web/}, Next.js) дөрвөн хуудастай. Эдгээр нь Нүүр, Чөлөөт горим, Хичээл, Тухай юм.
+Веб апп (\code{web/}, Next.js) дөрвөн хуудастай: Нүүр (9 бүтцийн жагсаалт, дээд цэс), «Чөлөөт горим» (бүтэц сонгож «Үйлдэл сонгох» товчоор турших, «Юу болов?» ба «Түүх» самбар, буцаах, шинээр эхлэх), «Хичээл» (9 шат: алхам бүрт багшийн тайлбар, \textbf{монгол дуугаар} сонсох товч, дууссан шат \textbf{$\checkmark$}-ээр тэмдэглэгдэж хадгалагдана, сүүлд асуулт) ба «Тухай». C цөмийн 9 бүтцийг бүгдийг нь дэлгэц зурна (Хүснэгт 1.1): сүүлийн үйлдэлд өөрчлөгдсөн эсвэл олдсон элемент тодорч, OK/ERR түүх жагсаалтаар харагдана; хэш-д \term{collision} ба хайлтын алхам, модонд өндөр, \term{scheduler}-т процесс бүрийн явц ажиглагдана. Команд бүрийн дараа веб апп \code{kds --json}-ыг дуудаж, буцсан \term{JSON}-ыг зурдаг тул зураг бодит ажиллагаанаас зөрөхгүй.
 
-\textbf{Нүүр} хуудас 9 бүтцийн жагсаалт ба дээд цэсийг харуулна.
-
-\textbf{Чөлөөт горим} хуудсанд бүтэц сонгох жагсаалт, «Үр дүн» карт, «Үйлдэл сонгох» товч, «Юу болов?» ба «Түүх (n)» самбар байна. Мөн «Сүүлчийнхийг буцаах», «Команд хуулах», «Шинээр эхлэх» үйлдлүүд бий.
-
-\textbf{Хичээл} хуудас 9 шаттай. Багш алхам бүрт тайлбар хэлж, нэг командыг тус тусад нь ажиллуулна. Тайлбарыг \textbf{монгол дуугаар} сонсох дууны товч (чанга яригч дүрс) байх бөгөөд шат дуусвал \textbf{$\checkmark$}-ээр тэмдэглэгдэж хадгалагдана. Сүүлд нь ойлголт шалгах асуулт гарна.
-
-\textbf{Тухай} хуудас төслийн танилцуулга ба гишүүдийн үүргийг харуулна. Өнгөний загвар нь индиго / нил ягаан.
-
-\textbf{Бүтэц бүрийн дэлгэц.} C цөмд \textbf{9} бүтэц бий бөгөөд веб дэлгэц бүгдийг нь зурна. Үүнд жагсаалт, \term{queue}, \term{stack}, \term{bitmap}, \term{hash}, BST/AVL мод, улаан-хар мод (зангилааг өнгөөр нь будаж, эргүүлэлтийн тоог харуулна), \term{min-heap} (мод ба массив хэлбэрээр) болон процесс/scheduler орно. Хэрэглэгч \term{CLI}-ээр (\code{./kds examples/rb_heap.txt}) мөн шалгаж болно.
-
-\textbf{Юуг өөрчилж турших вэ.} Огноо, тоо, \term{bitmap}-ийн хэмжээ (1--128), \term{bucket}-ийн тоо (1--16), түлхүүр/утга, модны төрөл (BST/AVL), процессын нэр, ажлын хугацаа (1--20), \term{scheduler}-ийн бодлого ба квант (1--10)-ийг өөрчилж турших боломжтой. Өгөгдлийг командын мөр эсвэл script файлаар (\code{examples/*.txt}) оруулна. «Шинээр эхлэх» товч ажиллуулсан командуудыг устгаж бүтцийг reset хийнэ.
-
-\textbf{Юуг ажиглах вэ.} Сүүлийн үйлдэлд өөрчлөгдсөн эсвэл олдсон элемент график дээр тодорч харагдана. Ажлын түүхэнд OK/ERR мессеж бүр жагсаалтаар харагдана. Хэш хүснэгтэд \term{collision}-ийн тоо болон хайлтын алхам, модонд өндөр, \term{scheduler}-т процесс бүрийн явцыг ажиглана. Команд бүрийн дараа веб апп \code{kds --json}-ыг дуудаж, буцсан \term{JSON}-ыг зурдаг.
-
-\Needspace{14\baselineskip}
+\Needspace{7\baselineskip}
 Зураг 3.1-д холбоост жагсаалтад огноо нэмж, хайсны дараах дэлгэцийг харуулав.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth,keepaspectratio]{fig_web_list.png}
-\caption*{Зураг 3.1 -- Холбоост жагсаалт: 3 огноог \code{add_tail}-аар оруулаад \code{list find 17 3 1998} хийсэн үр дүн. Олдсон элемент (index 1) хүрээтэй тодорч, зангилаа бүрийн хооронд next/prev холбоос харагдана.}
+\includegraphics[width=0.72\textwidth,keepaspectratio]{fig_web_list.png}
+\caption*{Зураг 3.1 -- Холбоост жагсаалт: 3 огноог \code{add_tail}-аар оруулаад \code{list find 17 3 1998} хийсэн үр дүн. Олдсон элемент (index 1) хүрээтэй тодорч, next/prev холбоос харагдана.}
 \end{figure}
 
-\Needspace{14\baselineskip}
-Зураг 3.2-т хэш хүснэгтэд \term{collision} үүссэн байдлыг харуулав.
+Зураг 3.2 ба 3.3-т хэш хүснэгтийн \term{collision}, \term{AVL} модны төлөв харуулав.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth,keepaspectratio]{fig_web_hash.png}
-\caption*{Зураг 3.2 -- Хэш хүснэгт (4 \term{bucket}, зурагт bucket 2, 3 харагдана): \code{bob}, \code{ab}, \code{ba} нэг \term{bucket}-д (bucket 3) унаж \term{collision} үүссэн. Сүүлд хайсан \code{ba} тодорч, chaining жагсаалтаар холбогдсон нь харагдана.}
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{fig_web_hash.png}
+\caption*{Зураг 3.2 -- Хэш (4 \term{bucket}): \code{bob}, \code{ab}, \code{ba} нэг \term{bucket}-т унаж \term{collision} үүсэв; сүүлд хайсан \code{ba} тодорч, chaining жагсаалт харагдана.}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{fig_web_tree.png}
+\caption*{Зураг 3.3 -- \term{AVL} мод: 5, 3, 8, 1 оруулсны дараах график; сүүлд оруулсан зангилаа 1 тодорч.}
+\end{minipage}
 \end{figure}
 
-\Needspace{14\baselineskip}
-Зураг 3.3-т \term{AVL} модонд 5, 3, 8, 1 утгыг дарааллаар оруулсны дараах төлвийг харуулав.
+Зураг 3.4 ба 3.5-д \term{scheduler}-ийн төлөв ба шинэчилсэн веб аппын хуудсууд харуулав.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.5\textwidth,keepaspectratio]{fig_web_tree.png}
-\caption*{Зураг 3.3 -- \term{AVL} мод: 5, 3, 8, 1 оруулсны дараах график. Сүүлд оруулсан зангилаа 1 тодорч харагдана.}
-\end{figure}
-
-\Needspace{14\baselineskip}
-Зураг 3.4-т \term{Round Robin} бодлоготой \term{scheduler}-ийн төлвийг харуулав.
-
-\begin{figure}[H]
+\begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphics[width=0.55\textwidth,keepaspectratio]{fig_web_sched.png}
-\caption*{Зураг 3.4 -- \term{Round Robin} (q=2): P1, P2, P3 процессыг үүсгээд \code{sched tick}-ээр нэг тик ажиллуулсны дараах төлөв. Ажиллаж буй P1 (rem 4/5) тодорч, \term{ready queue}-д P2 $\rightarrow$ P3 дараалан байна.}
-\end{figure}
-
-\Needspace{14\baselineskip}
-Зураг 3.5-д шинэчилсэн веб аппын «Чөлөөт горим» хуудасны бүтэц сонгох жагсаалт (9 бүтэц), мөн «Хичээл» хуудасны 5--9-р шатыг харуулав.
-
-\begin{figure}[H]
+\includegraphics[width=\linewidth]{fig_web_sched.png}
+\caption*{Зураг 3.4 -- \term{Round Robin} (q=2): P1, P2, P3 үүсгээд \code{sched tick}-ээр нэг тик; ажиллаж буй P1 (rem 4/5) тодорч, \term{ready queue}-д P2 $\rightarrow$ P3.}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphics[width=0.85\textwidth,keepaspectratio]{fig_lists.png}
-\caption*{Зураг 3.5 -- Шинэчилсэн веб апп: зүүн талд «Чөлөөт горим»-ын бүтэц сонгох жагсаалт (9 бүтэц), баруун талд «Хичээл» хуудасны 5--9-р шат.}
+\includegraphics[width=\linewidth]{fig_lists.png}
+\caption*{Зураг 3.5 -- Шинэчилсэн веб апп: «Чөлөөт горим»-ын 9 бүтцийн жагсаалт (зүүн), «Хичээл»-ийн 5--9-р шат (баруун).}
+\end{minipage}
 \end{figure}
 
 % ---------------------------------------------------------------------------
-\section*{4. Reviewer Responses}
-\phantomsection\addcontentsline{toc}{section}{4. Reviewer Responses}
-Бид хоёр албан ёсны шүүмжид хариулсан. Эхнийх нь II-4-13 багийн Review PDF (\code{V-1-4-review.pdf}) бөгөөд 10 асуудал (P1--P10) ба эхлэгчдэд зориулсан 4 санал (S1--S4)-ыг Critical, Major, Minor, Suggestion гэж ангилав; үүнийг Хүснэгт 4.1-д нэгтгэв. Хоёр дахь нь II-4-9 багийн шүүмж (\code{Review_V-1-4..pdf}, 2026-11-20) бөгөөд 3 Major (M-1--M-3), 5 Minor (m-1--m-5), 4 санал (s-1--s-4) агуулсан --- эдгээрийн хариуг \textbf{Хүснэгт 4.2}-т бичив. Хоёр шүүмжид Critical (үндсэн функц ажиллахгүй) асуудал олдоогүй. Зөвшөөрсөн саналд хийсэн өөрчлөлт ба нотлох тестийг, хэсэгчлэн зөвшөөрсөн саналд үлдсэн хэсгийн техникийн үндэслэлийг бичив. Албан ёсны шүүмжээс гадна оюутнуудаас ирсэн техникийн comment-ыг энэ тайланд нэгтгээгүй.
-
-Хүснэгт 4.1 нь шүүмж бүрт хийсэн шийдвэр, өөрчлөлт, нотолгоог нэг мөрөнд харуулж, тайлан уншигч шүүмжлэгчийн хэлсэн бүхэнд хариу өгсөн эсэхийг шалгах боломжтой байлгахын тулд оруулсан.
+\section*{4. Шүүмжийн хариу (Reviewer Responses)}
+\phantomsection\addcontentsline{toc}{section}{4. Шүүмжийн хариу (Reviewer Responses)}
+Бид хоёр албан ёсны шүүмжид хариулсан. Эхнийх нь II-4-13 багийн Review PDF (\code{V-1-4-review.pdf}): тэд бидний \code{v1.0.0} tag (commit \code{1dcab26}, 2026-10-27) болон үндсэн салбарын \code{2964225} (2026-11-08) хувилбаруудыг шалгаж, 10 асуудал (P1--P10) ба 4 санал (S1--S4)-ыг Critical, Major, Minor, Suggestion гэж ангилсан; хариуг Хүснэгт 4.1-д нэгтгэв. Хоёр дахь нь II-4-9 багийн шүүмж (\code{Review_V-1-4..pdf}, 2026-11-20): 3 Major (M-1--M-3), 5 Minor (m-1--m-5), 4 санал (s-1--s-4); хариуг Хүснэгт 4.2-т бичив. Хоёр шүүмжид Critical (үндсэн функц ажиллахгүй) асуудал олдоогүй. Зөвшөөрсөн саналд хийсэн өөрчлөлт ба нотлох тестийг, хэсэгчлэн зөвшөөрсөн саналд үлдсэн хэсгийн техникийн үндэслэлийг бичив.
 
 {\fontsize{9}{11}\selectfont\setlength{\tabcolsep}{3pt}
-\begin{longtable}{|L{0.05\textwidth}|L{0.19\textwidth}|L{0.12\textwidth}|L{0.145\textwidth}|L{0.335\textwidth}|}
+\begin{longtable}{|L{0.05\textwidth}|L{0.27\textwidth}|L{0.13\textwidth}|L{0.45\textwidth}|}
 \hline
-\textbf{№} & \textbf{Шүүмж} & \textbf{Priority} & \textbf{Шийдвэр} & \textbf{Өөрчлөлт ба нотолгоо} \\ \hline
+\hdrow \textbf{№} & \textbf{Шүүмж} & \textbf{Үнэлгээ ба шийдвэр} & \textbf{Өөрчлөлт ба нотолгоо} \\ \hline
 \endfirsthead
 \hline
-\textbf{№} & \textbf{Шүүмж} & \textbf{Priority} & \textbf{Шийдвэр} & \textbf{Өөрчлөлт ба нотолгоо} \\ \hline
+\hdrow \textbf{№} & \textbf{Шүүмж} & \textbf{Үнэлгээ ба шийдвэр} & \textbf{Өөрчлөлт ба нотолгоо} \\ \hline
 \endhead
-P1 & 16-аас олон үгтэй мөр C цөмд санах ойн алдаа гаргана (\term{ASan} \code{stack-buffer-}\allowbreak\code{overflow}, \code{kds.c:178}) & Major & Зөвшөөрсөн & \code{main()} нь 14-өөс олон аргументийг \code{ERR too many tokens (max 14 arguments)} болгож handler руу дамжуулахгүй. Нотолгоо: \code{examples/errors.txt}-д 17 үгтэй мөр, \code{tests/expected_errors.out}, \code{tests/fuzz_json.py}-ийн 14--40 үгтэй мөр. Дахин туршилт: Хүснэгт 5.1 (өмнө \term{ASan} алдаа, одоо ERR). \\ \hline
-P2 & Веб UI цөм унасныг мэдэгдэхгүй, муу мөр скриптэд үлдэж дараагийн командууд тэнд унана & Major & Хэсэгчлэн зөвшөөрсөн & \code{use-run.ts}: цөм унасан мөрийг скриптээс буцааж «Програм алдаатай команд хүлээн авлаа» гэсэн монгол мэдэгдэл харуулна. Нотолгоо: \code{errors.test.ts} (17 үгтэй мөр цөмд ERR event болохыг шалгана). Playwright E2E тест нэмээгүй. Шалтгаан: E2E нь browser ба CI-д Chromium шаарддаг тул хамрах хүрээнээс гадуур гэж үзэж, оронд нь \code{node --test}-ийн нэгж тест ба \term{fuzz}-ээр хамгаалсан. \\ \hline
-P3 & Manual 2.1-ийн \code{git checkout v1.0.0} нь Manual-д бичсэн функцгүй хуучин хувилбар татна & Major & Зөвшөөрсөн & Manual 2.1-ийг \code{main} дээр суурилуулах заавар болгож, \code{v1.0.0} tag-ийг заахаа больсон. Final release tag нь Final Report-той ижил commit дээр тавигдана. Нотолгоо: \code{v1.0.0} дээр \code{make test} 7 PASS, \code{make check} 54 PASS бол Final дээр 9 ба 98 (Хүснэгт 5.1). \\ \hline
-P4 & Kernel module-ийн одоогийн хувилбарыг жинхэнэ Linux дээр ачаалсан нотолгоо тайланд алга & Major & Зөвшөөрсөн & \code{src/kernel/}\allowbreak\code{run_module_test.sh}-ийг Ubuntu 24.04.2 (\term{kernel} 6.11.0-17-generic, \term{Secure Boot}, \term{MOK}) дээр ажиллуулж 9 PASS авсан. Нотолгоо: Зураг 6.2, 6.3, 6.4, \code{docs/KERNEL_EVIDENCE.md}. Түүхий гаралтыг \code{docs/kernel_build_log.txt} ба \code{docs/kernel_dmesg.txt} файлаар репод оруулсан (2026-11-19-ний давтан ажиллуулалт, дахин 9 PASS). \\ \hline
-P5 & Report доторх зөрүү: «долоон бүтэц», «9 бүтэц», зургийн дугаар, commit хүснэгтийн огноо & Minor & Зөвшөөрсөн & Report-ийг 9 бүтцээр нэгтгэж, зураг ба хүснэгтийн дугаарыг бүлэг-дугаараар (1.1, 2.1) дарааллуулж, хоцрогдсон «\term{red-black} хэрэгжүүлээгүй» гэсэн хязгаарлалтыг засав. Commit хүснэгтийг commit-ийн тоо болгон хураангуйлсан. \\ \hline
-P6 & Scheduler-ийн дундаж хүлээлтийг програмаар батлах боломжгүй, зөвхөн гараар бодсон & Minor & Зөвшөөрсөн & \code{sched stats} команд нэмж \code{--json} төлвөөр веб дээр «Дундаж хүлээлт» товчоор харуулсан. Нотолгоо: \code{tests/expected_scheduler.out} дахь \code{avg_wait=5.00} (RR) ба \code{4.33} (\term{FCFS}), \code{errors.test.ts}. \\ \hline
-P7 & ERR мессеж англи бөгөөд веб дээр таслагддаг & Minor & Зөвшөөрсөн & \code{config.ts}-д ERR бүрийн монгол тайлбарын газрын зураг, \code{event-log.tsx}-д \code{title} ба \code{break-words} нэмсэн. Нотолгоо: \code{errors.test.ts} нь \code{examples/errors.txt}-ийн ERR бүр тайлбартай эсэхийг шалгана. \\ \hline
-P8 & Manual-ийн жижиг зөрүү: хоцрогдсон мессеж, \code{bitmap size} цэвэрлэх үйлдэл, int-ийн хязгаар & Minor & Зөвшөөрсөн & Manual 1.8-ийн мессежийг одоогийн кодтой тулгаж, \code{bitmap size} нь бүх битийг цэвэрлэнэ гэж тэмдэглэв. Хязгаараас хэтэрсэн int-д ерөнхий usage биш \code{ERR ... integer out of range} гаргадаг болгосон (санал болгосон хоёр хувилбараас мужийн мессежийг сонгов). \\ \hline
-P9 & Тестийн цоорхой: \term{fuzz} ба \code{errors.txt} 16-аас олон үгтэй мөр үүсгэдэггүй & Minor & Зөвшөөрсөн & \code{fuzz_json.py}-д 14--40 үгтэй, 30--900 оронтой урт, int халилттай мөр нэмсэн, \code{errors.txt}-д 17 үгтэй мөр нэмж \code{expected_errors.out}-ийг шинэчилсэн. Нотолгоо: \code{make check} 98 PASS. \\ \hline
-P10 & Хамрах хүрээний цоорхой: \term{rb}, \term{heap} веб дээр харагдахгүй, дан холбоост жагсаалтын демо байхгүй, Windows туршигдаагүй & Suggestion & Хэсэгчлэн зөвшөөрсөн & Веб дээр \term{red-black} мод ба \term{min-heap}-ийн карт, дэлгэц, хичээлийн шат нэмсэн (\code{stage.tsx}, \code{levels.ts}, \code{rbheap.test.ts}). Windows-ийн туршилтыг энэ тайланд нотлоогүй бөгөөд Manual-д MSYS2 ба WSL-ийн заавар орсон. Дан холбоост жагсаалтын тусдаа демо нэмээгүй. Шалтгаан: сурах бичиг үүнийг зөвхөн тайлбарласан бөгөөд төсөлд \code{hlist} нь \term{hash}-ийн \term{bucket}-д дан холбоост жагсаалтаар хэрэгжсэн. \\ \hline
-S1 & Report-д нэр томьёоны жагсаалт нэмэх & Suggestion & Зөвшөөрсөн & Хүснэгт 1.2 (10 нэр томьёоны энгийн тайлбар) нэмсэн бөгөөд нэр томьёо бүр тексттэй ялгагдахаар налуу бичигдсэн. \\ \hline
-S2 & \code{list_head}-ийн next/prev, \term{AVL} эргүүлэлт, \term{Round Robin}-ийн \term{Gantt} гэсэн 3 онолын диаграм нэмэх & Suggestion & Зөвшөөрсөн & Зураг 1.1 (\code{list_head}), Зураг 1.3 (\term{AVL}-ийн зүүн эргүүлэлт), Зураг 6.1 (\term{Gantt}). Нэмж Зураг 1.2 (\term{BST} ба \term{AVL}-ийн өндөр). \\ \hline
-S3 & Хураангуйг 3 богино өгүүлбэр болгох & Suggestion & Хэсэгчлэн зөвшөөрсөн & Хураангуйг дэд гарчиггүй хоёр догол мөр болгож богиносгосон. Гурван өгүүлбэр болгоогүй. Шалтгаан: эцсийн тайлангийн хураангуйд эцсийн шийдэл, гол сайжруулалт, дахин туршилтын үр дүнг хамтад нь тусгах шаардлагатай (БД2 удирдамж). \\ \hline
-S4 & Manual 2.7-г «\term{Secure Boot} идэвхтэй бол» гэж тусад нь зурагтай болгох & Suggestion & Хэсэгчлэн зөвшөөрсөн & Manual 2.7-д \term{MOK} түлхүүр үүсгэх, гарын үсэг зурах алхмыг тусад нь бичсэн, \code{Key was rejected by service} алдааны хариу 1.8-д орсон. Зураг Manual-д оруулаагүй, зургийг Report-ын Зураг 6.2-т харуулсан. \\ \hline
+P1 & 16-аас олон үгтэй мөр C цөмд санах ойн алдаа гаргана (\term{ASan} \code{stack-buffer-overflow}, \code{kds.c:178}) & Major, зөвшөөрсөн & \code{main()} 14-өөс олон аргументыг \code{ERR too many tokens (max 14 arguments)} болгож handler руу дамжуулахгүй. Нотолгоо: \code{errors.txt}-ийн 17 үгтэй мөр, \code{fuzz_json.py}-ийн 14--40 үгтэй мөр, Хүснэгт 5.1. \\ \hline
+P2 & Веб UI цөм унасныг мэдэгдэхгүй, муу мөр скриптэд үлдэж дараагийн командууд тэнд унана & Major, хэсэгчлэн & \code{use-run.ts}: цөм унасан мөрийг скриптээс буцааж монгол мэдэгдэл харуулна (\code{errors.test.ts}). Playwright E2E нэмээгүй: Chromium шаарддаг тул хамрах хүрээнээс гадуур, оронд нь \code{node --test} ба \term{fuzz}-ээр хамгаалсан. \\ \hline
+P3 & Manual 2.1-ийн \code{git checkout v1.0.0} функцгүй хуучин хувилбар татна & Major, зөвшөөрсөн & Manual 2.1-ийг \code{main} дээр суурилуулах заавар болгож, \code{v1.0.0}-г заахаа больсон. \code{v1.0.0} дээр 7/54 PASS бол Final дээр 9 ба 98 PASS (Хүснэгт 5.1). \\ \hline
+P4 & Kernel module-ийг жинхэнэ Linux дээр ачаалсан нотолгоо тайланд алга & Major, зөвшөөрсөн & \code{run_module_test.sh}-ийг Ubuntu 24.04.2 (\term{kernel} 6.11.0-17, \term{Secure Boot}, \term{MOK}) дээр ажиллуулж 9 PASS (Зураг 6.2--6.4). Түүхий гаралтыг \code{kernel_build_log.txt}, \code{kernel_dmesg.txt} файлаар оруулсан (2026-11-19-ний давтан ажиллуулалт, мөн 9 PASS). \\ \hline
+P5 & Report доторх зөрүү: «долоон бүтэц», «9 бүтэц», зургийн дугаар, commit хүснэгтийн огноо & Minor, зөвшөөрсөн & 9 бүтцээр нэгтгэж, зураг ба хүснэгтийн дугаарыг бүлэг-дугаараар дарааллуулж, commit хүснэгтийг commit-ийн тоо болгон хураангуйлсан. \\ \hline
+P6 & Scheduler-ийн дундаж хүлээлтийг програмаар батлах боломжгүй & Minor, зөвшөөрсөн & \code{sched stats} команд нэмж \code{--json} төлвөөр веб дээр «Дундаж хүлээлт» товчоор харуулсан; \code{avg_wait=5.00} (RR), \code{4.33} (\term{FCFS}) (6-р хэсэг). \\ \hline
+P7 & ERR мессеж англи бөгөөд веб дээр таслагддаг & Minor, зөвшөөрсөн & \code{config.ts}-д ERR бүрийн монгол тайлбарын газрын зураг, \code{event-log.tsx}-д \code{title}, \code{break-words}; \code{errors.test.ts} ERR бүрийн тайлбар байхыг шалгана. \\ \hline
+P8 & Manual-ийн жижиг зөрүү: хоцрогдсон мессеж, \code{bitmap size}, int-ийн хязгаар & Minor, зөвшөөрсөн & Manual-ийн мессежүүдийг кодтой тулгав; хэтэрсэн int-д ерөнхий usage биш \code{ERR ... integer out of range} гаргадаг болгов. \\ \hline
+P9 & Тестийн цоорхой: \term{fuzz} ба \code{errors.txt} 16-аас олон үгтэй мөр үүсгэдэггүй & Minor, зөвшөөрсөн & \code{fuzz_json.py}-д 14--40 үгтэй, 30--900 оронтой урт, int халилттай мөр нэмсэн; \code{errors.txt}-д 17 үгтэй мөр нэмж \code{expected_errors.out} шинэчилсэн (98 PASS). \\ \hline
+P10 & \term{rb}, \term{heap} веб дээр харагдахгүй, дан холбоост жагсаалтын демо байхгүй, Windows туршигдаагүй & Suggestion, хэсэгчлэн & Веб дээр \term{red-black}, \term{min-heap}-ийн карт, дэлгэц, хичээлийн шат нэмсэн. Windows тусдаа туршигдаагүй (Manual-д MSYS2/WSL заавар). Дан холбоост жагсаалтын тусдаа демо нэмээгүй: \code{hlist} нь \term{hash}-ийн \term{bucket}-д дан холбоост жагсаалтаар хэрэгжсэн. \\ \hline
+S1 & Report-д нэр томьёоны жагсаалт нэмэх & Suggestion, зөвшөөрсөн & Хүснэгт 1.2 (10 нэр томьёоны энгийн тайлбар) нэмсэн; нэр томьёо бүр текстээс налуу фонтогоор ялгагдана. \\ \hline
+S2 & \code{list_head}-ийн next/prev, \term{AVL} эргүүлэлт, \term{Round Robin}-ийн \term{Gantt} гэсэн 3 диаграм нэмэх & Suggestion, зөвшөөрсөн & Зураг 1.1 (\code{list_head}), 1.3 (\term{AVL} эргүүлэлт), 6.1 (\term{Gantt}); нэмж Зураг 1.2 (\term{BST} ба \term{AVL}-ийн өндөр). \\ \hline
+S3 & Хураангуйг 3 богино өгүүлбэр болгох & Suggestion, хэсэгчлэн & Хураангуйг дэд гарчиггүй хоёр догол мөр болгосон. Гурван өгүүлбэр болгоогүй: эцсийн шийдэл, гол засвар, дахин туршилтын үр дүнг хамт тусгах шаардлагатай. \\ \hline
+S4 & Manual 2.7-г «\term{Secure Boot} идэвхтэй бол» гэж тусад нь зурагтай болгох & Suggestion, хэсэгчлэн & Manual 2.7-д \term{MOK} түлхүүр үүсгэх, гарын үсэг зурах алхмыг тусад нь бичсэн; зургийг Зураг 6.2-т харуулсан. \\ \hline
 \end{longtable}
 \par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт 4.1 -- Reviewer Comments and Responses\par}\vspace{4pt}
 
-Хүснэгт 4.1-ээс харахад 14 саналын 10 нь бүрэн, 4 нь хэсэгчлэн зөвшөөрөгдсөн бөгөөд үгүйсгэсэн санал байхгүй. Хэсэгчлэн зөвшөөрсөн дөрвөн саналын (P2, P10, S3, S4) үлдсэн хэсэг бүрт шалтгаан бичигдсэн. Гол шалтгаан нь E2E тест, дан холбоост жагсаалтын демо зэрэг нь төслийн хамрах хүрээнээс гадуур, эсвэл өөр аргаар (нэгж тест, \code{hlist}) хамгаалагдсан явдал юм.
+Хүснэгт 4.1-ээс харахад 14 саналын 10 нь бүрэн, 4 нь хэсэгчлэн зөвшөөрөгдсөн бөгөөд үгүйсгэсэн санал байхгүй; хэсэгчлэн зөвшөөрсөн бүрд шалтгаан бичигдсэн.
 
 II-4-9 баг бидний ажиллагааг тусдаа орчинд (Ubuntu 24.04.5, \term{kernel} 6.18.44, gcc 13.3, Python 3.12) давтан ажиллуулж, \code{make} warning 0, \code{make test} 3/3 удаа 9 PASS, \code{make check} 98 PASS гэж баталж, 9 нэмэлт оролтын шалгалтын 7-г тааруулсан (дүгнэлт 9, 10). Тэдний олсон 12 зүйл бүр бодит бөгөөд бид түүнийг Хүснэгт 4.2-т задалж хариулав.
 
 {\fontsize{9}{11}\selectfont\setlength{\tabcolsep}{3pt}
-\begin{longtable}{|L{0.05\textwidth}|L{0.19\textwidth}|L{0.12\textwidth}|L{0.145\textwidth}|L{0.335\textwidth}|}
+\begin{longtable}{|L{0.05\textwidth}|L{0.27\textwidth}|L{0.13\textwidth}|L{0.45\textwidth}|}
 \hline
-\textbf{№} & \textbf{Шүүмж} & \textbf{Priority} & \textbf{Шийдвэр} & \textbf{Өөрчлөлт ба нотолгоо} \\ \hline
+\hdrow \textbf{№} & \textbf{Шүүмж} & \textbf{Үнэлгээ ба шийдвэр} & \textbf{Өөрчлөлт ба нотолгоо} \\ \hline
 \endfirsthead
 \hline
-\textbf{№} & \textbf{Шүүмж} & \textbf{Priority} & \textbf{Шийдвэр} & \textbf{Өөрчлөлт ба нотолгоо} \\ \hline
+\hdrow \textbf{№} & \textbf{Шүүмж} & \textbf{Үнэлгээ ба шийдвэр} & \textbf{Өөрчлөлт ба нотолгоо} \\ \hline
 \endhead
-M-1 & Сурах бичгийн Part I (\code{struct color}) ба Part II (\term{Collatz}) веб графаар харагдахгүй, зөвхөн \term{kernel module}-д бий (\code{grep -ci "collatz|color"} = 0) & Major & Хэсэгчлэн зөвшөөрсөн & Шүүмжлэгчийн санал болгосон хоёр замаас \textbf{үндэслэлээ Report-д бичих}-ийг сонгосон (7.1-ийн «Part I/II-ийн дүрслэл» заалт). Үндэслэл: Part I/II нь сурах бичигт \textbf{\term{kernel}} доторх даалгавар тул бодит \code{kmalloc} ба \code{list_head} гинжийг жинхэнэ \term{kernel}-д ачаалж, \code{dmesg} болон \code{/proc/kds}-оор баталсан (Зураг 6.2--6.4). Харин \code{kds}-д \code{color}, \code{collatz} командыг нэмбэл \code{state}-ийн түлхүүр 9-өөс 11 болж \code{tests/json_check.py}-ийн \code{STATE_KEYS}, веб \code{model.ts}, Manual болон Report-ын «9 бүтэц», \code{make check}-ийн 98 PASS-ийн бүтэц зэрэг солигдоно --- эцсийн хүлээлгэн өгөхийн өмнө тийм өргөн хүрээний өөрчлөлт аль хэдийн баталгаажсан нотолгоог эвдэх эрсдэлтэй. \\ \hline
-M-2 & Гишүүдийн оролцоо repo-оос баталгаажихгүй (zip-д \code{.git} байхгүй, commit-ыг нэг гишүүн төвлөрүүлсэн) & Major & Хэсэгчлэн зөвшөөрсөн & Репод \code{.mailmap} нэмж аль хэдийн бодитоор орсон git идентификаторуудыг нэр ба \term{student ID}-д холбосон; Хавсралт C-д \code{git shortlog -sne}-ийн яг гаралт (81 commit) болон \term{kernel} log дэх \code{host: b241940001-server}, \code{/home/gerel/OS_BD1} зам, PR \#1-ийн merge мөр --- А.Гэрэлийн машин дээр ажиллуулсан, тусдаа салбараас нэгтгэсэн гэдгийн бодит нотолгоо. Гэхдээ 6 гишүүний гурав нь тусдаа git идентификаторгүй хэвээр байна. Бид түүхийг дахин бичиж «нотолгоо» үүсгээгүй, мөн шалгах боломжгүй \code{Co-authored-by} мөр зориуд хийгээгүй: тэдгээр гишүүний хувь нэмэр нь Хавсралт C-ийн файл/тестийн жагсаалтаар л батлагдах тул үүнийг сул талаар нь үлдээв. \\ \hline
-M-3 & \term{Kernel}-ийн нотолгооны 4 баримт зөрвтөл (огноо, зургийн дугаар, PASS тоо) & Major & Зөвшөөрсөн & Нэг л огноо: \textbf{2026-11-19 04:05:12 (UTC+8)} --- \code{kernel_build_log.txt}-ийн \texttt{\# date:} мөр дэх утга, 2026-11-18-ний анхны ачааллыг түүхэнд нь тэмдэглэв; зураг \textbf{6.2--6.4}; PASS тоо \textbf{9} (\term{Secure Boot} идэвхгүй үед \code{sign} хийгдэхгүй тул \textbf{8}) болж \code{docs/KERNEL_EVIDENCE.md} (9 PASS-ийн задалгаа, файлын бүтэц), Manual 2.7 болон 2.8, Report-ын 6-р хэсэг, Хүснэгт 6.1 дөрвөндөө ижил болтол нэгтгэгдсэн. Manual 2.7-ийн «3 PASS» жишээ гаралтыг скриптийн бодит 9 PASS мөрөөр сольж, \code{dmesg -C}-ийн анхааруулга нэмсэн. \\ \hline
-m-1 & Manual 2.9 «1023 тэмдэгтээс урт бол ERR» --- бодитоор 1023 тэмдэгт аль хэдийн ERR & Minor & Зөвшөөрсөн & «1022-оос урт (1023 ба түүнээс олон тэмдэгт) бол» гэж засаж, 1022 хүртэлх мөр хэвийн гэдгийг нэмсэн. Шалтгаан: \code{char line[1024]} + \code{fgets}. Нотолгоо: 1022 тэмдэгтэй мөр $\rightarrow$ \code{ERR queue: usage} буюу уртын шалгалтыг давсан, 1023 $\rightarrow$ \code{ERR line too long} (засварын үеэр бид давтан хэмжсэн). \\ \hline
-m-2 & Report Хүснэгт 6.1 «text==json PASS ×8» vs \code{make check}-ийн 9; Manual 2.5 «8 скрипт: PASS x9» гэж өөрөө зөрнө & Minor & Зөвшөөрсөн & Хоёулыг «\textbf{PASS ×9 (8 скрипт + бүгдийг нь нэгтгэсэн дүгнэлт мөр)}» гэж нэг болгосон. Мөн Python-ийн хувьд шүүмжлэгчийн 3.12 дээр ажилласан нь зүй гэсэн дүгнэлтыг тодруулахын тулд Report 7.2-т «туршсан 3.13, шаардлага $\ge$3.8» гэж нэмсэн. \\ \hline
-m-3 & БД1/БД2 ба багийн код холилдсон (\code{MODULE_AUTHOR "F.CSM302 BD1 team 4"}, \code{package.json} «BD1») & Minor & Зөвшөөрсөн & \code{kds_module.c}-ийн толгой тайлбар болон \code{MODULE_AUTHOR}-ыг \textbf{F.CSM302 БД2, V-1-4} ба 6 гишүүний \term{student ID}-ээр, \code{web/package.json}-ийн тайлбарыг «F.CSM302 БД2, V-1-4» болгож засав. \\ \hline
-m-4 & \code{--json} горим буруу \term{UTF-8} оролтод \textbf{хүчингүй JSON} гаргана (0x80-аас дээш кодын байт түүхээрээ гарах) & Minor & Зөвшөөрсөн & \code{putjs()}-ийн escape-ийг шинэчлэж, \code{utf8_seq()} туслах функцээр \term{UTF-8} дарааллыг (Unicode 3.9 D92b «maximal subpart» дүрэм, surrogate муж, \code{F0} ба \code{F4}-ийн хязгаартай) шалгасан; хүчингүй байтыг \texttt{\textbackslash ufffd} гэсэн 6 тэмдэгтийн дараалал болгож сольж, \code{"}, \texttt{\textbackslash}, 0x20-ын доорх хяналтын тэмдэгт өмнөхчилсөн хэвээр. \code{fuzz_json.py}-д муу \term{UTF-8} оролтын шинэ аймаг (\code{bad_utf8}) нэмж, JSON мөрүүдийг \textbf{bytes}-ээр нь \code{json.loads}-оор задалдаг болгосон (хүчингүй гарвал тест FAIL). Нотолгоо: \texttt{printf '\textbackslash xff\textbackslash xfe add' | ./kds --json} $\rightarrow$ хүчингүй байт бүр \texttt{\textbackslash ufffd}; \code{make check} 98 PASS. \\ \hline
-m-5 & \code{/api/run}-ийн бат бөх байдал: хэмжээг \code{req.json()}-оос хойш шалгадаг, \code{child.stdin}-д \code{error} listener байхгүй, timeout алга, 413-ыг түүхий JSON текстээр харуулдаг & Minor & Зөвшөөрсөн & \code{route.ts}: \code{Content-Length}-ийг эхлээд шалгах (\code{MAX_BODY_BYTES} = скриптийн хязгаарын 4 дахин), \code{refuse()} туслах нь 413/400/503 алдаанд \textbf{монгол} \code{userMessage} буцаана; \code{child.stdin.on("error", ...)} нэмсэн; 10 секундын timeout$\rightarrow$\code{SIGTERM}, дахин 2 секунд$\rightarrow$\code{SIGKILL} (\code{fatal: "kds timed out"}), зам бүрд \code{clearTimeout}. \code{use-run.ts}: \code{Fatal} төрөл \code{detail}, \code{notice} талбайтай болж, серверийн монгол мэдэгдэлийг хэрэглэгчид шууд харуулна. Нотолгоо: \code{curl}-ээр 413 ба 400 хариу, \code{npm test} 17/17, \code{tsc --noEmit} цэвэр. \\ \hline
-s-1 & \code{kds_exit()} нь \code{free_all()}-ийн хуулбар; \term{Collatz} \code{unsigned long} ашигласан тул 32 битийн \term{kernel}-д халих & Suggestion & Зөвшөөрсөн & \code{free_all(bool log)} гэсэн нэг туслах (init-ийн алдааны замд \code{log=false}, \code{rmmod}-т \code{true}) болгож давхардлыг арилгасан; \term{Collatz}-ийн утгыг \code{u64} болгож \texttt{\%llu}-р хэвлэсэн. Шүүмжлэгчийн тооцоолол зөв: start $\le$ 1\,000\,000 үеийн оргил $5.7\cdot10^{10}$ нь 32 битийн 4\,294\,967\,295-аас хэтэрнэ. \\ \hline
-s-2 & \code{release.yml} push бүрд шинэ tag үүсгэж, Manual-ийн «v1.1.0 = Report-той ижил commit» амлалтыг таслах эрсдэлтэй & Suggestion & Зөвшөөрсөн & Workflow-г \code{workflow_dispatch} (заавал \code{confirm=release} гэж бичсэнээр) болгосон --- CI ногоон болох тутам tag гаргахгүй болсон; шалтгааныг \code{release.yml} workflow-ийн толгойрт тэмдэглэж, README болон Manual 2.1-ийн «сүүлийн тэмдэглэгдсэн release нь v1.1.0, эцсийн код \code{main}-д байна» гэсэн тодорхойлолтыг хооронд нь нийцүүлэв. \\ \hline
-s-3 & Скрипт \code{dmesg -C}-ээр шүүмжлэгчийн лог-ийг устгаж, хуучин модулийг мэдэгдэлгүй \code{rmmod} хийдэг; \code{dmesg} файлын ачааллын мөрүүд «\#\#\# rmmod» гарчгийн доор орсон & Suggestion & Зөвшөөрсөн & \code{run_module_test.sh}-ийн толгойрт WARNING блок, Manual 2.7-д анхааруулга нэмсэн; \code{dmesg} гарчгийг \texttt{\#\#\# dmesg: load} / \texttt{\#\#\# rmmod kds\_module} / \texttt{\#\#\# dmesg: unload} / \texttt{\#\#\# dmesg: rejected load} гэж салгасан. Репод буй хуучин log-ын ялгааг \code{docs/KERNEL_EVIDENCE.md}-ийн 3-т зааж өгсөн (\code{kds:} агуулгын мөр ижил, зөвхөн хэсгийн нэр өөр). \\ \hline
-s-4 & Module GPL-2.0 гэж зарласан ч репод \code{LICENSE} файл алга & Suggestion & Зөвшөөрсөн & \code{LICENSE} (GNU \textbf{GPL-2.0-only} албан ёсны текст) нэмсэн; README-д «Лиценз» хэсэг бичиж, \code{MODULE_LICENSE("GPL")} ба \code{SPDX-License-Identifier: GPL-2.0}-той нийцүүлсэн. \\ \hline
+M-1 & Сурах бичгийн Part I (\code{struct color}) ба Part II (\term{Collatz}) веб графаар харагдахгүй, зөвхөн \term{kernel module}-д бий & Major, хэсэгчлэн & 7.1-д үндэслэлээ бичсэн: Part I/II сурах бичигт \textbf{\term{kernel}} доторх даалгавар тул жинхэнэ \term{kernel}-д ачаалж \code{dmesg}, \code{/proc/kds}-оор баталсан (Зураг 6.2--6.4). \code{kds}-д нэмбэл \code{state}-ийн түлхүүр 9-өөс 11 болж \code{json_check.py}, веб \code{model.ts}, «9 бүтэц» гэсэн бүх нотолгоо эвдэрнэ. \\ \hline
+M-2 & Гишүүдийн оролцоо repo-оос баталгаажихгүй (zip-д \code{.git} байхгүй, commit-ыг нэг гишүүн төвлөрүүлсэн) & Major, хэсэгчлэн & Репод \code{.mailmap} нэмж бодит идентификаторуудыг нэр ба \term{student ID}-д холбосон; Хавсралт A-д \code{git shortlog -sne} (81 commit), \term{kernel} log дэх \code{host: b241940001-server}, \code{/home/gerel/OS_BD1} зам, \texttt{PR \#1}-ийн merge мөр. Гэхдээ 6 гишүүний гурав нь тусдаа идентификаторгүй; шалгах боломжгүй \code{Co-authored-by} мөр нэмэх нь худал нотолгоо тул сул талаар нь үлдээв. \\ \hline
+M-3 & \term{Kernel}-ийн нотолгооны 4 баримт зөрвтөл (огноо, зургийн дугаар, PASS тоо) & Major, зөвшөөрсөн & Нэг л огноо: \textbf{2026-11-19 04:05:12 (UTC+8)}; зураг \textbf{6.2--6.4}; PASS тоо \textbf{9} (\term{Secure Boot} идэвхгүй үед \textbf{8}) гэж \code{KERNEL_EVIDENCE.md}, Manual 2.7/2.8, 6-р хэсэг, Хүснэгт 6.1 дөрвөндөө ижил болгосон. Manual-ийн «3 PASS» жишээг бодит 9 PASS мөрөөр сольж, \code{dmesg -C} анхааруулга нэмсэн. \\ \hline
+m-1 & Manual 2.9 «1023 тэмдэгтээс урт бол ERR» --- бодитоор 1023 тэмдэгт аль хэдийн ERR & Minor, зөвшөөрсөн & «1022-оос урт (1023 ба түүнээс олон тэмдэгт) бол» гэж засав (\code{char line[1024]} + \code{fgets}); 1023 → \code{ERR line too long} (давтан хэмжсэн). \\ \hline
+m-2 & Report Хүснэгт 6.1 «text==json PASS ×8» vs \code{make check}-ийн 9; Manual 2.5 «PASS x9» гэж өөрөө зөрнө & Minor, зөвшөөрсөн & Хоёулыг «PASS ×9 (8 скрипт + дүгнэлт мөр)» гэж нэг болгосон; Report 7.2-т «туршсан 3.13, шаардлага $\ge$3.8» гэж нэмсэн. \\ \hline
+m-3 & БД1/БД2 ба багийн код холилдсон (\code{MODULE_AUTHOR}, \code{package.json} «BD1») & Minor, зөвшөөрсөн & \code{kds_module.c}-ийн толгой тайлбар ба \code{MODULE_AUTHOR}-ыг «F.CSM302 БД2, V-1-4» ба 6 гишүүний \term{student ID}-ээр, \code{web/package.json}-ийн тайлбарыг мөн засав. \\ \hline
+m-4 & \code{--json} горим буруу \term{UTF-8} оролтод хүчингүй \term{JSON} гаргана & Minor, зөвшөөрсөн & \code{utf8_seq()} туслах функцээр \term{UTF-8} дарааллыг (Unicode 3.9 D92b) шалгаж, хүчингүй байтыг U+FFFD болгосон; \code{fuzz_json.py}-д \code{bad_utf8} аймаг нэмж, \term{JSON} мөрүүдийг bytes-ээр задалдаг болгосон (98 PASS). \\ \hline
+m-5 & \code{/api/run}: хэмжээ \code{req.json()}-оос хойш шалгагдана, \code{stdin} \code{error} listener байхгүй, timeout алга & Minor, зөвшөөрсөн & \code{route.ts}: \code{Content-Length}-ийг эхлээд шалгах (\code{MAX_BODY_BYTES}), 413/400/503-д монгол мэдэгдэл, \code{child.stdin.on("error", ...)}, 10с timeout → \code{SIGTERM}, 2с → \code{SIGKILL}. \code{npm test} 17/17, \code{tsc --noEmit} цэвэр. \\ \hline
+s-1 & \code{kds_exit()} нь \code{free_all()}-ийн хуулбар; \term{Collatz} \code{unsigned long} 32 битийн \term{kernel}-д халина & Suggestion, зөвшөөрсөн & \code{free_all(bool log)} гэсэн нэг туслах болгож давхардлыг арилгасан; \term{Collatz}-ийн утгыг \code{u64} болгож \texttt{\%llu}-р хэвлэсэн. Шүүмжлэгчийн тооцоолол зөв: оргил $5.7\cdot10^{10}$ нь 32 битийн хязгаараас хэтэрнэ. \\ \hline
+s-2 & \code{release.yml} push бүрд шинэ tag үүсгэж, «v1.1.0 = Report-той ижил commit» амлалтыг таслах эрсдэлтэй & Suggestion, зөвшөөрсөн & Workflow-г \code{workflow_dispatch} (\code{confirm=release}) болгосон --- CI ногоон болох тутам tag гарахгүй; шалтгааныг workflow-ийн толгойрт тэмдэглэж, README ба Manual 2.1-ийг нийцүүлэв. \\ \hline
+s-3 & Скрипт \code{dmesg -C}-ээр шүүмжлэгчийн лог-ийг устгаж, хуучин модулийг мэдэгдэлгүй \code{rmmod} хийдэг & Suggestion, зөвшөөрсөн & \code{run_module_test.sh}-ийн толгойрт WARNING блок, Manual 2.7-д анхааруулга нэмсэн; \code{dmesg} гарчгийг load / unload / rejected гэж салгасан. Хуучин log-ын ялгааг \code{KERNEL_EVIDENCE.md}-ийн 3-т тэмдэглэв. \\ \hline
+s-4 & Module GPL-2.0 гэж зарласан ч репод \code{LICENSE} файл алга & Suggestion, зөвшөөрсөн & \code{LICENSE} (GNU GPL-2.0-only албан ёсны текст) нэмсэн; README-д «Лиценз» хэсэг бичиж, \code{MODULE_LICENSE("GPL")} ба \code{SPDX-License-Identifier: GPL-2.0}-той нийцүүлсэн. \\ \hline
 \end{longtable}
 \par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт 4.2 -- II-4-9 шүүмжийн санал ба бидний хариу\par}\vspace{4pt}
 
-Хүснэгт 4.2-ийн 12 саналаас \textbf{10-г бүрэн}, 2-ыг (M-1, M-2) хэсэгчлэн зөвшөөрч, шалтгааныг нь тус тусад нь бичив; үгүйсгэсэн санал байхгүй. II-4-9-ийн шалгаагүй гэж тэмдэглэсэн хоёр зүйл --- жинхэнэ \term{kernel} дээрх \code{insmod} ба browser дээрх UI --- бидний хувьд нотолгоотай: эхнийх нь Зураг 6.2--6.4 ба \code{docs/KERNEL_EVIDENCE.md}, хоёр дахь нь энэ тайлангийн 3-р хэсгийн бодит дэлгэцийн зураг (Зураг 3.1--3.5).
+Хүснэгт 4.2-ийн 12 саналаас 10-г бүрэн, 2-ыг (M-1, M-2) хэсэгчлэн зөвшөөрч шалтгааныг тус тусад нь бичив; үгүйсгэсэн санал байхгүй. II-4-9-ийн шалгаагүй гэж тэмдэглэсэн хоёр зүйл --- жинхэнэ \term{kernel} дээрх \code{insmod} ба browser дээрх UI --- бидний хувьд нотолгоотай: эхнийх нь Зураг 6.2--6.4 ба \code{docs/KERNEL_EVIDENCE.md}, хоёр дахь нь 3-р хэсгийн бодит дэлгэцийн зураг (Зураг 3.1--3.5).
 
 % ---------------------------------------------------------------------------
 \section*{5. Дахин туршилт}
 \phantomsection\addcontentsline{toc}{section}{5. Дахин туршилт}
 \hthree{5.1 Туршилтын арга}
 
-Засварын өмнөх хувилбар болгон II-4-13 шүүмжилсэн \code{main} (commit \code{2964225}), мөн Manual-ийн заасан \code{v1.0.0} tag (commit \code{1dcab26})-ийг \code{git archive}-ээр тусад нь татаж, ижил орчинд (Ubuntu 24.04, gcc 13, \term{ASan} ба \term{UBSan} идэвхтэй) build хийн ажиллуулсан. Дараах хүснэгтийн тоо бүгд тэдгээрийн бодит гаралт бөгөөд бид ямар нэг утга зохиож бичээгүй.
-
-\Needspace{0.6\textheight}Хүснэгт 5.1 нь шүүмжид дурдсан асуудал бүрийг засварын өмнө ба дараа нь ижил оролтоор ажиллуулж, засвар бодитоор нөлөөлснийг (өмнө алдаа, дараа зөв) ба шинэ regression гараагүйг (өмнө PASS байсан нь одоо ч PASS) нэг дор харуулахын тулд оруулсан.
+Засварын өмнөх хувилбар болгон II-4-13 шүүмжилсэн \code{main} (commit \code{2964225}), мөн Manual-ийн заасан \code{v1.0.0} tag (commit \code{1dcab26})-ийг \code{git archive}-ээр тусад нь татаж, ижил орчинд (Ubuntu 24.04, gcc 13, \term{ASan} ба \term{UBSan} идэвхтэй) build хийн ажиллуулсан. Хүснэгт 5.1 нь шүүмжид дурдсан асуудал бүрийг засварын өмнө ба дараа ижил оролтоор ажиллуулж, засвар бодитоор нөлөөлснийг ба шинэ regression гараагүйг нэг дор харуулахын тулд оруулав.
 
 {\fontsize{9}{11}\selectfont\setlength{\tabcolsep}{3pt}
 \begin{tabular}{|L{0.20\textwidth}|L{0.27\textwidth}|L{0.27\textwidth}|L{0.17\textwidth}|}
 \hline
-\textbf{Тест} & \textbf{Засварын өмнө} & \textbf{Засварын дараа} & \textbf{Дүгнэлт} \\ \hline
+\hdrow \textbf{Тест} & \textbf{Засварын өмнө} & \textbf{Засварын дараа} & \textbf{Дүгнэлт} \\ \hline
 \code{make test} (\code{main} \code{2964225}) & 9 PASS & 9 PASS & Хэвээр \\ \hline
 \code{make check} (\code{main} \code{2964225}) & 98 PASS, FAIL 0 & 98 PASS, FAIL 0 & Regression байхгүй \\ \hline
-19 үгтэй \code{list add_tail 1 1 2000 1 1 ...} (текст горим) & \term{ASan}: \code{stack-buffer-}\allowbreak\code{overflow}, \code{kds.c:178} & \code{ERR too many tokens (max 14 arguments)}, \code{LIST size=0} & P1 засагдсан \\ \hline
-Ижил мөр (\code{--json} горим) & \term{ASan}: \code{stack-buffer-}\allowbreak\code{overflow}, \code{list_cmd} & \code{ok:false}, \code{msg:"ERR too many tokens (max 14 arguments)"} & P1 засагдсан \\ \hline
-\code{sched stats} & \code{ERR sched: unknown op} & \code{SCHED STATS finished=3 avg_wait=5.00 avg_turnaround=8.33} (RR), \code{4.33} ба \code{7.67} (\term{FCFS}) & P6 засагдсан \\ \hline
-\code{list add_tail 2147483648 1 2000} & \code{ERR list: usage <op> <day> <month> <year>} & \code{ERR list: integer out of range -2147483647..2147483647 (got '2147483648')} & P8 засагдсан \\ \hline
+19 үгтэй \code{list add_tail 1 1 2000 ...} (текст горим) & \term{ASan}: \code{stack-buffer-overflow}, \code{kds.c:178} & \code{ERR too many tokens (max 14 arguments)}, \code{LIST size=0} & P1 засагдсан \\ \hline
+Ижил мөр (\code{--json} горим) & \term{ASan}: \code{stack-buffer-overflow}, \code{list_cmd} & \code{ok:false}, \code{msg:"ERR too many tokens (max 14 arguments)"} & P1 засагдсан \\ \hline
+\code{sched stats} & \code{ERR sched: unknown op} & \code{avg_wait=5.00} (RR), \code{4.33} (\term{FCFS}) ба \code{avg_turnaround} хамт & P6 засагдсан \\ \hline
+\code{list add_tail 2147483648 1 2000} & \code{ERR list: usage <op> <day> <month> <year>} & \code{ERR list: integer out of range ... (got '2147483648')} & P8 засагдсан \\ \hline
 \term{Kernel module} & Зөвхөн compile (шүүмжлэгчийн K1) & Жинхэнэ Linux дээр ачаалж 9 PASS & P4 засагдсан \\ \hline
 Веб апп \code{node --test} & 10 тест PASS (шүүмжлэгчийн ажиллуулалт) & 17 тест PASS & 7 шинэ тест нэмэгдсэн \\ \hline
-Manual-ийн \code{rb insert 5}, \code{heap push 3}, \code{hash auto on} (\code{v1.0.0} tag) & \code{ERR unknown structure 'rb'}, \code{'heap'}, \code{hash: unknown op}. \code{make test} 7 PASS, \code{make check} 54 PASS & Бүгд OK. \code{make test} 9 PASS, \code{make check} 98 PASS & P3 засагдсан \\ \hline
+Manual-ийн \code{rb insert 5}, \code{heap push 3}, \code{hash auto on} (\code{v1.0.0} tag) & \code{ERR unknown structure 'rb'}, \code{'heap'}, \code{hash: unknown op}; \code{make test} 7, \code{make check} 54 PASS & Бүгд OK; \code{make test} 9, \code{make check} 98 PASS & P3 засагдсан \\ \hline
 \end{tabular}
 \par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт 5.1 -- Засварын өмнө ба дараах дахин туршилт\par}\vspace{4pt}
 
 Хүснэгтээс харахад \code{main}-ийн дээр засвар хийхээс өмнө ч, дараа ч \code{make check}-ийн 98 шалгалт бүгд PASS байсан. Тэгэхээр \term{ASan} алдаа төсөлд байсан ч бидний хуучин тестэд илрээгүй, өөрөөр хэлбэл шүүмжлэгчийн тэмдэглэсэн P9 (тестийн цоорхой) үнэн байв. Одоо \term{fuzz} нь 14--40 үгтэй мөр үүсгэдэг тул ижил алдаа дахин гарвал \code{make check} тэр даруй барина.
 
 \hthree{5.2 Regression}
 
-Засвар бүрийн дараа \code{make check}-ийг бүрэн ажиллуулсан. Үүнд 9 тест (8 жишээ скрипт ба 5000 санамсаргүй командтай stress), 9 скриптийн текст ба \code{--json} гаралтын тулгалт, 8 seed $\times$ 5000 буюу 40\,000 санамсаргүй командын \term{differential fuzz}, 32 \term{AVL} инвариант ба 40 \term{red-black}, \term{min-heap} шалгалт орно. Нийт 98 шалгалт PASS, FAIL 0. Веб аппын 17 тест хоёр дахь давхарга болж, цөмийн гаралтыг дэлгэцийн загварт задалсан байдлыг баталгаажуулна. Дахин туршилтыг бүхлээр нь Ubuntu 24.04 дээр хийсэн.
+Засвар бүрийн дараа \code{make check}-ийг бүрэн ажиллуулсан: 9 тест (8 жишээ скрипт ба 5000 командтай stress), 9 скриптийн текст ба \code{--json} гаралтын тулгалт, 8 seed × 5000 буюу 40\,000 санамсаргүй командын \term{differential fuzz}, 32 \term{AVL} инвариант ба 40 \term{red-black}, \term{min-heap} шалгалт. Нийт 98 шалгалт PASS, FAIL 0. Веб аппын 17 тест хоёр дахь давхарга болж, цөмийн гаралтыг дэлгэцийн загварт задалсан байдлыг баталгаажуулна. Дахин туршилтыг бүхлээр нь Ubuntu 24.04 дээр хийсэн.
 
 % ---------------------------------------------------------------------------
 \section*{6. Эцсийн үр дүн}
 \phantomsection\addcontentsline{toc}{section}{6. Эцсийн үр дүн}
 
-\textbf{Хүснэгтийн зорилго:} Хүснэгт 6.1-д 3-р хэсгийн тест бүрийг бодитоор ажиллуулсан эцсийн гаралтыг нэгтгэж, PASS/FAIL төлвийг шалгуулагчид нэг дороос харуулахын тулд оруулсан.
-
+\tabcap{Хүснэгт 6.1 -- Тестүүдийн эцсийн үр дүн}
 {\fontsize{9.5}{12}\selectfont
 \begin{tabular}{|L{0.55\textwidth}|L{0.40\textwidth}|}
 \hline
-\textbf{Тест} & \textbf{Үр дүн} \\ \hline
-textbook, all\_structures, errors, \term{hash}\_resize, rb\_\term{heap} & \textbf{PASS ×5} \\ \hline
+\hdrow \textbf{Тест} & \textbf{Үр дүн} \\ \hline
+textbook, all\_structures, errors, \code{hash_resize}, \code{rb_heap} & \textbf{PASS ×5} \\ \hline
 search (хайлт, \term{hash}, BST/AVL) & \textbf{PASS} \\ \hline
 \term{scheduler} (RR, \term{FCFS}, алдаа), \code{scheduler_full} (8 процесс) & \textbf{PASS ×2} \\ \hline
 \term{stress} (5000 × 8 команд) & \textbf{PASS, ERR 0, \term{sanitizer} мэдээлэлгүй} \\ \hline
-text == --json (\code{json_check.py}) & \textbf{PASS ×9 (8 скрипт + бүгдийг нь нэгтгэсэн дүгнэлт мөр)} \\ \hline
-\term{fuzz} text == json (8 seed × 5000 команд, тэгш seed-д \term{AVL}) & \textbf{PASS ×8 (seed бүрд ≈4\,700 гаралтын мөр)} \\ \hline
-avl\_check (30 гүйлт + эрэмбэлсэн 1..15) & \textbf{PASS ×32 (\term{BST} өндөр 15, \term{AVL} өндөр 4)} \\ \hline
-rb\_check (\term{red-black} 30 seed + \term{min-heap} 10 seed: өнгө, \term{black-height}, inorder/эс хазайх чанар) & \textbf{PASS ×40} \\ \hline
-\term{Kernel module}, \textbf{өмнөх} хувилбар (birthday, kfifo, \term{bitmap}) & \textbf{PASS: Ubuntu 24.04, \term{kernel} 6.11.0-17, insmod/rmmod} \\ \hline
-\term{Kernel module}, \textbf{одоогийн} хувилбар (color, \term{Collatz}, \code{start} параметр, hashtable, rbtree, \code{/proc/kds}) & \textbf{PASS: Ubuntu 24.04.2, \term{kernel} 6.11.0-17-generic, \term{Secure Boot} идэвхтэй (\term{MOK} гарын үсэгтэй) бөгөөд автомат тест скрипт 9 PASS (Зураг 6.2--6.4)} \\ \hline
-CI (GitHub Actions) & \textbf{PASS: C цөм (Ubuntu+macOS) ба Next.js веб апп build+тест} \\ \hline
+text == --json (\code{json_check.py}) & \textbf{PASS ×9 (8 скрипт + дүгнэлт мөр)} \\ \hline
+\term{fuzz} text == json (8 seed × 5000, тэгш seed-д \term{AVL}) & \textbf{PASS ×8 (seed бүрд ≈4\,700 мөр)} \\ \hline
+\code{avl_check} (30 гүйлт + эрэмбэлсэн 1..15) & \textbf{PASS ×32 (\term{BST} өндөр 15, \term{AVL} өндөр 4)} \\ \hline
+\code{rb_check} (\term{red-black} 30 + \term{min-heap} 10 seed) & \textbf{PASS ×40} \\ \hline
+\term{Kernel module}, өмнөх хувилбар (birthday, kfifo, \term{bitmap}) & \textbf{PASS: Ubuntu 24.04, \term{kernel} 6.11.0-17, insmod/rmmod} \\ \hline
+\term{Kernel module}, одоогийн хувилбар (color, \term{Collatz}, hashtable, rbtree, \code{/proc/kds}) & \textbf{PASS: Ubuntu 24.04.2, \term{kernel} 6.11.0-17-generic, \term{Secure Boot} (\term{MOK}), скрипт 9 PASS (Зураг 6.2--6.4)} \\ \hline
+CI (GitHub Actions) & \textbf{PASS: C цөм (Ubuntu+macOS), веб апп build+тест} \\ \hline
 \end{tabular}
 \par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт 6.1 -- Тестүүдийн эцсийн үр дүн\par}\vspace{4pt}
 
-Хүснэгтээс харахад 9 бүтэц, \term{scheduler}, \term{kernel module}, CI бүгд PASS буцаасан бөгөөд \term{sanitizer} (ASan/UBSan) ямар ч алдаа мэдээлээгүй нь санах ойн алдаа, бүхэл тоон халихаас хамгаалагдсаныг баталгаажуулж байна. \term{Kernel module} нь жинхэнэ Linux орчинд \code{insmod}-оор ачаалагдаж, 9 шалгалт бүгд PASS болсон.
+Хүснэгтээс харахад 9 бүтэц, \term{scheduler}, \term{kernel module}, CI бүгд PASS буцаасан бөгөөд \term{sanitizer} ямар ч алдаа мэдээлээгүй нь санах ойн алдаа, бүхэл тоон халихаас хамгаалагдсаныг баталгаажуулж байна.
 
-\hthree{Сурах бичгийн жишээний бодит гаралт (examples/textbook.txt)}
+\hthree{Бодит гаралтын жишээ (examples/textbook.txt ба search.txt)}
 
+\noindent\begin{minipage}[t]{0.48\textwidth}
 \begin{codeblock}
 OK list add_tail 2/8/1995 (size=1)
 OK list add_tail 17/3/1998 (size=2)
 OK list add_tail 29/2/2000 (size=3)
 OK list add_tail 5/11/2001 (size=4)
 OK list add_tail 30/12/2003 (size=5)
-LIST size=5: 2/8/1995 -> 17/3/1998 -> 29/2/2000 -> 5/11/2001 -> 30/12/2003
+LIST size=5: 2/8/1995 -> 17/3/1998
+  -> 29/2/2000 -> 5/11/2001 -> 30/12/2003
 OK list del 17/3/1998 (size=4)
-LIST size=4: 2/8/1995 -> 29/2/2000 -> 5/11/2001 -> 30/12/2003
-OK list del 2/8/1995 (size=3)   ...   OK list del 30/12/2003 (size=0)
+OK list del 2/8/1995 (size=3) ... (size=0)
 LIST size=0: (empty)
 \end{codeblock}
-
-\hthree{Хайлт, хэш хүснэгт, мод (examples/search.txt, холбогдох мөрүүд)}
-
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
 \begin{codeblock}
 OK list find 17/3/1998 = index 1
 OK list find 1/1/2001 = not found
 OK queue find 20 = position 1
-OK stack find 1 = position 2
-OK hash put ab -> 7 (bucket=3, size=5, collision)
-OK hash put ba -> 8 (bucket=3, size=6, collision)
-HASH buckets=4 size=6 collisions=2: b0=[dave:11] b1=[carol:9] b2=[alice:1234] b3=[bob:5678 -> ab:7 -> ba:8]
+OK hash put ab -> 7 (bucket=3, collision)
+OK hash put ba -> 8 (bucket=3, collision)
+HASH buckets=4 size=6 collisions=2
 OK hash get ba = 8 (bucket=3, steps=3)
-OK hash get bob = 5678 (bucket=3, steps=1)
-OK hash get zed = not found (bucket=3)
-OK hash put bob = 0 (updated, bucket=3)
-ERR hash: key and value must be 1..12 letters, digits or _
 TREE size=5 height=5 inorder: 1, 2, 3, 4, 5
-ERR tree: mode can only be changed when the tree is empty
-TREE(avl) size=7 height=3 inorder: 1, 2, 3, 4, 5, 6, 7
-TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7
+TREE(avl) size=7 height=3 inorder: 1..7
 \end{codeblock}
+\end{minipage}
 
 \hthree{Scheduler: гараар тооцоо ба програмын гаралт}
 
-\term{Round Robin}, квант 2 бөгөөд A=5, B=3, C=2 тик, бүгд t=0-д ирсэн. Тик t нь $[t, t+1)$ хугацааны завсар тул t=5 дээр дууссан процессын дуусах хугацаа 6 болно. Процессууд CPU-г хэрхэн ээлжлэн эзэлснийг Зураг 6.1-д \term{Gantt} диаграммаар харуулав.
+\term{Round Robin}, квант 2 бөгөөд A=5, B=3, C=2 тик, бүгд t=0-д ирсэн. Тик t нь $[t, t+1)$ завсар тул t=5 дээр дууссан процессын дуусах хугацаа 6 болно. Процессууд CPU-г хэрхэн ээлжлэн эзэлснийг Зураг 6.1-д \term{Gantt} диаграммаар харуулав.
 
-\Needspace{12\baselineskip}
+\Needspace{8\baselineskip}
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
@@ -551,7 +516,6 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7
   bar/.style={draw, minimum height=6mm, font=\fontsize{12}{14.4}\selectfont, anchor=south west},
   lbl/.style={font=\fontsize{12}{14.4}\selectfont}
 ]
-% Gantt chart rows: A (top), B, C -- intervals [0,2)=A [2,4)=B [4,6)=C [6,8)=A [8,9)=B [9,10)=A [10,11)=idle
 \node[bar, minimum width=18mm] at (0,2) {A};
 \node[bar, minimum width=18mm] at (6,2) {A};
 \node[bar, minimum width=9mm]  at (9,2) {A};
@@ -559,120 +523,105 @@ TREE(avl) size=6 height=3 inorder: 1, 2, 3, 5, 6, 7
 \node[bar, minimum width=9mm]  at (8,1) {B};
 \node[bar, minimum width=18mm] at (4,0) {C};
 \node[bar, minimum width=9mm, dashed] at (10,2) {idle};
-% axis
 \draw[->] (0,-0.6) -- (11.3,-0.6) node[right, font=\fontsize{12}{14.4}\selectfont]{t};
 \foreach \t in {0,1,...,11} \draw (\t,-0.45) -- (\t,-0.75) node[below, font=\fontsize{12}{14.4}\selectfont]{\t};
 \end{tikzpicture}
-\caption*{Зураг 6.1 -- \term{Round Robin} (q=2) \term{Gantt} диаграм: A, B, C процессийн CPU эзэмшсэн завсрууд [0,2) A, [2,4) B, [4,6) C, [6,8) A, [8,9) B, [9,10) A, [10,11) idle.}
+\caption*{Зураг 6.1 -- \term{Round Robin} (q=2) \term{Gantt} диаграм: CPU эзэмшсэн завсрууд [0,2) A, [2,4) B, [4,6) C, [6,8) A, [8,9) B, [9,10) A, [10,11) idle.}
 \end{figure}
 
-\textbf{Хүснэгтийн зорилго:} Хүснэгт 6.2 нь гараар бодсон дундаж хүлээлтийг (5.00) C программын бодит \code{sched} гаралттай тулгаж, \term{scheduler}-ийн алгоритм зөв хэрэгжсэнийг онол ба практикийн хоёр тусдаа эх сурвалжаар нотлоход зориулагдсан.
-
-\term{Gantt} диаграммыг тоон баталгаатай болгохын тулд процесс бүрийн дуусах хугацаа, нийт үргэлжилсэн хугацаа, хүлээсэн хугацааг Хүснэгт 6.2-д гараар бодсон утгаар нь нэгтгэв (хүлээлт = нийт үргэлжилсэн хугацаа $-$ ажил).
-
+\tabcap{Хүснэгт 6.2 -- \term{Round Robin}-ийн гараар бодсон хуваарь}
 {\fontsize{9.5}{12}\selectfont
 \begin{tabular}{|L{0.16\textwidth}|L{0.14\textwidth}|L{0.15\textwidth}|L{0.17\textwidth}|L{0.12\textwidth}|L{0.15\textwidth}|}
 \hline
-\textbf{Процесс} & \textbf{Сүүлийн тик} & \textbf{Дуусах хугацаа} & \textbf{Нийт үргэлжилсэн} & \textbf{Ажил} & \textbf{Хүлээсэн} \\ \hline
+\hdrow \textbf{Процесс} & \textbf{Сүүлийн тик} & \textbf{Дуусах} & \textbf{Нийт үргэлж.} & \textbf{Ажил} & \textbf{Хүлээсэн} \\ \hline
 C (P3) & 5 & 6 & 6 & 2 & 4 \\ \hline
 B (P2) & 8 & 9 & 9 & 3 & 6 \\ \hline
 A (P1) & 9 & 10 & 10 & 5 & 5 \\ \hline
 \multicolumn{5}{|r|}{\textbf{Дундаж хүлээлт}} & \textbf{5.00} \\ \hline
 \end{tabular}
 \par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт 6.2 -- \term{Round Robin}-ийн гараар бодсон хуваарь\par}\vspace{4pt}
 
-Хүснэгтээс харахад хамгийн богино ажилтай C процесс хамгийн түрүүнд (6-д), хамгийн урт ажилтай A хамгийн сүүлд (10-д) дууссан бөгөөд гурван процессын дундаж хүлээлт 5.00 гарсан. Ижил ажлыг \term{FCFS}-ээр ажиллуулахад A 0, B 5, C 8 тик хүлээж, дундаж хүлээлт 4.33 болно. \term{Round Robin} богино процесст түргэн хариу өгдөг ч энэ жишээнд дундаж хүлээлт \term{FCFS}-ээс их гарсан нь квант ба шилжилтийн өртөг юм. Дундаж хүлээлтийг одоо \textbf{програм өөрөө} \code{sched stats} командаар (процесс бүр ирсэн ба дууссан цагийг хадгалж) тооцдог: RR-д \code{avg_wait=5.00}, \code{avg_turnaround=8.33} бөгөөд \term{FCFS}-д \code{avg_wait=4.33}, \code{avg_turnaround=7.67}. Тэгэхээр дээрх гараар бодсон тоо нь програмын гаралтаар шууд батлагддаг бөгөөд веб дээр «Дундаж хүлээлт» товчоор мөн харагдана.
+Хамгийн богино ажилтай C хамгийн түрүүнд (6-д), урт ажилтай A хамгийн сүүлд (10-д) дууссан. Ижил ажлыг \term{FCFS}-ээр ажиллуулахад A 0, B 5, C 8 тик хүлээж, дундаж хүлээлт 4.33 болно. Дундаж хүлээлтийг одоо \textbf{програм өөрөө} \code{sched stats} командаар тооцдог: RR-д \code{avg_wait=5.00}, \code{avg_turnaround=8.33}; \term{FCFS}-д \code{avg_wait=4.33}, \code{avg_turnaround=7.67}. Тэгэхээр дээрх гараар бодсон тоо програмын гаралтаар шууд батлагдаж, веб дээр «Дундаж хүлээлт» товчоор мөн харагдана.
 
+\noindent\begin{minipage}[t]{0.48\textwidth}
 \begin{codeblock}
 OK sched policy rr q=2
-SCHED policy=rr(q=2) time=0 running=none ready=P1(A:5), P2(B:3), P3(C:2) done=0
 TICK t=0 P1(A) remaining=4
 TICK t=1 P1(A) remaining=3 preempted
 TICK t=2 P2(B) remaining=2
 TICK t=3 P2(B) remaining=1 preempted
 TICK t=4 P3(C) remaining=1
+\end{codeblock}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\begin{codeblock}
 TICK t=5 P3(C) remaining=0 finished
 TICK t=6 P1(A) remaining=2
 TICK t=7 P1(A) remaining=1 preempted
 TICK t=8 P2(B) remaining=0 finished
 TICK t=9 P1(A) remaining=0 finished
-TICK t=10 idle
-SCHED policy=rr(q=2) time=11 running=none ready=(empty) done=3
-SCHED STATS finished=3 avg_wait=5.00 avg_turnaround=8.33
+SCHED STATS finished=3 avg_wait=5.00
+           avg_turnaround=8.33
 \end{codeblock}
+\end{minipage}
 
 \hthree{Буруу оролтын бодит гаралт (examples/errors.txt)}
 
 \begin{codeblock}
 ERR list: day out of range for month          (31/4/2000)
-ERR list: day out of range for month          (29/2/1900 - өндөр жил биш)
-ERR list: month must be 1..12
-ERR list: year must be 1900..2100
-ERR list: date must be 3 numbers <day> <month> <year>, not d/m/y   (0/5/2000 ба 10/0/2000)
-ERR list: day out of range for month          (өдөр 0)
-ERR list: month must be 1..12                 (сар 0)
-ERR list: usage <op> <day> <month> <year>
-ERR list: 1/1/2000 not found
-ERR list: missing operation
-ERR unknown structure 'frob'
-ERR queue: underflow (empty)
-ERR stack: underflow (empty)
+ERR list: month must be 1..12                 (сар 13)
+ERR list: year must be 1900..2100             (жил 1800)
+ERR list: date must be 3 numbers, not d/m/y   (0/5/2000)
 ERR bitmap: size must be 1..128               (0 ба 129)
 ERR bitmap: index 99 out of range 0..31
-ERR tree: duplicate 5
-ERR tree: 9 not found
 ERR too many tokens (max 14 arguments)        (17 token-той мөр)
-ERR queue: integer out of range -2147483647..2147483647 (got '99999999999')
+ERR queue: integer out of range ... (got '99999999999')
 \end{codeblock}
 
 \hthree{Kernel module}
 
-\textbf{Одоогийн хувилбар} (Part I/II, hashtable, rbtree, \code{/proc/kds}) жинхэнэ Linux дээр \code{src/kernel/run_module_test.sh}-ээр ачаалагдсан. Орчин: Ubuntu 24.04.2 LTS, \term{kernel} 6.11.0-17-generic, gcc 13.3.0, \term{Secure Boot} идэвхтэй тул модульд \term{MOK} түлхүүрээр гарын үсэг зурсан (\code{signer: kds module signing}). Ажиллуулсан огноо \textbf{2026-11-19 04:05:12 (UTC+8)} бөгөөд энэ нь репод хадгалсан \code{docs/kernel_build_log.txt}-ийн \texttt{\# date:} мөр дэх утгатай яг ижил; түүний өмнө 2026-11-18-нд анхны амжилттай ачаалал хийгдсэн. Скрипт \code{make exit=0} буюу build, sign, \code{start=25}, \code{start=15}, \code{start=0} гурван ачаалал, \code{/proc/kds} уншилт, \term{rmmod}-ыг дараалан шалгаж \textbf{9 PASS} өгсөн (Зураг 6.2; PASS бүрийн задалгаа \code{docs/KERNEL_EVIDENCE.md}-д). \term{Secure Boot} идэвхгүй орчинд \code{sign} шалгалт хийгдэхгүй тул \textbf{8 PASS} гарах нь зүй. Build-ийн гаралтад зөвхөн kbuild-ийн мэдээллийн мөр (\code{the compiler differs...}, \code{Skipping BTF generation}) байгаа бөгөөд compiler warning алга. \term{Collatz} гишүүдийн тоо: start=25 үед 24, start=15 үед 18 -- хэрэглэгчийн орчинд Python-оор урьдчилан тооцсон утгатай таарсан.
+\textbf{Одоогийн хувилбар} (Part I/II, hashtable, rbtree, \code{/proc/kds}) жинхэнэ Linux дээр \code{src/kernel/run_module_test.sh}-ээр ачаалагдсан. Орчин: Ubuntu 24.04.2 LTS, \term{kernel} 6.11.0-17-generic, \term{Secure Boot} идэвхтэй тул модульд \term{MOK} түлхүүрээр гарын үсэг зурсан. Ажиллуулсан огноо \textbf{2026-11-19 04:05:12 (UTC+8)} нь репод хадгалсан \code{docs/kernel_build_log.txt}-ийн \texttt{\# date:} мөр дэх утгатай яг ижил. Скрипт build, sign, \code{start=25}, \code{start=15}, \code{start=0} гурван ачаалал, \code{/proc/kds} уншилт, \term{rmmod}-ыг дараалан шалгаж \textbf{9 PASS} өгсөн (Зураг 6.2; PASS бүрийн задалгаа \code{docs/KERNEL_EVIDENCE.md}-д). \term{Secure Boot} идэвхгүй орчинд \code{sign} шалгалт хийгдэхгүй тул \textbf{8 PASS} гарах нь зүй. \term{Collatz} гишүүдийн тоо: start=25 үед 24, start=15 үед 18 -- урьдчилан тооцсон утгатай таарсан.
 
-\Needspace{18\baselineskip}
+\Needspace{8\baselineskip}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth,keepaspectratio]{fig_kmod_pass.png}
-\caption*{Зураг 6.2 -- Тест скрипт: build (make exit=0), sign, \code{insmod} (start=25, start=15), \code{start=0}-ийн татгалзал, \term{Collatz} 24 ба 18 гишүүн -- бүгд PASS.}
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{fig_kmod_pass.png}
+\caption*{Зураг 6.2 -- Тест скрипт: build (make exit=0), sign, \code{insmod} (start=25, 15), \code{start=0}-ийн татгалзал, \term{Collatz} 24 ба 18 гишүүн -- бүгд PASS.}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth]{fig_kmod15.png}
+\caption*{Зураг 6.3 -- \code{insmod kds_module.ko start=15}: \code{/proc/kds} (colors, collatz, birthdays, hashtable, rbtree, \term{bitmap}) ба \term{dmesg}-ийн \code{kds:} мөрүүд.}
+\end{minipage}
 \end{figure}
 
-\Needspace{18\baselineskip}
+\Needspace{8\baselineskip}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth,keepaspectratio]{fig_kmod15.png}
-\caption*{Зураг 6.3 -- \code{insmod kds_module.ko start=15}: \code{/proc/kds} (colors, collatz 18 гишүүн, birthdays, hashtable, rbtree, \term{bitmap}) ба \term{dmesg}-ийн \code{kds:} мөрүүд (rb 20..80, rb erase 30, \term{hash} get/del).}
+\includegraphics[width=0.95\textwidth,keepaspectratio]{fig_kmod0.png}
+\caption*{Зураг 6.4 -- \term{rmmod}-ын дараа \code{module unloaded}; \code{insmod kds_module.ko start=0} нь \code{Invalid parameters} гэж татгалзаж, \term{dmesg}-д \code{start must be 1..1000000 (got 0)} гарсан.}
 \end{figure}
 
-\Needspace{14\baselineskip}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth,keepaspectratio]{fig_kmod0.png}
-\caption*{Зураг 6.4 -- \term{rmmod}-ын дараа \code{module unloaded} бөгөөд \code{insmod kds_module.ko start=0} нь \code{Invalid parameters} гэж татгалзаж, \term{dmesg}-д \code{start must be 1..1000000 (got 0)} гарсан.}
-\end{figure}
+\hthree{Ажиглалт}
 
-\hthree{Ажиглалт ба хэлэлцүүлэг}
-
-Бүх буруу оролт тодорхой мессеж өгч, програм нэг ч удаа унасангүй. ASan/UBSan санах ойн алдаа, leak мэдээлээгүй (Linux CI дээр, харин macOS 26 дээр \code{SAN=0} ажиллуулсан нь зөвхөн \term{sanitizer} шалгалтыг хасна). Веб апп нь C программаас ирсэн \code{--json} төлвийг л зурдаг тул зураг бодит ажиллагаанаас зөрөхгүй бөгөөд үүнийг 40\,000 санамсаргүй командад текст ба \code{--json} гаралтын мессеж яг таарч байгаагаар баталгаажуулсан. Эрэмбэлсэн оролтод \term{BST}-ийн өндөр n-тэй тэнцүү болж, \term{AVL}-ийнх $\lg n$ орчим байсан нь онолтой таарч байна. Хэш хүснэгтэд \term{collision} нэмэгдэх тусам хайлтын алхам өссөн нь мөн онолтой нийцнэ.
+Бүх буруу оролт тодорхой мессеж өгч, програм нэг ч удаа унасангүй; ASan/UBSan санах ойн алдаа, leak мэдээлээгүй (Linux CI дээр; macOS 26 дээр \code{SAN=0} ажиллуулсан нь зөвхөн \term{sanitizer} шалгалтыг хасна). Веб апп нь C программаас ирсэн \code{--json} төлвийг л зурдаг тул зураг бодит ажиллагаанаас зөрөхгүй нь 40\,000 санамсаргүй командад текст ба \code{--json} мессеж яг таарснаар баталгаажсан. Эрэмбэлсэн оролтод \term{BST}-ийн өндөр n-тэй тэнцүү, \term{AVL}-ийнх $\lg n$ орчим байсан нь онолтой таарч байна.
 
 % ---------------------------------------------------------------------------
 \section*{7. Хязгаарлалт}
 \phantomsection\addcontentsline{toc}{section}{7. Хязгаарлалт}
 \hthree{7.1 Үлдсэн асуудал}
 
-\term{Kernel module}-ийг зөвхөн нэг машин дээр (Ubuntu 24.04.2, \term{kernel} 6.11.0-17-generic) ачаалж туршсан бөгөөд өөр \term{kernel} хувилбарт дахин build хийх шаардлагатай. \term{Secure Boot} идэвхтэй үед гарын үсэггүй модуль ачаалагдахгүй тул \term{MOK} түлхүүрээр гарын үсэг зурсан.
+\term{Kernel module}-ийг зөвхөн нэг машин дээр (Ubuntu 24.04.2, \term{kernel} 6.11.0-17-generic) ачаалж туршсан; өөр \term{kernel} хувилбарт дахин build хийх шаардлагатай. \term{Secure Boot} идэвхтэй үед гарын үсэггүй модуль ачаалагдахгүй тул \term{MOK} түлхүүрээр гарын үсэг зурсан.
 
 Хэш функц нь энгийн нийлбэр тул «ab», «ba» шиг үсгийн байр солигдсон түлхүүрүүд үргэлж \term{collision} үүсгэнэ. \term{Bucket}-ийн тоо auto resize-ээр 64 хүртэл ихэсдэг ч элементийн хязгаар 24-өөр бүдүүн дүрслэл болгож тоог хязгаарласан.
 
-\term{Scheduler}-т бүх процесс үүсгэсэн мөчдөө ирнэ гэж үзсэн. I/O хүлээлт ба тэргүүлэх эрэмбэ байхгүй.
+\term{Scheduler}-т бүх процесс үүсгэсэн мөчдөө ирнэ гэж үзсэн; I/O хүлээлт ба тэргүүлэх эрэмбэ байхгүй. Веб апп зөвхөн дэлгэц дээр зурдаг, өөрөө логик агуулдаггүй тул локал ажиллуулахад \code{make}-аар \code{kds}-г урьдчилан build хийх шаардлагатай. \term{Queue}, \term{stack} ба амьд процессын тоо 8, \term{hash}-ийн элемент 24-өөр хязгаарлагдсан -- энэ нь дүрслэлд багтаах зорилготой.
 
-Веб апп зөвхөн дэлгэц дээр зурдаг, өөрөө логик агуулдаггүй тул интернэт/сервер шаардлагатай (хуучин нэг файлтай UI-гээс ялгаатай нь, тэр нь browser дотроо бүх логикыг давтдаг байсан). Веб аппыг локал ажиллуулахад \code{make}-аар \code{kds}-г урьдчилан build хийх шаардлагатай.
+\textbf{Part I/II-ийн дүрслэл (II-4-9 M-1).} Сурах бичгийн Programming Project-ийн Part I (\code{struct color}) ба Part II (\term{Collatz}, \code{start} параметр) сурах бичигт \code{kmalloc} ба \code{list_head} ашиглан \term{kernel} дотор хийгддэг тул бид жинхэнэ \term{kernel}-д ачаалж \code{dmesg} ба \code{/proc/kds}-оор баталсан (Зураг 6.2--6.4); \code{kds}-д давтан хэрэгжүүлбэл user-space-н давхар хэрэгжилт болж, \code{state}-ийн түлхүүр 9-өөс 11 болж «9 бүтэц» гэсэн бүх нотолгоо эвдэрнэ (дэлгэрэнгүй үндэслэл M-1 мөрт).
 
-\term{Queue}, \term{stack} ба амьд процессын тоо 8, \term{hash}-ийн элемент 24-өөр хязгаарлагдсан. Энэ нь дүрслэлд багтаах зорилготой.
-
-\textbf{Part I/II-ийн дүрслэл (II-4-9 M-1).} Сурах бичгийн Programming Project-ийн Part I (\code{struct color} жагсаалт) ба Part II (\term{Collatz} дараалал, \code{start} параметр) нь бидэнд \textbf{\term{kernel} module}-д хэрэгжсэн бөгөөд веб графаар биш, жинхэнэ \term{kernel}-ийн \code{dmesg} ба \code{/proc/kds} гаралтаар батлагдсан (Зураг 6.2--6.4). Энэ бол сонголт: уг хоёр даалгавар сурах бичигт \code{kmalloc} ба \code{list_head} ашиглан kernel дотор хийгддэг; хэрэв бид үүнийг \code{kds}-д давтан хэрэгжүүлж веб дээр зурвал дэлгэц дээрх зүйл user-space-н давхар хэрэгжилт болох бөгөөд \term{kernel}-ийн зан үйл нь гэсэн нотолгоо хэвээр л \term{log} шаардана. Нэмэхэд: \code{state}-ийн түлхүүр 9-өөс 11 болж \code{json_check.py}, \code{model.ts}, 98 PASS-ийн бүтэц, «9 бүтэц» гэсэн бүх тоо хамт солигдах ёстой.
-
-\textbf{Шүүмжээс үлдсэн.} Playwright E2E тест, дан холбоост жагсаалтын тусдаа демо нэмээгүй (4-р хэсгийн P2, P10). Manual 2.7-ийн \term{Secure Boot} заавар зураггүй. II-4-9-ийн M-1-ийг дээрх үндэслэлээр граф дээр нэмээгүй; M-2-ын хувьд 6 гишүүний гурав нь тусдаа git идентификаторгүй хэвээр (түүхэн commit-ыг дахин бичээгүй) --- үүнийг Хавсралт C-д нуухгүйгээр тодорхой бичсэн.
+\textbf{Шүүмжээс үлдсэн.} Playwright E2E тест, дан холбоост жагсаалтын тусдаа демо нэмээгүй (4-р хэсгийн P2, P10). Manual 2.7-ийн \term{Secure Boot} заавар зураггүй. II-4-9-ийн M-1-ийг дээрх үндэслэлээр граф дээр нэмээгүй; M-2-ын хувьд 6 гишүүний гурав нь тусдаа git идентификаторгүй хэвээр (түүхэн commit-ыг дахин бичээгүй) --- үүнийг Хавсралт A-д нуухгүйгээр тодорхой бичсэн.
 
 \hthree{7.2 Дэмжих орчин}
 
@@ -681,9 +630,9 @@ ERR queue: integer out of range -2147483647..2147483647 (got '99999999999')
 % ---------------------------------------------------------------------------
 \section*{8. Дүгнэлт}
 \phantomsection\addcontentsline{toc}{section}{8. Дүгнэлт}
-БД2-ийн ажлаар төслийн зөв ажиллагаа, туршилт, баримт гурвыг бүгдийг нь шүүмжид тулгуурлан сайжруулав. Хамгийн чухал үр дүн нь шүүмжлэгч олсон \term{ASan} алдааг нэг оролтоор давтан үзүүлж, засаад, ижил оролтоор алдаагүй болохыг харуулсан явдал юм. Мөн \code{make check}-ийн 98 шалгалт өмнө ч, дараа ч бүгд PASS байсан нь хуучин тестүүд энэ төрлийн алдааг илрүүлэхгүй байсныг, харин шинэ \term{fuzz} түүнийг барьдаг болсныг харуулж байна. Веб аппын хувьд хэрэглэгчийн буруу оролт одоо ойлгомжтой монгол мэдэгдэлтэй, цөм унасан ч өмнөх төлөв нь хадгалагдана. \term{Kernel module}-ийг жинхэнэ Linux дээр, \term{Secure Boot} идэвхтэй орчинд ачаалж, сурах бичгийн Programming Project-ийн шаардлагыг нотолгоотой хангав.
+БД2-ийн ажлаар төслийн зөв ажиллагаа, туршилт, баримт гурвыг бүгдийг нь шүүмжид тулгуурлан сайжруулав. Хамгийн чухал үр дүн нь шүүмжлэгч олсон \term{ASan} алдааг нэг оролтоор давтан үзүүлж, засаад, ижил оролтоор алдаагүй болохыг харуулсан явдал юм. \code{make check}-ийн 98 шалгалт өмнө ч, дараа ч бүгд PASS байсан нь хуучин тестүүд энэ төрлийн алдааг илрүүлэхгүй байсныг, шинэ \term{fuzz} түүнийг барьдаг болсныг харуулж байна. \term{Kernel module}-ийг жинхэнэ Linux дээр, \term{Secure Boot} идэвхтэй орчинд ачаалж, сурах бичгийн Programming Project-ийн шаардлагыг нотолгоотой хангав.
 
-Бид энэ ажлаас гурван зүйл сурсан. Нэгдүгээрт, өөрсдийн бичсэн тест өөрсдийн алдааг бүрэн илрүүлдэггүй тул бусдын шүүмж, тусдаа дайрах (adversarial) оролт чухал. Хоёрдугаарт, нэг эх сурвалжтай (C цөм нь \term{JSON} төлөв гаргаж, веб зөвхөн зурдаг) архитектур нь засварыг нэг газар хийхэд хангалттай болгодог. Гуравдугаарт, шүүмжид хариулахдаа зөвшөөрөөгүй, хэсэгчлэн зөвшөөрсөн хэсэгт нь шалтгаанаа тодорхой бичих нь өөрсдийн хамрах хүрээг сайн ойлгоход тусалдаг.
+Бид энэ ажлаас гурван зүйл сурсан. Нэгдүгээрт, өөрсдийн бичсэн тест өөрсдийн алдааг бүрэн илрүүлдэггүй тул бусдын шүүмж, тусдаа дайрах (adversarial) оролт чухал. Хоёрдугаарт, нэг эх сурвалжтай (C цөм \term{JSON} төлөв гаргаж, веб зөвхөн зурдаг) архитектур нь засварыг нэг газар хийхэд хангалттай болгодог. Гуравдугаарт, шүүмжид хариулахдаа хэсэгчлэн зөвшөөрсөн хэсэгт шалтгаанаа тодорхой бичих нь өөрсдийн хамрах хүрээг сайн ойлгоход тусалдаг.
 
 % ---------------------------------------------------------------------------
 \section*{Ашигласан материал}
@@ -691,108 +640,33 @@ ERR queue: integer out of range -2147483647..2147483647 (got '99999999999')
 
 \begin{enumerate}[leftmargin=22pt,itemsep=2pt,topsep=2pt]
   \item \hypertarget{ref1}{} A. Silberschatz, P. B. Galvin, G. Gagne. \textit{Operating System Concepts}, 10th ed. Hoboken, NJ: Wiley, 2018 -- Chapter 1 Introduction, 1.9 Kernel Data Structures (p. 36) бөгөөд Chapter 3 Processes.
-  \item \hypertarget{ref2}{} T. H. Cormen, C. E. Leiserson, R. L. Rivest, C. Stein. \textit{Introduction to Algorithms}, 3rd ed. Cambridge, MA: MIT Press, 2009 -- Part III Data Structures (хайлт, BST, тэнцвэржсэн мод, hash table).
-  \item \hypertarget{ref3}{} G. M. Adelson-Velsky, E. M. Landis. ``An algorithm for the organization of information.'' \textit{Doklady Akademii Nauk SSSR}, vol. 146, 1962, pp. 263--266 (AVL тэнцвэржсэн модны анхны алгоритм).
-  \item \hypertarget{ref4}{} D. P. Bovet, M. Cesati. \textit{Understanding the Linux Kernel}, 3rd ed. Sebastopol, CA: O'Reilly Media, 2005 -- процессын удирдлага, kernel-ийн холбоост жагсаалт (\code{list_head}) бүтэц.
+  \item \hypertarget{ref2}{} T. H. Cormen, C. E. Leiserson, R. L. Rivest, C. Stein. \textit{Introduction to Algorithms}, 3rd ed. Cambridge, MA: MIT Press, 2009 -- Part III Data Structures.
+  \item \hypertarget{ref3}{} G. M. Adelson-Velsky, E. M. Landis. ``An algorithm for the organization of information.'' \textit{Doklady Akademii Nauk SSSR}, vol. 146, 1962, pp. 263--266.
+  \item \hypertarget{ref4}{} D. P. Bovet, M. Cesati. \textit{Understanding the Linux Kernel}, 3rd ed. Sebastopol, CA: O'Reilly Media, 2005 -- процессын удирдлага, kernel-ийн холбоост жагсаалт (\code{list_head}).
   \item \hypertarget{ref5}{} F.CSM302 «Бие даалт 1» удирдамж.
 \end{enumerate}
 
 % ---------------------------------------------------------------------------
-% Хавсралт A
-% ---------------------------------------------------------------------------
+\section*{Хавсралт A. Гишүүдийн оролцоо}
+\phantomsection\addcontentsline{toc}{section}{Хавсралт A. Гишүүдийн оролцоо}
 
-% ---------------------------------------------------------------------------
-\section*{Хавсралт A. Сайжруулалтын бүртгэл}
-\phantomsection\addcontentsline{toc}{section}{Хавсралт A. Сайжруулалтын бүртгэл}
+Хүснэгт A.1 нь гишүүн тус бүрийн хариуцсан онол/туршилтын ажил, тэдгээрийн гаргасан бодит файл/commit-ийг хослуулж, баг даалгаврыг хэрхэн хуваасан, нэг нэгнээ давхардуулаагүйг харуулахын тулд оруулав.
 
-Хүснэгт A.1 нь 4-р хэсгийн шүүмж бүрийг хийсэн өөрчлөлт, нотолгоотой нь товч бүртгэсэн жагсаалт юм. Дэлгэрэнгүй үндэслэлийг Хүснэгт 4.1-ээс үзнэ үү.
-
-{\fontsize{9}{11}\selectfont\setlength{\tabcolsep}{3pt}
-\begin{longtable}{|L{0.05\textwidth}|L{0.15\textwidth}|L{0.12\textwidth}|L{0.145\textwidth}|L{0.18\textwidth}|L{0.17\textwidth}|}
-\hline
-\textbf{№} & \textbf{Шүүмж} & \textbf{Priority} & \textbf{Шийдвэр} & \textbf{Хийсэн өөрчлөлт} & \textbf{Нотолгоо} \\ \hline
-\endfirsthead
-\hline
-\textbf{№} & \textbf{Шүүмж} & \textbf{Priority} & \textbf{Шийдвэр} & \textbf{Хийсэн өөрчлөлт} & \textbf{Нотолгоо} \\ \hline
-\endhead
-1 & Олон үгтэй мөрийн санах ойн алдаа (P1) & Major & Зөвшөөрсөн & \code{kds.c}: 14-өөс олон аргументыг ERR болгоно & \code{errors.txt}, Хүснэгт 5.1 \\ \hline
-2 & Веб UI цөм унасныг мэдэгдэхгүй (P2) & Major & Хэсэгчлэн & \code{use-run.ts}: муу мөрийг буцааж монгол мэдэгдэл & \code{errors.test.ts} \\ \hline
-3 & Manual-ийн хуучин tag (P3) & Major & Зөвшөөрсөн & Manual 2.1: \code{main}, final tag & Хүснэгт 5.1 (\code{v1.0.0} 7 PASS) \\ \hline
-4 & Kernel module-ийн нотолгоо (P4) & Major & Зөвшөөрсөн & Жинхэнэ Linux дээр ачаалсан & Зураг 6.2--6.4 \\ \hline
-5 & Report-ийн зөрүү (P5) & Minor & Зөвшөөрсөн & Тайланг 9 бүтцээр нэгтгэсэн & Report \\ \hline
-6 & Дундаж хүлээлтийн нотолгоо (P6) & Minor & Зөвшөөрсөн & \code{sched stats} & \code{expected_}\allowbreak\code{scheduler.out} \\ \hline
-7 & ERR англи, таслагддаг (P7) & Minor & Зөвшөөрсөн & \code{config.ts}, \code{event-log.tsx} & \code{errors.test.ts} \\ \hline
-8 & Manual-ийн жижиг зөрүү (P8) & Minor & Зөвшөөрсөн & Manual 1.8, int мужийн ERR & Хүснэгт 5.1 \\ \hline
-9 & Тестийн цоорхой (P9) & Minor & Зөвшөөрсөн & \code{fuzz_json.py}, \code{errors.txt} & \code{make check} 98 PASS \\ \hline
-10 & Веб дээр \term{rb}, \term{heap} (P10) & Suggestion & Хэсэгчлэн & 9 бүтэц, 9 шат & \code{rbheap.test.ts} \\ \hline
-11 & Нэр томьёоны жагсаалт (S1) & Suggestion & Зөвшөөрсөн & Хүснэгт 1.2 & Report \\ \hline
-12 & 3 онолын диаграм (S2) & Suggestion & Зөвшөөрсөн & Зураг 1.1, 1.3, 6.1 & Report \\ \hline
-13 & Хураангуйг богиносгох (S3) & Suggestion & Хэсэгчлэн & Хураангуйг хоёр догол мөр болгосон & Report \\ \hline
-14 & Manual 2.7 \term{Secure Boot} (S4) & Suggestion & Хэсэгчлэн & Manual 2.7 тусад нь бичсэн & Manual \\ \hline
-\end{longtable}
-\par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт A.1 -- Сайжруулалтын бүртгэл\par}\vspace{4pt}
-
-Хүснэгт A.2 нь засвар бүрийн шалгах тестийг өмнө ба дараа нь товч харьцуулсан дүгнэлт юм. Бүрэн хүснэгтийг Хүснэгт 5.1-ээс үзнэ.
-
-{\fontsize{9}{11}\selectfont\setlength{\tabcolsep}{3pt}
-\begin{tabular}{|L{0.20\textwidth}|L{0.24\textwidth}|L{0.24\textwidth}|L{0.20\textwidth}|}
-\hline
-\textbf{Тест} & \textbf{Засварын өмнө} & \textbf{Засварын дараа} & \textbf{Дүгнэлт} \\ \hline
-\code{make check} & 98 PASS & 98 PASS & Regression байхгүй \\ \hline
-19 үгтэй мөр & \term{ASan} алдаа & \code{ERR too many tokens} & Засагдсан \\ \hline
-\code{sched stats} & \code{unknown op} & 5.00 ба 4.33 & Засагдсан \\ \hline
-\term{Kernel module} & Зөвхөн compile & Ачаалж 9 PASS & Нотлогдсон \\ \hline
-\end{tabular}
-\par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт A.2 -- Тестийн өмнө ба дараах дүгнэлт\par}\vspace{4pt}
-
-% ---------------------------------------------------------------------------
-\clearpage
-\section*{Хавсралт B. Постер төлөвлөх маягт}
-\phantomsection\addcontentsline{toc}{section}{Хавсралт B. Постер төлөвлөх маягт}
-
-Хүснэгт B.1 нь Poster.pdf-ийн блок бүрт ямар мэдээлэл, зураг, нотолгоо орохыг урьдчилан төлөвлөсөн маягт юм. Зураг бүр бодит программаас авсан байна.
-
-{\fontsize{9.5}{12}\selectfont\setlength{\tabcolsep}{3pt}
-\begin{tabular}{|L{0.16\textwidth}|L{0.44\textwidth}|L{0.34\textwidth}|}
-\hline
-\textbf{Блок} & \textbf{Гол мэдээлэл} & \textbf{Зураг, нотолгоо} \\ \hline
-Гарчиг & V-1-4 -- Kernel Data Structures -- Final, гишүүд, F.CSM302 & Лого \\ \hline
-Асуудал & Linux \term{kernel}-ийн өгөгдлийн бүтцүүд элемент нэмэх, устгах үед хэрхэн өөрчлөгддөгийг нүдээр харуулах & Зураг 1.1 \\ \hline
-Шийдэл & Нэг C цөм (\code{kds --json}) ба зөвхөн зурдаг веб апп, \term{kernel module} & Зураг 2.1 \\ \hline
-Туршилт ба дүрслэл & Команд оруулж, ажилласан төлвийг график дээр ажиглана & Зураг 3.1--3.4 \\ \hline
-Үр дүн & \code{make check} 98 PASS, \term{kernel module} 9 PASS & Хүснэгт 5.1, Зураг 6.2 \\ \hline
-Сайжруулалт & Шүүмжийн мөрөөр хийсэн 4 зүйл: санах ойн алдаа, монгол алдааны мэдэгдэл, \code{sched stats}, \term{kernel module} нотолгоо & Хүснэгт 4.1 \\ \hline
-Дүгнэлт & Гол үр дүн ба хязгаарлалт & 7-р хэсэг \\ \hline
-GitHub QR & Final release холбоос & QR код \\ \hline
-\end{tabular}
-\par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт B.1 -- Постер төлөвлөх маягт\par}\vspace{4pt}
-
-% ---------------------------------------------------------------------------
-\section*{Хавсралт C. Гишүүдийн оролцоо}
-\phantomsection\addcontentsline{toc}{section}{Хавсралт C. Гишүүдийн оролцоо}
-
-\textbf{Хүснэгтийн зорилго:} Хүснэгт C.1 нь гишүүн тус бүрийн хариуцсан онол/туршилтын ажил, тэдгээрийн гаргасан бодит файл/commit-ийг хослуулж, баг даалгаврыг хэрхэн хуваасан, нэг нэгнээ давхардуулаагүйг нотолгоотойгоор харуулахын тулд оруулсан.
-
+\tabcap{Хүснэгт A.1 -- Гишүүдийн хариуцсан ажил ба баталгаа}
 {\fontsize{9}{10.8}\selectfont
 \begin{tabular}{|L{0.19\textwidth}|L{0.39\textwidth}|L{0.35\textwidth}|}
 \hline
-\textbf{Гишүүн} & \textbf{Хариуцах ажил} & \textbf{Гаргасан файл / commit} \\ \hline
-Н. Ням-Од & Онолын судалгаа: сурах бичгийн Chapter 1, 1.9 \term{Kernel} Data Structures (p. 36) ба 3-р бүлгийн Programming Project, list\_head ба container\_of бөгөөд тайлангийн 1-р хэсэг & 2026-10-27: UI график, дэлгэцийн зураг, Report/Manual PDF, V-1-4 -- web/src/components/stage.tsx, docs/report\_src/*, docs/V-1-4\_*.pdf \\ \hline
-А. Гэрэл & Repository удирдлага, веб апп (web/, Next.js) ба C программын \code{--json} горим, CI/release тохиргоо, C програм ба \term{kernel module}-ийг нэгтгэх, \term{kernel module}-ийг өөрийн Linux сервер дээр build хийж insmod/rmmod-оор турших бөгөөд тайлангийн 2--3-р хэсэг & 2026-10-20…27: first commit, UI, Report zasav, Example, Code buten bolgov, \term{JSON} mode/web app/CI \\ \hline
-А. Номин & Туршилтын өгөгдөл ба хүлээгдэх гаралт: 5 огнооны жагсаалт (textbook), бүх бүтцийн давхар тест (all\_structures), буруу/захын оролт (errors.txt: 31/4, 29/2/1900, сар 13, жил 1800, \term{bitmap} 0 ба 129, индекс $-$1 ба 99, давхардсан tree утга). Мөр бүрийн \code{ERR} мессежийг гараар уншиж \code{tests/run_tests.sh}-ийн жагсаалтад нэмсэн бөгөөд тайлангийн 3-р хэсэг & examples/textbook.txt, examples/all\_structures.txt, examples/errors.txt, tests/expected\_errors.out, tests/run\_tests.sh \\ \hline
-Э. Мягмаршагай & Процесс ба \term{scheduler}: A(5), B(3), C(2) процессийн RR (квант 2) ба \term{FCFS} хуваарийг хүснэгтээр гараар бодоод дуусах хугацаа 6/9/10, дундаж хүлээлт 5.00 ба 4.33-ыг \code{kds}-ийн гаралттай тулгасан бөгөөд 8 процессийн \code{scheduler_full}-д 9 дэх процесс татгалзагдахыг шалгасан бөгөөд тайлангийн 6-р хэсэг & \code{examples/scheduler.txt}, \code{examples/scheduler_full.txt}, tests/expected\_\term{scheduler}.out, tests/expected\_\code{scheduler_full}.out \\ \hline
-О. Хүслэн & Manual (хэрэглэгчийн ба operational заавар) бичиж, хэсэг бүрийг дагаж өөр компьютер дээр \code{make}, \code{make test}, \code{make check}, \code{npm install}, \code{npm run dev}-ийг гүйцэтгэж, зааварт бичсэн хүлээгдсэн гаралттай таарч байгааг гараар тулгаж шалгасан & docs/latex/manual.tex, docs/report\_src/manual.html, docs/V-1-4\_Manual.pdf \\ \hline
-Ч. Түмэншагай & \term{Hash map} ба \term{AVL} модны туршилт: «ab»/«ba» түлхүүрийн \term{collision}, \term{bucket} доторх хайлтын алхам, эрэмбэлсэн 1--7 оролтод \term{BST} өндөр 7 ба \term{AVL} өндөр 3-ыг гараар шалгасан бөгөөд веб аппын хуудас бүрийн монгол тайлбар бөгөөд тайлангийн 3, 7, 8-р хэсэг & examples/search.txt, tests/avl\_check.py, web/src/lib/levels.ts, web/src/app/about/page.tsx \\ \hline
+\hdrow \textbf{Гишүүн} & \textbf{Хариуцах ажил} & \textbf{Гаргасан файл / commit} \\ \hline
+Н. Ням-Од & Онолын судалгаа: 1.9 \term{Kernel} Data Structures (p. 36) ба 3-р бүлгийн Programming Project, \code{list_head} ба \code{container_of}; тайлангийн 1-р хэсэг & 2026-10-27: UI график, дэлгэцийн зураг, Report/Manual PDF (\code{stage.tsx}, \code{report\_src/*}) \\ \hline
+А. Гэрэл & Repository удирдлага, веб апп (web/, Next.js) ба \code{--json} горим, CI/release тохиргоо, \term{kernel module}-ийг өөрийн Linux сервер дээр build хийж insmod/rmmod-оор турших; тайлангийн 2--3-р хэсэг & 2026-10-20…27: first commit, UI, JSON mode/web app/CI, kernel evidence \\ \hline
+А. Номин & Туршилтын өгөгдөл ба хүлээгдэх гаралт: textbook, all\_structures, errors.txt (захын оролтууд); мөр бүрийн \code{ERR} мессежийг \code{run_tests.sh}-ийн жагсаалтад нэмсэн; тайлангийн 3-р хэсэг & examples/textbook.txt, examples/all\_structures.txt, examples/errors.txt, tests/expected\_errors.out, tests/run\_tests.sh \\ \hline
+Э. Мягмаршагай & Процесс ба \term{scheduler}: A(5), B(3), C(2)-ийн RR (q=2) ба \term{FCFS} хуваарийг гараар бодоод дуусах 6/9/10, дундаж хүлээлт 5.00 ба 4.33-ыг \code{kds}-ийн гаралттай тулгасан; \code{scheduler_full}; тайлангийн 6-р хэсэг & examples/scheduler.txt, examples/scheduler\_full.txt, tests/expected\_scheduler.out, tests/expected\_scheduler\_full.out \\ \hline
+О. Хүслэн & Manual бичиж, хэсэг бүрийг өөр компьютер дээр \code{make}, \code{make test}, \code{make check}, \code{npm install}, \code{npm run dev}-ийг гүйцэтгэж хүлээгдсэн гаралттай тулгаж шалгасан & docs/latex/manual.tex, docs/V-1-4\_Manual.pdf \\ \hline
+Ч. Түмэншагай & \term{Hash map} ба \term{AVL} туршилт: «ab»/«ba» collision, хайлтын алхам, 1--7 оролтод \term{BST} өндөр 7 ба \term{AVL} өндөр 3-ыг гараар шалгасан; тайлангийн 3, 7, 8-р хэсэг & examples/search.txt, tests/avl\_check.py, web/src/lib/levels.ts, web/src/app/about/page.tsx \\ \hline
 \end{tabular}
 \par}
-\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт C.1 -- Гишүүдийн хариуцсан ажил ба баталгаа\par}\vspace{4pt}
 
-Хүснэгтээс харахад ажил онолын судалгаа, C цөм ба веб апп, туршилтын өгөгдөл, \term{scheduler}, заавар, хэш ба мод гэсэн зургаан чиглэлд хуваагдсан бөгөөд гишүүн бүр өөрийн чиглэлийн бодит файл эсвэл commit-тэй байна.
-
-\textbf{II-4-9 M-2-т хариу: \code{git} баримт.} Зараас \code{.git}гүй zip авч шалгасан тул тэд commit түүхийг хараагүй. Репод \code{.mailmap} файл нэмж, нэг хүний хэд хэдэн идентификаторыг нэр дээр нь нэгтгэв. Үр дүн (2026-11-21, \code{main}):
+\textbf{II-4-9 M-2-т хариу: \code{git} баримт.} Зараас \code{.git}гүй zip авч шалгасан тул шүүмжлэгч commit түүхийг хараагүй. Репод \code{.mailmap} файл нэмж, нэг хүний хэд хэдэн идентификаторыг нэр дээр нь нэгтгэв. Үр дүн (2026-11-21, \code{main}):
 
 \begin{codeblock}
 $ git shortlog -sne
@@ -800,13 +674,10 @@ $ git shortlog -sne
     35  А. Гэрэл <altangerelgerel059@gmail.com>
      1  Claude <noreply@anthropic.com>
      1  Nonaxannn <nomin9302@gmail.com>
-$ git rev-list --count HEAD
-81
 \end{codeblock}
 
-Эндээс харагдах зүйл: (1) 81 commit-ийн 79 буюу 97.5\% нь хоёр гишүүний нэр дээр байна --- шүүмжлэгчийн хэлснээр «commit/push-ийг нэг гишүүн төвлөрүүлсэн» гэдэг үнэн боловч хоёр дансанд хуваагддаг. (2) \texttt{PR \#1 «feature/hash-rbtree-heap-proc»} салбараас \code{main}-д нэгтгэгдсэн (merge commit \code{6390a2a}) нь C цөмийн 9 бүтцийн өргөтгөл тусдаа салбараар авчирч, өөр бүртгэлээр нэгтгэсэн бодит мөр. (3) \term{kernel module}-ийн log дэх \code{host: b241940001-server} ба \code{/home/gerel/OS_BD1} зам нь А.Гэрэлийн машин дээрх ажиллагааг харуулна (энэ нь \code{.mailmap}-ын холбоосны баталгаа мөн).
+Эндээс харагдах зүйл: (1) 81 commit-ийн 79 буюу 97.5\% нь хоёр гишүүний нэр дээр байна --- «commit/push-ийг нэг гишүүн төвлөрүүлсэн» гэдэг үнэн боловч хоёр дансанд хуваагддаг. (2) \texttt{PR \#1 «feature/hash-rbtree-heap-proc»} салбараас \code{main}-д нэгтгэгдсэн (merge commit \code{6390a2a}) нь C цөмийн 9 бүтцийн өргөтгөл тусдаа салбараар авчирч, өөр бүртгэлээр нэгтгэсэн бодит мөр. (3) \term{kernel module}-ийн log дэх \code{host: b241940001-server} ба \code{/home/gerel/OS_BD1} зам нь А.Гэрэлийн машин дээрх ажиллагааг харуулна.
 
-\textbf{Бид юуг баталгаажуулж чадаагүй вэ.} Э.Мягмаршагай, О.Хүслэн, Ч.Түмэншагай нарын хийсэн ажил (хүснэгт C.1-д бичсэн тулгалт, Manual, туршилт) \code{git log}-д тусдаа идентификатороор харагдахгүй; \code{Nonaxannn} бүртгэлийг хэнд харгалзахыг бид зөвхөн имэйлийн нэрнээс (\code{nomin9302@gmail.com}) таамаглаж болох ч баталгаагүй тул \code{.mailmap}-д оруулаагүй; \code{Claude} нэрээр 1 commit орсон нь AI тусламжтай бичигдсенийг илтгэнэ (README-ийн «Бэлэн код, сан, AI ашиглалт» хэсэгт зарласан). Бид эдгээрийг засна гэж түүхийг дахин бичиж, эсвэл шалгах боломжгүй \code{Co-authored-by} мөр нэмээгүй --- тийм «нотолгоо» худал болно. Үлдсэн зөрүүг дээрх файл/тестийн жагсаалтаар л батална.
-
+\textbf{Бид юуг баталгаажуулж чадаагүй вэ.} Э.Мягмаршагай, О.Хүслэн, Ч.Түмэншагай нарын хийсэн ажил (Хүснэгт A.1-д бичсэн тулгалт, Manual, туршилт) \code{git log}-д тусдаа идентификатороор харагдахгүй; \code{Nonaxannn} бүртгэлийг хэнд харгалзахыг зөвхөн имэйлийн нэрнээс (\code{nomin9302@gmail.com}) таамаглаж болох ч баталгаагүй тул \code{.mailmap}-д оруулаагүй; \code{Claude} нэрээр 1 commit орсон нь AI тусламжтай бичигдсенийг илтгэнэ (README-ийн «Бэлэн код, сан, AI ашиглалт» хэсэгт зарласан). Бид түүхийг дахин бичиж, эсвэл шалгах боломжгүй \code{Co-authored-by} мөр нэмээгүй --- тийм «нотолгоо» худал болно. Үлдсэн зөрүүг дээрх файл/тестийн жагсаалтаар л батална.
 
 \end{document}
