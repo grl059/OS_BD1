@@ -15,7 +15,7 @@
 % ---------------------------------------------------------------------------
 {\fontsize{20}{24}\selectfont\bfseries Manual -- Kernel Data Structures\par}
 \vspace{2pt}
-{\fontsize{11.5}{14}\selectfont Хуваарилалтын код: V-1-4 · F.CSM302 Үйлдлийн систем · БД2 (Final, v1.1.0)\par
+{\fontsize{11.5}{14}\selectfont Хуваарилалтын код: V-1-4 · F.CSM302 Үйлдлийн систем · БД2 (Final)\par
 Repository: github.com/grl059/OS\_BD1\par}
 \vspace{3pt}
 {\color{linkblue}\rule{\textwidth}{1.5pt}}
@@ -198,7 +198,7 @@ git clone https://github.com/grl059/OS_BD1.git kernel-data-structures
 cd kernel-data-structures
 git log -1 --format='%h %ad %s' --date=short    # шалгах хувилбар: main-ийн сүүлийн commit
 \end{codeblock}
-Энэ Manual нь \code{main} салбарын \textbf{сүүлийн} хувилбарыг тайлбарласан. Final release tag нь \code{v1.1.0} бөгөөд Final Report-той ижил commit дээр тавигдсан тул \code{git checkout v1.1.0} хийж болно, гэхдээ checkout хийсний дараа \code{make check} ажиллуулж 2.8-ийн тоотой тулгана. Хуучин \code{v1.0.0} tag нь \code{rb}, \code{heap}, \code{hash auto|rehash|stats} командуудыг агуулаагүй тул \textbf{ашиглахгүй}.
+Энэ Manual нь \code{main} салбарын \textbf{эцсийн} commit-ыг тайлбарласан бөгөөд Final Report болон репод хадгалсан PDF хоёр яг тэр commit дээр зэрэгцэн байна. Сүүлийн тэмдэглэгдсэн release нь \code{v1.1.0} (II-4-13 шүүмжийн засвар); түүнээс хойш II-4-9 шүүмжийн засвар (\code{--json}-ийн UTF-8 хамгаалалт, \code{/api/run}-ы timeout ба мэдэгдэл, \term{kernel module}-ийн \code{u64} ба баримтын нэгтгэл) \code{main}-д орсон тул \textbf{ээргийн кодыг \code{main}-аас} авна. Хуучин \code{v1.0.0} tag нь \code{rb}, \code{heap}, \code{hash auto|rehash|stats} командуудыг агуулаагүй тул \textbf{ашиглахгүй}. Шинэ tag хэрэгтэй бол \code{release.yml}-ийг гараар (\code{workflow_dispatch}) ажиллуулна — CI push бүрд автоматаар tag үүсгэхгүй.
 
 \manualsubsection{2.2 OS, compiler/runtime, version}
 Зааврыг давтан ажиллуулагч өөр хувилбарын хэрэгсэл ашиглаад зөрөхгүйн тулд бидний туршсан хувилбар ба доод шаардлагыг доор нэгтгэв.
@@ -245,7 +245,7 @@ make test
 #   PASS search / hash_resize / rb_heap
 #   PASS stress (5000 x 8 commands, ERR 0, no sanitizer report)
 make check                             # make test + доорх тав
-python3 tests/json_check.py            # текст горим == --json горим, 8 скрипт: PASS x9
+python3 tests/json_check.py            # текст горим == --json горим: PASS x9 (8 скрипт + сүүлийн нэгтгэсэн мөр)
 python3 tests/fuzz_json.py 8 5000      # 8 seed x 5000 санамсаргүй команд (тэгш seed-д AVL): PASS x8
 python3 tests/avl_check.py             # AVL: inorder ба өндөр <= 1.44*log2(n+2), 30 гүйлт: PASS x32
 python3 tests/rb_check.py              # red-black 30 seed (өнгө, black-height, inorder) + min-heap 10 seed (эс хазайх чанар): PASS x40
@@ -256,22 +256,34 @@ python3 tests/rb_check.py              # red-black 30 seed (өнгө, black-heig
 \code{examples/errors.txt}: буруу огноо (31/4, 29/2/1900), сар 13, жил 1800, налуу зураастай огноо (0/5/2000), өдөр/сар 0, үсэг бүхий аргумент, хоосон бүтцээс pop, \term{bitmap} size 0 ба 129, индекс $-$1 ба 99, давхардсан tree утга, байхгүй утга устгах, \textbf{17 үгтэй мөр} (\code{ERR too many tokens}) ба int-ээс том тоо (\code{99999999999}, $-2147483648$ $\rightarrow$ \code{integer out of range}). \code{tests/fuzz_json.py} нь 14--40 үгтэй, 900 тэмдэгттэй нэг үгтэй, int-ээс том тоотой мөрүүдийг мөн санамсаргүй үүсгэнэ. \code{examples/scheduler.txt}-ийн төгсгөл: урт нэр, ажил 0 ба 21, квант 0 ба 11, мэдэгдэхгүй бодлого. \code{examples/scheduler_full.txt}: 9 дэх процесс татгалзагдана. \code{examples/search.txt}: 13 тэмдэгттэй түлхүүр, «-» тэмдэгттэй түлхүүр, хоосон биш модны төрлийг солих. \code{examples/hash_resize.txt}: \code{rehash 65} (64-оос дээш), \code{rehash 0}, \code{auto maybe} мөрүүд ERR. \code{examples/rb_heap.txt}: давхардсан \code{rb insert}, байхгүй утгын \code{rb delete}, хоосон \term{heap}-ийн \code{pop} ба \code{peek} ERR. Эдгээрийн мөр бүр ойлгомжтой \code{ERR} мессеж өгч, програм үргэлжлэн ажиллах ёстой.
 
 \manualsubsection{2.7 Kernel module}
+\textbf{Анхааруулга:} доорх скрипт ажиллах машиндаа өөрчлөлт оруулна --- ачаалал бүрийн өмнө
+\code{sudo dmesg -C}-ээр \term{kernel}-ийн бичлэгийн буферыг цэвэрлэнэ (тэнд хадгалахыг хүссэн лог
+байвал урьдчилан хуулж авна), мөн өмнө нь ачаалагдсан \code{kds_module}-ийг ямар ч мэдэгдэлгүйгээр
+\code{rmmod} хийнэ. Өөрийн VM эсвэл өөрийн машинд л ажиллуулна.
+
 \begin{codeblock}
-sh src/kernel/run_module_test.sh
+sh src/kernel/run_module_test.sh        # Secure Boot идэвхтэй үеийн 9 PASS мөр:
 #   make -> docs/kernel_build_log.txt
-#   PASS insmod  (start=25, 24 гишүүн)
-#   PASS insmod start=15 (18 гишүүн)
-#   PASS insmod start=0 (fail: Invalid parameters)
-#   -> docs/kernel_dmesg.txt
+#   PASS build
+#   PASS sign (/home/<user>/mok)
+#   PASS /proc/kds ()                    # start=25 (анхдагч) ачаалал
+#   PASS insmod  (ok)                    # 24 гишүүнийг collatz шалгалтаар давтан батална
+#   PASS /proc/kds (start=15)
+#   PASS insmod start=15 (ok)
+#   PASS insmod start=0 (fail)           # Invalid parameters гэж татгалзсан нь зөв
+#   PASS collatz start=25: 24 terms
+#   PASS collatz start=15: 18 terms      # Secure Boot идэвхгүй бол "PASS sign" мөр алга -> 8 PASS
+#   -> docs/kernel_dmesg.txt  ### insmod / ### cat /proc/kds / ### dmesg: load /
+#                             ### rmmod kds_module / ### dmesg: unload / ### dmesg: rejected load
 
 # Гараар:
 cd src/kernel && make
 sudo insmod kds_module.ko start=15 && sudo dmesg | grep kds:
 sudo rmmod kds_module && sudo dmesg | grep kds: | tail -30
 \end{codeblock}
-\textbf{Нотолгоо:} \code{run_module_test.sh} нь \code{docs/kernel_build_log.txt} ба \code{docs/kernel_dmesg.txt}-г үүсгэдэг. Скриптийг одоогийн \code{kds_module.c} дээр жинхэнэ Linux (Ubuntu 24.04.2, \term{kernel} 6.11.0-17-generic, \term{Secure Boot} идэвхтэй, \term{MOK} гарын үсэгтэй) дээр ажиллуулж 9 PASS авсан; дэлгэцийн зургийг Report-ын Зураг 7--9-д оруулсан.
+\textbf{Нотолгоо:} \code{run_module_test.sh} нь \code{docs/kernel_build_log.txt} ба \code{docs/kernel_dmesg.txt}-г үүсгэдэг. Скриптийг жинхэнэ Linux (Ubuntu 24.04.2, \term{kernel} 6.11.0-17-generic, \term{Secure Boot} идэвхтэй, \term{MOK} гарын үсэгтэй) дээр 2026-11-19 04:05 (UTC+8) ажиллуулж \textbf{9 PASS} авсан; репод хадгалсан \code{kernel_build_log.txt}-ийн эхний мөр дэх огноо яг үүнтэй тэнцүү. Дэлгэцийн зургийг Report-ын \textbf{Зураг 6.2--6.4}-т, түүхий гаралтыг \code{docs/KERNEL_EVIDENCE.md}-т харуулсан. \term{Secure Boot} идэвхгүй орчинд \code{sign} алхам алга болж \textbf{8 PASS} гарах нь зүй (үлдсэн 8 шалгалт ижил).
 
-\textbf{Хүлээгдэх \term{dmesg}} (\code{start=15}): «loading module (start=15)», 4 «color red=... blue=... green=...» мөр, 18 «collatz» мөр (15 46 23 70 35 106 53 160 80 40 20 10 5 16 8 4 2 1), «collatz start=15 terms=18», 5 «birthday d/m/y», «fifo out» 10, 20, 30, «\term{bitmap} weight=2, bit15=1». \term{rmmod} үед «removing color/collatz/birthday» мөрүүд болон «module unloaded» гарна. \code{start=0} үед «start must be 1..1000000 (got 0)» гарч, \term{insmod} амжилтгүй болно.
+\textbf{Хүлээгдэх \term{dmesg}} (\code{start=15}): «loading module (start=15)», 4 «color red=... blue=... green=...» мөр, 18 «collatz» мөр (15 46 23 70 35 106 53 160 80 40 20 10 5 16 8 4 2 1), «collatz start=15 terms=18», 5 «birthday d/m/y», «fifo out» 10, 20, 30, «\term{bitmap} weight=2, bit15=1». \term{rmmod} үед «removing hash/rb/color/collatz/birthday» (жишээ нь \code{start=15} ачааллын \term{dmesg}-т 4 hash, 6 rb, 4 color, 18 collatz, 5 birthday мөр) болон «module unloaded» гарна. \code{start=0} үед «start must be 1..1000000 (got 0)» гарч, \term{insmod} амжилтгүй болно.
 
 \textbf{\term{Secure Boot} идэвхтэй эсэхийг} \code{mokutil --sb-state} командаар шалгана («SecureBoot enabled» гарвал идэвхтэй; «disabled» бол доорх алхам хэрэггүй). \textbf{Идэвхтэй үед} (\code{insmod: Key was rejected}\newline\code{by service}) дараах тохиргоог нэг удаа хийнэ:
 \begin{codeblock}
@@ -295,7 +307,7 @@ sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv 
 \code{make test} & 9 PASS (8 скрипт + \term{stress}), exit 0\\
 \code{make check} & Нийт 98 PASS (9 test + 9 text==json + 8 \term{fuzz} + 32 \term{AVL} + 40 rb/heap), FAIL 0\\
 Веб апп (\code{npm run dev}) & Browser-ийн console-д алдаа гарахгүй; «Чөлөөт горим» хуудасны гаралт \term{CLI}-тай ижил (хоёулаа нэг C программ ашигладаг)\\
-\code{run_module_test.sh} & 9 PASS (build, sign, \term{insmod} start=25/15, start=0 татгалзал, /proc/kds, \term{Collatz} 24/18 гишүүн); build log ба \term{dmesg} файл үүснэ\\
+\code{run_module_test.sh} & 9 PASS (build, sign, \term{insmod} start=25/15, start=0 татгалзал, /proc/kds, \term{Collatz} 24/18 гишүүн); build log ба \term{dmesg} файл үүснэ. \term{Secure Boot} идэвхгүй бол \code{sign} шалгалт хийгдэхгүй тул \textbf{8 PASS} гарна\\
 \end{longtable}
 Хүснэгтийн бүх мөр биелвэл C цөм, тест, веб апп, \term{kernel module} дөрөв бүгд зөв ажиллаж байна гэж үзнэ; аль нэг мөр зөрвөл 1.8-ийн алдааны хүснэгтээс шалтгааныг хайна.
 
@@ -303,7 +315,7 @@ sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/mok/MOK.priv 
 \begin{itemize}[leftmargin=20pt,itemsep=1pt,topsep=2pt]
   \item \term{Kernel module} WSL, Docker-т ачаалагдахгүй (\term{kernel} header ба \term{insmod} эрх байхгүй). Linux VM эсвэл үндсэн Linux ашиглана.
   \item Өөр \term{kernel} хувилбар дээр API өөрчлөгдсөн бол module-ийг дахин build хийнэ.
-  \item \term{CLI}-д нэг мөр 1023 тэмдэгтээс урт бол «ERR line too long» гарна.
+  \item \term{CLI}-д нэг мөр 1022-оос урт (1023 ба түүнээс олон тэмдэгт) бол «ERR line too long» гарна. 1022 тэмдэгт хүртэлх мөр хэвийн ажиллана.
   \item Веб апп серверийн хажуу (\code{web/src/app/api/run/route.ts}) C цөмийг дэвсгэр дээр дуудаж ажиллуулдаг тул веб аппыг нээхийн өмнө \code{make}-аар \code{./kds} (эсвэл Windows дээр \code{kds.exe}) build хийсэн байх ёстой; эс бөгөөс «C core not built» алдаа гарна.
   \item \term{Hash}-ийн хувьд \code{size} 1..16, \code{rehash} 1..64 \term{bucket}; \code{auto on} үед ачаалал 0.75-аас хэтрвэл \term{bucket} автомат 2 дахин ихэснэ. Элементийн тоо 24, \term{queue}, \term{stack}, процесс 8 (дүрслэлд багтаах зорилгоор).
   \item \textbf{macOS 26 + Apple clang:} \term{ASan} runtime нь програм эхлэх үед төгсгөлгүй хүлээлт үүсгэж болно (гаралтгүй, 100\% CPU). Ийм үед \code{make SAN=0} гэж \term{sanitizer}-гүй build хийнэ; тест болон веб апп хэвийн ажиллана, зөвхөн ASan/UBSan шалгалт хийгдэхгүй.

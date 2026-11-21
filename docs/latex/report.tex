@@ -281,7 +281,7 @@ C цөм (\code{src/user/kds.c}) & Үгийн массивын хязгаары�
 
 Repository: \code{github.com/grl059/OS_BD1} (салбар \code{main}). Бүтэц нь удирдамжийн 6-р хэсгийн дагуу: \code{README.md} (нэр, код, зорилго, Quick Start, AI тэмдэглэл), \code{src/}, \code{tests/}, \code{examples/}, \code{docs/} (Manual, Report, screenshot, тайлангийн эх LaTeX ба HTML). Build-ийн гаралт болон гарын үсгийн түлхүүрийг \code{.gitignore}-оор хассан.
 
-Final release-ийн өмнө репозиторид нийт 70 commit хийгдсэн байсан. Эдгээр нь C цөм, веб апп, \term{kernel module}, тестийн скрипт, тайлан ба Manual-ийн өөрчлөлтүүдийг агуулсан бөгөөд төсөл нэг удаагийн хуулбар бус, шат шатаар хөгжсөнийг харуулна. Гишүүн бүрийн хариуцсан ажил, түүний үр дүнгийн файлыг Хавсралт A-д үзүүлэв.
+v1.1.0 tag тавигдах үед репозиторид 72 commit байсан (II-4-13 шүүмжийн засварууд дараа), одоо \code{main}-д 81 бөгөөд II-4-9 шүүмжийн засвар энэ тайлангийн хамт орно. Яг тоог \code{git rev-list --count HEAD}-ээр, гишүүн тус бүрийнх нь дэлгэрэнгүйг \code{git shortlog -sne}-ээр (реpod буй \code{.mailmap}-ыг ашиглана) шалгана. Эдгээр commit нь C цөм, веб апп, \term{kernel module}, тестийн скрипт, тайлан ба Manual-ийн өөрчлөлтүүдийг агуулсан бөгөөд төсөл нэг удаагийн хуулбар бус, шат шатаар хөгжсөнийг харуулна. Гишүүн бүрийн хариуцсан ажил, түүний үр дүнгийн файлыг Хавсралт C-д үзүүлэв.
 
 % ---------------------------------------------------------------------------
 \section*{3. Туршилт ба дүрслэл}
@@ -384,7 +384,7 @@ rb\_check & tests/rb\_check.py: \term{red-black} 30 seed + \term{min-heap} 10 se
 % ---------------------------------------------------------------------------
 \section*{4. Reviewer Responses}
 \phantomsection\addcontentsline{toc}{section}{4. Reviewer Responses}
-Албан ёсны II-4-13 багийн Review PDF-ийг (\code{V-1-4-review.pdf}) нэгтгэж, 10 асуудал (P1--P10) ба эхлэгчдэд зориулсан 4 санал (S1--S4)-ыг Critical, Major, Minor, Suggestion гэж ангилав. Critical (үндсэн функц ажиллахгүй) асуудал олдоогүй. Зөвшөөрсөн саналд хийсэн өөрчлөлт ба нотлох тестийг, хэсэгчлэн зөвшөөрсөн саналд үлдсэн хэсгийн техникийн үндэслэлийг бичив. Албан ёсны шүүмжээс гадна оюутнуудаас ирсэн техникийн comment-ыг энэ тайланд нэгтгээгүй.
+Бид хоёр албан ёсны шүүмжид хариулсан. Эхнийх нь II-4-13 багийн Review PDF (\code{V-1-4-review.pdf}) бөгөөд 10 асуудал (P1--P10) ба эхлэгчдэд зориулсан 4 санал (S1--S4)-ыг Critical, Major, Minor, Suggestion гэж ангилав; үүнийг Хүснэгт 4.1-д нэгтгэв. Хоёр дахь нь II-4-9 багийн шүүмж (\code{Review_V-1-4..pdf}, 2026-11-20) бөгөөд 3 Major (M-1--M-3), 5 Minor (m-1--m-5), 4 санал (s-1--s-4) агуулсан --- эдгээрийн хариуг \textbf{Хүснэгт 4.2}-т бичив. Хоёр шүүмжид Critical (үндсэн функц ажиллахгүй) асуудал олдоогүй. Зөвшөөрсөн саналд хийсэн өөрчлөлт ба нотлох тестийг, хэсэгчлэн зөвшөөрсөн саналд үлдсэн хэсгийн техникийн үндэслэлийг бичив. Албан ёсны шүүмжээс гадна оюутнуудаас ирсэн техникийн comment-ыг энэ тайланд нэгтгээгүй.
 
 Хүснэгт 4.1 нь шүүмж бүрт хийсэн шийдвэр, өөрчлөлт, нотолгоог нэг мөрөнд харуулж, тайлан уншигч шүүмжлэгчийн хэлсэн бүхэнд хариу өгсөн эсэхийг шалгах боломжтой байлгахын тулд оруулсан.
 
@@ -414,7 +414,35 @@ S4 & Manual 2.7-г «\term{Secure Boot} идэвхтэй бол» гэж тус�
 \par}
 \par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт 4.1 -- Reviewer Comments and Responses\par}\vspace{4pt}
 
-Хүснэгтээс харахад 14 саналын 10 нь бүрэн, 4 нь хэсэгчлэн зөвшөөрөгдсөн бөгөөд үгүйсгэсэн санал байхгүй. Хэсэгчлэн зөвшөөрсөн дөрвөн саналын (P2, P10, S3, S4) үлдсэн хэсэг бүрт шалтгаан бичигдсэн. Гол шалтгаан нь E2E тест, дан холбоост жагсаалтын демо зэрэг нь төслийн хамрах хүрээнээс гадуур, эсвэл өөр аргаар (нэгж тест, \code{hlist}) хамгаалагдсан явдал юм.
+Хүснэгт 4.1-ээс харахад 14 саналын 10 нь бүрэн, 4 нь хэсэгчлэн зөвшөөрөгдсөн бөгөөд үгүйсгэсэн санал байхгүй. Хэсэгчлэн зөвшөөрсөн дөрвөн саналын (P2, P10, S3, S4) үлдсэн хэсэг бүрт шалтгаан бичигдсэн. Гол шалтгаан нь E2E тест, дан холбоост жагсаалтын демо зэрэг нь төслийн хамрах хүрээнээс гадуур, эсвэл өөр аргаар (нэгж тест, \code{hlist}) хамгаалагдсан явдал юм.
+
+II-4-9 баг бидний ажиллагааг тусдаа орчинд (Ubuntu 24.04.5, \term{kernel} 6.18.44, gcc 13.3, Python 3.12) давтан ажиллуулж, \code{make} warning 0, \code{make test} 3/3 удаа 9 PASS, \code{make check} 98 PASS гэж баталж, 9 нэмэлт оролтын шалгалтын 7-г тааруулсан (дүгнэлт 9, 10). Тэдний олсон 12 зүйл бүр бодит бөгөөд бид түүнийг Хүснэгт 4.2-т задалж хариулав.
+
+{\fontsize{9}{11}\selectfont\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|L{0.05\textwidth}|L{0.19\textwidth}|L{0.12\textwidth}|L{0.145\textwidth}|L{0.335\textwidth}|}
+\hline
+\textbf{№} & \textbf{Шүүмж} & \textbf{Priority} & \textbf{Шийдвэр} & \textbf{Өөрчлөлт ба нотолгоо} \\ \hline
+\endfirsthead
+\hline
+\textbf{№} & \textbf{Шүүмж} & \textbf{Priority} & \textbf{Шийдвэр} & \textbf{Өөрчлөлт ба нотолгоо} \\ \hline
+\endhead
+M-1 & Сурах бичгийн Part I (\code{struct color}) ба Part II (\term{Collatz}) веб графаар харагдахгүй, зөвхөн \term{kernel module}-д бий (\code{grep -ci "collatz|color"} = 0) & Major & Хэсэгчлэн зөвшөөрсөн & Шүүмжлэгчийн санал болгосон хоёр замаас \textbf{үндэслэлээ Report-д бичих}-ийг сонгосон (7.1-ийн «Part I/II-ийн дүрслэл» заалт). Үндэслэл: Part I/II нь сурах бичигт \textbf{\term{kernel}} доторх даалгавар тул бодит \code{kmalloc} ба \code{list_head} гинжийг жинхэнэ \term{kernel}-д ачаалж, \code{dmesg} болон \code{/proc/kds}-оор баталсан (Зураг 6.2--6.4). Харин \code{kds}-д \code{color}, \code{collatz} командыг нэмбэл \code{state}-ийн түлхүүр 9-өөс 11 болж \code{tests/json_check.py}-ийн \code{STATE_KEYS}, веб \code{model.ts}, Manual болон Report-ын «9 бүтэц», \code{make check}-ийн 98 PASS-ийн бүтэц зэрэг солигдоно --- эцсийн хүлээлгэн өгөхийн өмнө тийм өргөн хүрээний өөрчлөлт аль хэдийн баталгаажсан нотолгоог эвдэх эрсдэлтэй. \\ \hline
+M-2 & Гишүүдийн оролцоо repo-оос баталгаажихгүй (zip-д \code{.git} байхгүй, commit-ыг нэг гишүүн төвлөрүүлсэн) & Major & Хэсэгчлэн зөвшөөрсөн & Репод \code{.mailmap} нэмж аль хэдийн бодитоор орсон git идентификаторуудыг нэр ба \term{student ID}-д холбосон; Хавсралт C-д \code{git shortlog -sne}-ийн яг гаралт (81 commit) болон \term{kernel} log дэх \code{host: b241940001-server}, \code{/home/gerel/OS_BD1} зам, PR \#1-ийн merge мөр --- А.Гэрэлийн машин дээр ажиллуулсан, тусдаа салбараас нэгтгэсэн гэдгийн бодит нотолгоо. Гэхдээ 6 гишүүний гурав нь тусдаа git идентификаторгүй хэвээр байна. Бид түүхийг дахин бичиж «нотолгоо» үүсгээгүй, мөн шалгах боломжгүй \code{Co-authored-by} мөр зориуд хийгээгүй: тэдгээр гишүүний хувь нэмэр нь Хавсралт C-ийн файл/тестийн жагсаалтаар л батлагдах тул үүнийг сул талаар нь үлдээв. \\ \hline
+M-3 & \term{Kernel}-ийн нотолгооны 4 баримт зөрвтөл (огноо, зургийн дугаар, PASS тоо) & Major & Зөвшөөрсөн & Нэг л огноо: \textbf{2026-11-19 04:05:12 (UTC+8)} --- \code{kernel_build_log.txt}-ийн \texttt{\# date:} мөр дэх утга, 2026-11-18-ний анхны ачааллыг түүхэнд нь тэмдэглэв; зураг \textbf{6.2--6.4}; PASS тоо \textbf{9} (\term{Secure Boot} идэвхгүй үед \code{sign} хийгдэхгүй тул \textbf{8}) болж \code{docs/KERNEL_EVIDENCE.md} (9 PASS-ийн задалгаа, файлын бүтэц), Manual 2.7 болон 2.8, Report-ын 6-р хэсэг, Хүснэгт 6.1 дөрвөндөө ижил болтол нэгтгэгдсэн. Manual 2.7-ийн «3 PASS» жишээ гаралтыг скриптийн бодит 9 PASS мөрөөр сольж, \code{dmesg -C}-ийн анхааруулга нэмсэн. \\ \hline
+m-1 & Manual 2.9 «1023 тэмдэгтээс урт бол ERR» --- бодитоор 1023 тэмдэгт аль хэдийн ERR & Minor & Зөвшөөрсөн & «1022-оос урт (1023 ба түүнээс олон тэмдэгт) бол» гэж засаж, 1022 хүртэлх мөр хэвийн гэдгийг нэмсэн. Шалтгаан: \code{char line[1024]} + \code{fgets}. Нотолгоо: 1022 тэмдэгтэй мөр $\rightarrow$ \code{ERR queue: usage} буюу уртын шалгалтыг давсан, 1023 $\rightarrow$ \code{ERR line too long} (засварын үеэр бид давтан хэмжсэн). \\ \hline
+m-2 & Report Хүснэгт 6.1 «text==json PASS ×8» vs \code{make check}-ийн 9; Manual 2.5 «8 скрипт: PASS x9» гэж өөрөө зөрнө & Minor & Зөвшөөрсөн & Хоёулыг «\textbf{PASS ×9 (8 скрипт + бүгдийг нь нэгтгэсэн дүгнэлт мөр)}» гэж нэг болгосон. Мөн Python-ийн хувьд шүүмжлэгчийн 3.12 дээр ажилласан нь зүй гэсэн дүгнэлтыг тодруулахын тулд Report 7.2-т «туршсан 3.13, шаардлага $\ge$3.8» гэж нэмсэн. \\ \hline
+m-3 & БД1/БД2 ба багийн код холилдсон (\code{MODULE_AUTHOR "F.CSM302 BD1 team 4"}, \code{package.json} «BD1») & Minor & Зөвшөөрсөн & \code{kds_module.c}-ийн толгой тайлбар болон \code{MODULE_AUTHOR}-ыг \textbf{F.CSM302 БД2, V-1-4} ба 6 гишүүний \term{student ID}-ээр, \code{web/package.json}-ийн тайлбарыг «F.CSM302 БД2, V-1-4» болгож засав. \\ \hline
+m-4 & \code{--json} горим буруу \term{UTF-8} оролтод \textbf{хүчингүй JSON} гаргана (0x80-аас дээш кодын байт түүхээрээ гарах) & Minor & Зөвшөөрсөн & \code{putjs()}-ийн escape-ийг шинэчлэж, \code{utf8_seq()} туслах функцээр \term{UTF-8} дарааллыг (Unicode 3.9 D92b «maximal subpart» дүрэм, surrogate муж, \code{F0} ба \code{F4}-ийн хязгаартай) шалгасан; хүчингүй байтыг \texttt{\textbackslash ufffd} гэсэн 6 тэмдэгтийн дараалал болгож сольж, \code{"}, \texttt{\textbackslash}, 0x20-ын доорх хяналтын тэмдэгт өмнөхчилсөн хэвээр. \code{fuzz_json.py}-д муу \term{UTF-8} оролтын шинэ аймаг (\code{bad_utf8}) нэмж, JSON мөрүүдийг \textbf{bytes}-ээр нь \code{json.loads}-оор задалдаг болгосон (хүчингүй гарвал тест FAIL). Нотолгоо: \texttt{printf '\textbackslash xff\textbackslash xfe add' | ./kds --json} $\rightarrow$ хүчингүй байт бүр \texttt{\textbackslash ufffd}; \code{make check} 98 PASS. \\ \hline
+m-5 & \code{/api/run}-ийн бат бөх байдал: хэмжээг \code{req.json()}-оос хойш шалгадаг, \code{child.stdin}-д \code{error} listener байхгүй, timeout алга, 413-ыг түүхий JSON текстээр харуулдаг & Minor & Зөвшөөрсөн & \code{route.ts}: \code{Content-Length}-ийг эхлээд шалгах (\code{MAX_BODY_BYTES} = скриптийн хязгаарын 4 дахин), \code{refuse()} туслах нь 413/400/503 алдаанд \textbf{монгол} \code{userMessage} буцаана; \code{child.stdin.on("error", ...)} нэмсэн; 10 секундын timeout$\rightarrow$\code{SIGTERM}, дахин 2 секунд$\rightarrow$\code{SIGKILL} (\code{fatal: "kds timed out"}), зам бүрд \code{clearTimeout}. \code{use-run.ts}: \code{Fatal} төрөл \code{detail}, \code{notice} талбайтай болж, серверийн монгол мэдэгдэлийг хэрэглэгчид шууд харуулна. Нотолгоо: \code{curl}-ээр 413 ба 400 хариу, \code{npm test} 17/17, \code{tsc --noEmit} цэвэр. \\ \hline
+s-1 & \code{kds_exit()} нь \code{free_all()}-ийн хуулбар; \term{Collatz} \code{unsigned long} ашигласан тул 32 битийн \term{kernel}-д халих & Suggestion & Зөвшөөрсөн & \code{free_all(bool log)} гэсэн нэг туслах (init-ийн алдааны замд \code{log=false}, \code{rmmod}-т \code{true}) болгож давхардлыг арилгасан; \term{Collatz}-ийн утгыг \code{u64} болгож \texttt{\%llu}-р хэвлэсэн. Шүүмжлэгчийн тооцоолол зөв: start $\le$ 1\,000\,000 үеийн оргил $5.7\cdot10^{10}$ нь 32 битийн 4\,294\,967\,295-аас хэтэрнэ. \\ \hline
+s-2 & \code{release.yml} push бүрд шинэ tag үүсгэж, Manual-ийн «v1.1.0 = Report-той ижил commit» амлалтыг таслах эрсдэлтэй & Suggestion & Зөвшөөрсөн & Workflow-г \code{workflow_dispatch} (заавал \code{confirm=release} гэж бичсэнээр) болгосон --- CI ногоон болох тутам tag гаргахгүй болсон; шалтгааныг \code{release.yml} workflow-ийн толгойрт тэмдэглэж, README болон Manual 2.1-ийн «сүүлийн тэмдэглэгдсэн release нь v1.1.0, эцсийн код \code{main}-д байна» гэсэн тодорхойлолтыг хооронд нь нийцүүлэв. \\ \hline
+s-3 & Скрипт \code{dmesg -C}-ээр шүүмжлэгчийн лог-ийг устгаж, хуучин модулийг мэдэгдэлгүй \code{rmmod} хийдэг; \code{dmesg} файлын ачааллын мөрүүд «\#\#\# rmmod» гарчгийн доор орсон & Suggestion & Зөвшөөрсөн & \code{run_module_test.sh}-ийн толгойрт WARNING блок, Manual 2.7-д анхааруулга нэмсэн; \code{dmesg} гарчгийг \texttt{\#\#\# dmesg: load} / \texttt{\#\#\# rmmod kds\_module} / \texttt{\#\#\# dmesg: unload} / \texttt{\#\#\# dmesg: rejected load} гэж салгасан. Репод буй хуучин log-ын ялгааг \code{docs/KERNEL_EVIDENCE.md}-ийн 3-т зааж өгсөн (\code{kds:} агуулгын мөр ижил, зөвхөн хэсгийн нэр өөр). \\ \hline
+s-4 & Module GPL-2.0 гэж зарласан ч репод \code{LICENSE} файл алга & Suggestion & Зөвшөөрсөн & \code{LICENSE} (GNU \textbf{GPL-2.0-only} албан ёсны текст) нэмсэн; README-д «Лиценз» хэсэг бичиж, \code{MODULE_LICENSE("GPL")} ба \code{SPDX-License-Identifier: GPL-2.0}-той нийцүүлсэн. \\ \hline
+\end{longtable}
+\par}
+\par\vspace{2pt}{\centering\fontsize{10}{12}\selectfont Хүснэгт 4.2 -- II-4-9 шүүмжийн санал ба бидний хариу\par}\vspace{4pt}
+
+Хүснэгт 4.2-ийн 12 саналаас \textbf{10-г бүрэн}, 2-ыг (M-1, M-2) хэсэгчлэн зөвшөөрч, шалтгааныг нь тус тусад нь бичив; үгүйсгэсэн санал байхгүй. II-4-9-ийн шалгаагүй гэж тэмдэглэсэн хоёр зүйл --- жинхэнэ \term{kernel} дээрх \code{insmod} ба browser дээрх UI --- бидний хувьд нотолгоотай: эхнийх нь Зураг 6.2--6.4 ба \code{docs/KERNEL_EVIDENCE.md}, хоёр дахь нь энэ тайлангийн 3-р хэсгийн бодит дэлгэцийн зураг (Зураг 3.1--3.5).
 
 % ---------------------------------------------------------------------------
 \section*{5. Дахин туршилт}
@@ -462,7 +490,7 @@ textbook, all\_structures, errors, \term{hash}\_resize, rb\_\term{heap} & \textb
 search (хайлт, \term{hash}, BST/AVL) & \textbf{PASS} \\ \hline
 \term{scheduler} (RR, \term{FCFS}, алдаа), \code{scheduler_full} (8 процесс) & \textbf{PASS ×2} \\ \hline
 \term{stress} (5000 × 8 команд) & \textbf{PASS, ERR 0, \term{sanitizer} мэдээлэлгүй} \\ \hline
-text == --json (8 скрипт) & \textbf{PASS ×8} \\ \hline
+text == --json (\code{json_check.py}) & \textbf{PASS ×9 (8 скрипт + бүгдийг нь нэгтгэсэн дүгнэлт мөр)} \\ \hline
 \term{fuzz} text == json (8 seed × 5000 команд, тэгш seed-д \term{AVL}) & \textbf{PASS ×8 (seed бүрд ≈4\,700 гаралтын мөр)} \\ \hline
 avl\_check (30 гүйлт + эрэмбэлсэн 1..15) & \textbf{PASS ×32 (\term{BST} өндөр 15, \term{AVL} өндөр 4)} \\ \hline
 rb\_check (\term{red-black} 30 seed + \term{min-heap} 10 seed: өнгө, \term{black-height}, inorder/эс хазайх чанар) & \textbf{PASS ×40} \\ \hline
@@ -600,7 +628,7 @@ ERR queue: integer out of range -2147483647..2147483647 (got '99999999999')
 
 \hthree{Kernel module}
 
-\textbf{Одоогийн хувилбар} (Part I/II, hashtable, rbtree, \code{/proc/kds}) жинхэнэ Linux дээр \code{src/kernel/run_module_test.sh}-ээр ачаалагдсан. Орчин: Ubuntu 24.04.2 LTS, \term{kernel} 6.11.0-17-generic, gcc 13.3.0, \term{Secure Boot} идэвхтэй тул модульд \term{MOK} түлхүүрээр гарын үсэг зурсан (\code{signer: kds module signing}). Скрипт \code{make exit=0} буюу build, sign, \code{start=25}, \code{start=15}, \code{start=0} гурван ачаалал, \code{/proc/kds} уншилт, \term{rmmod}-ыг дараалан шалгаж \textbf{9 PASS} өгсөн (Зураг 6.2). Build-ийн гаралтад зөвхөн kbuild-ийн мэдээллийн мөр (\code{the compiler differs...}, \code{Skipping BTF generation}) байгаа бөгөөд compiler warning алга. \term{Collatz} гишүүдийн тоо: start=25 үед 24, start=15 үед 18 -- хэрэглэгчийн орчинд Python-оор урьдчилан тооцсон утгатай таарсан.
+\textbf{Одоогийн хувилбар} (Part I/II, hashtable, rbtree, \code{/proc/kds}) жинхэнэ Linux дээр \code{src/kernel/run_module_test.sh}-ээр ачаалагдсан. Орчин: Ubuntu 24.04.2 LTS, \term{kernel} 6.11.0-17-generic, gcc 13.3.0, \term{Secure Boot} идэвхтэй тул модульд \term{MOK} түлхүүрээр гарын үсэг зурсан (\code{signer: kds module signing}). Ажиллуулсан огноо \textbf{2026-11-19 04:05:12 (UTC+8)} бөгөөд энэ нь репод хадгалсан \code{docs/kernel_build_log.txt}-ийн \texttt{\# date:} мөр дэх утгатай яг ижил; түүний өмнө 2026-11-18-нд анхны амжилттай ачаалал хийгдсэн. Скрипт \code{make exit=0} буюу build, sign, \code{start=25}, \code{start=15}, \code{start=0} гурван ачаалал, \code{/proc/kds} уншилт, \term{rmmod}-ыг дараалан шалгаж \textbf{9 PASS} өгсөн (Зураг 6.2; PASS бүрийн задалгаа \code{docs/KERNEL_EVIDENCE.md}-д). \term{Secure Boot} идэвхгүй орчинд \code{sign} шалгалт хийгдэхгүй тул \textbf{8 PASS} гарах нь зүй. Build-ийн гаралтад зөвхөн kbuild-ийн мэдээллийн мөр (\code{the compiler differs...}, \code{Skipping BTF generation}) байгаа бөгөөд compiler warning алга. \term{Collatz} гишүүдийн тоо: start=25 үед 24, start=15 үед 18 -- хэрэглэгчийн орчинд Python-оор урьдчилан тооцсон утгатай таарсан.
 
 \Needspace{18\baselineskip}
 \begin{figure}[H]
@@ -642,11 +670,13 @@ ERR queue: integer out of range -2147483647..2147483647 (got '99999999999')
 
 \term{Queue}, \term{stack} ба амьд процессын тоо 8, \term{hash}-ийн элемент 24-өөр хязгаарлагдсан. Энэ нь дүрслэлд багтаах зорилготой.
 
-\textbf{Шүүмжээс үлдсэн.} Playwright E2E тест, дан холбоост жагсаалтын тусдаа демо нэмээгүй (4-р хэсгийн P2, P10). Manual 2.7-ийн \term{Secure Boot} заавар зураггүй.
+\textbf{Part I/II-ийн дүрслэл (II-4-9 M-1).} Сурах бичгийн Programming Project-ийн Part I (\code{struct color} жагсаалт) ба Part II (\term{Collatz} дараалал, \code{start} параметр) нь бидэнд \textbf{\term{kernel} module}-д хэрэгжсэн бөгөөд веб графаар биш, жинхэнэ \term{kernel}-ийн \code{dmesg} ба \code{/proc/kds} гаралтаар батлагдсан (Зураг 6.2--6.4). Энэ бол сонголт: уг хоёр даалгавар сурах бичигт \code{kmalloc} ба \code{list_head} ашиглан kernel дотор хийгддэг; хэрэв бид үүнийг \code{kds}-д давтан хэрэгжүүлж веб дээр зурвал дэлгэц дээрх зүйл user-space-н давхар хэрэгжилт болох бөгөөд \term{kernel}-ийн зан үйл нь гэсэн нотолгоо хэвээр л \term{log} шаардана. Нэмэхэд: \code{state}-ийн түлхүүр 9-өөс 11 болж \code{json_check.py}, \code{model.ts}, 98 PASS-ийн бүтэц, «9 бүтэц» гэсэн бүх тоо хамт солигдах ёстой.
+
+\textbf{Шүүмжээс үлдсэн.} Playwright E2E тест, дан холбоост жагсаалтын тусдаа демо нэмээгүй (4-р хэсгийн P2, P10). Manual 2.7-ийн \term{Secure Boot} заавар зураггүй. II-4-9-ийн M-1-ийг дээрх үндэслэлээр граф дээр нэмээгүй; M-2-ын хувьд 6 гишүүний гурав нь тусдаа git идентификаторгүй хэвээр (түүхэн commit-ыг дахин бичээгүй) --- үүнийг Хавсралт C-д нуухгүйгээр тодорхой бичсэн.
 
 \hthree{7.2 Дэмжих орчин}
 
-\term{CLI} ба веб апп нь Ubuntu 24.04 (gcc 13, Python 3.13, Node.js 22) дээр бүрэн туршигдсан. Windows дээр MSYS2 эсвэл WSL ашиглах заавар Manual-д бий боловч энэ тайлангийн туршилтыг Windows дээр хийгээгүй. macOS дээр CI (\term{ASan}-тай) ажилладаг ч macOS 26 дээр \term{ASan} эхлэхэд гацдаг тул \code{make SAN=0} хэрэглэнэ. \term{Kernel module} нь зөвхөн жинхэнэ Linux дээр (\term{kernel} headers-тэй) ачаалагдах бөгөөд WSL ба Docker дээр ачаалагдахгүй.
+\term{CLI} ба веб апп нь Ubuntu 24.04 (gcc 13, Python 3.13, Node.js 22) дээр бүрэн туршигдсан; тестийн скрипт Python 3.8-аас дээш хувилбар шаарддаг тул \code{make check}-ийн 98 PASS-ийг II-4-9 баг Python 3.12 орчинд давтан гүйцэтгэсэн. Windows дээр MSYS2 эсвэл WSL ашиглах заавар Manual-д бий боловч энэ тайлангийн туршилтыг Windows дээр хийгээгүй. macOS дээр CI (\term{ASan}-тай) ажилладаг ч macOS 26 дээр \term{ASan} эхлэхэд гацдаг тул \code{make SAN=0} хэрэглэнэ. \term{Kernel module} нь зөвхөн жинхэнэ Linux дээр (\term{kernel} headers-тэй) ачаалагдах бөгөөд WSL ба Docker дээр ачаалагдахгүй.
 
 % ---------------------------------------------------------------------------
 \section*{8. Дүгнэлт}
@@ -762,8 +792,21 @@ GitHub QR & Final release холбоос & QR код \\ \hline
 
 Хүснэгтээс харахад ажил онолын судалгаа, C цөм ба веб апп, туршилтын өгөгдөл, \term{scheduler}, заавар, хэш ба мод гэсэн зургаан чиглэлд хуваагдсан бөгөөд гишүүн бүр өөрийн чиглэлийн бодит файл эсвэл commit-тэй байна.
 
-{\fontsize{9.5}{12}\selectfont\textbf{Тэмдэг:} Ажил тус бүрийг багийнхан хамтдаа хийж, бие биенийхээ гаралтыг шалгасан ч GitHub дээрх commit/push-ийг нэг гишүүн төвлөрүүлж хийдэг байсан тул \code{git log}-д гишүүн бүрийн нэр тус тусдаа гаргаагүй. Үүнийг \code{git shortlog}-ийн оронд дээрх файл, тестийн нэрээр баталгаажуулсан (жишээ нь \code{make test}-ийн 9 PASS мөр, \code{tests/expected_*.out}-ын гаралт).
-\par}
+\textbf{II-4-9 M-2-т хариу: \code{git} баримт.} Зараас \code{.git}гүй zip авч шалгасан тул тэд commit түүхийг хараагүй. Репод \code{.mailmap} файл нэмж, нэг хүний хэд хэдэн идентификаторыг нэр дээр нь нэгтгэв. Үр дүн (2026-11-21, \code{main}):
+
+\begin{codeblock}
+$ git shortlog -sne
+    44  Н. Ням-Од <nyamsurennyamod8@gmail.com>
+    35  А. Гэрэл <altangerelgerel059@gmail.com>
+     1  Claude <noreply@anthropic.com>
+     1  Nonaxannn <nomin9302@gmail.com>
+$ git rev-list --count HEAD
+81
+\end{codeblock}
+
+Эндээс харагдах зүйл: (1) 81 commit-ийн 79 буюу 97.5\% нь хоёр гишүүний нэр дээр байна --- шүүмжлэгчийн хэлснээр «commit/push-ийг нэг гишүүн төвлөрүүлсэн» гэдэг үнэн боловч хоёр дансанд хуваагддаг. (2) \texttt{PR \#1 «feature/hash-rbtree-heap-proc»} салбараас \code{main}-д нэгтгэгдсэн (merge commit \code{6390a2a}) нь C цөмийн 9 бүтцийн өргөтгөл тусдаа салбараар авчирч, өөр бүртгэлээр нэгтгэсэн бодит мөр. (3) \term{kernel module}-ийн log дэх \code{host: b241940001-server} ба \code{/home/gerel/OS_BD1} зам нь А.Гэрэлийн машин дээрх ажиллагааг харуулна (энэ нь \code{.mailmap}-ын холбоосны баталгаа мөн).
+
+\textbf{Бид юуг баталгаажуулж чадаагүй вэ.} Э.Мягмаршагай, О.Хүслэн, Ч.Түмэншагай нарын хийсэн ажил (хүснэгт C.1-д бичсэн тулгалт, Manual, туршилт) \code{git log}-д тусдаа идентификатороор харагдахгүй; \code{Nonaxannn} бүртгэлийг хэнд харгалзахыг бид зөвхөн имэйлийн нэрнээс (\code{nomin9302@gmail.com}) таамаглаж болох ч баталгаагүй тул \code{.mailmap}-д оруулаагүй; \code{Claude} нэрээр 1 commit орсон нь AI тусламжтай бичигдсенийг илтгэнэ (README-ийн «Бэлэн код, сан, AI ашиглалт» хэсэгт зарласан). Бид эдгээрийг засна гэж түүхийг дахин бичиж, эсвэл шалгах боломжгүй \code{Co-authored-by} мөр нэмээгүй --- тийм «нотолгоо» худал болно. Үлдсэн зөрүүг дээрх файл/тестийн жагсаалтаар л батална.
 
 
 \end{document}

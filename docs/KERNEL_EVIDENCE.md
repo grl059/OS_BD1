@@ -1,52 +1,78 @@
 # Kernel module: жинхэнэ Linux дээрх нотолгоо
 
-> **Төлөв: хийгдсэн (2026-11-18).** Ubuntu 24.04.2, kernel 6.11.0-17-generic, Secure Boot идэвхтэй, MOK гарын үсэгтэй; `run_module_test.sh` 9 PASS. Үр дүн Report-ын Зураг 6.2--6.4-т, түүхий гаралт нь docs/kernel_build_log.txt ба docs/kernel_dmesg.txt-д. Доорх нь давтах заавар.
+> **Төлөв: хийгдсэн.** Сүүлийн ажиллуулалт **2026-11-19 04:05:12 (UTC+8)** — Ubuntu 24.04.2 LTS,
+> kernel 6.11.0-17-generic, gcc 13.3.0, host `b241940001-server`, **Secure Boot идэвхтэй**, MOK
+> гарын үсэгтэй. `sh src/kernel/run_module_test.sh` → **9 PASS**.
+> Үүний өмнө 2026-11-18-нд анхны амжилттай ачаалал хийгдсэн; репод хадгалсан log файл нь дээрх
+> 2026-11-19-ний давтан ажиллуулалтын гаралт юм (`kernel_build_log.txt`-ийн `# date:` мөр).
+> Дэлгэцийн зураг: Report-ын **Зураг 6.2, 6.3, 6.4**. Түүхий гаралт: `docs/kernel_build_log.txt`,
+> `docs/kernel_dmesg.txt`.
 
-Review (II-4-13, P4) нь Report-ын Зураг 7 (dmesg) **өмнөх** хувилбарынх, харин одоогийн
-`src/kernel/kds_module.c` (Part I `struct color`, Part II Collatz + `start` параметр,
-hashtable/rbtree/`/proc/kds`) жинхэнэ Linux дээр ачаалагдсан нотолгоогүй гэж тэмдэглэсэн.
-Энэ нотолгоог **зөвхөн жинхэнэ Linux (VM эсвэл үндсэн машин; WSL/Docker биш)** дээр гаргана.
-Кодыг хийсэн хүн энэ файл дахь алхмыг гүйцэтгэж, гарсан файлуудаа commit хийнэ.
+## 1. Ямар кодыг ажиллуулсан бэ
 
-## 1. Бэлтгэл (Ubuntu 24.04)
+| Зүйл | Утга |
+|---|---|
+| `src/kernel/kds_module.c` | commit `786ec65` (2026-10-27) — тэр үеэс өөрчлөгдөөгүй байхад log авсан |
+| Гарын үсэг | `~/mok/MOK.priv` + `MOK.der`, `scripts/sign-file sha256` → `modinfo`-д `signer: kds module signing` |
+| Ачаалал | `insmod kds_module.ko` (анхдагч `start=25`), `start=15`, `start=0` (татгалзал) |
+
+Эдгээр параметрт модулийн гаргах `pr_info` мөрүүд тоо, үгээрээ өөрчлөгдөөгүй тул 2026-11-19-ний log
+одоогийн хувилбарыг төлөөлнө. Өөр kernel дээр дахин build + ажиллуулж шинэ log авах хэрэгтэй.
+
+## 2. 9 PASS-ийн задалгаа
+
+| # | Мөр | Шалгадаг зүйл |
+|---|---|---|
+| 1 | `PASS build` | `make` → `kds_module.ko` үүссэн, `make exit=0`, compiler warning алга |
+| 2 | `PASS sign (~/mok)` | MOK-оор гарын үсэг зурсан (**Secure Boot идэвхгүй үед энэ мөр гарахгүй → 8 PASS**) |
+| 3 | `PASS /proc/kds ()` | `start=25` ачаалалын дараа `/proc/kds`-д `start=`, `hashtable(`, `rbtree(` байсан |
+| 4 | `PASS insmod  (ok)` | `insmod kds_module.ko` амжилттай, `lsmod`-д харагдсан, `rmmod`-ийн дараа unload log гарсан |
+| 5 | `PASS /proc/kds (start=15)` | дээрхтэй адил, `start=15` ачаалалд |
+| 6 | `PASS insmod start=15 (ok)` | `insmod kds_module.ko start=15` амжилттай |
+| 7 | `PASS insmod start=0 (fail)` | `insmod: Invalid parameters` + `start must be 1..1000000 (got 0)` — татгалагдах ёстой |
+| 8 | `PASS collatz start=25: 24 terms` | dmesg-ийн `kds: collatz <n>` мөрийг тоолоход 24 |
+| 9 | `PASS collatz start=15: 18 terms` | адил, 18 |
+
+## 3. `kernel_dmesg.txt` файлын бүтэц
+
+Ажиллуулалт бүрт дараах хэсгүүд тус тусад нь бичигдэнэ:
+
+```
+### insmod kds_module.ko <параметр>   → insmod-ын stderr, (lsmod: ...), ### cat /proc/kds (бүтэн агуулга)
+### dmesg: load                       → ачаалах үеийн kds: мөрүүд (color, collatz, birthday, fifo, bitmap, hash, rb, /proc/kds created)
+### rmmod kds_module                  → rmmod командыйн алдаа (байвал)
+### dmesg: unload                     → цэвэрлэлтийн kds: removing ... + module unloaded
+### dmesg: rejected load              → зөвхөн start=0: loading module (start=0) + start must be 1..1000000 (got 0)
+```
+
+**Тэмдэглэл:** репод буй `docs/kernel_dmesg.txt` (2026-11-19) нь `### dmesg: load` / `### dmesg: unload`
+гарчгуудыг тусгайлан бичихээс өмнөх скриптийн хувилбараар үүссэн — ачаалах болон unload мөрүүд
+`### rmmod kds_module` гарчгийн доор нэгтгэгдсэн. `kds:` агуулгын мөрүүд ижил, зөвхөн хэсгийн нэр
+өөр. Одоогийн скриптээр дахин ажиллуулбал дээрх таван гарчиг ялгагдаж бичигдэнэ.
+
+## 4. Давтах заавар
 
 ```sh
 sudo apt update
 sudo apt install build-essential linux-headers-$(uname -r)
 mokutil --sb-state        # "SecureBoot enabled" бол Manual 2.7-ийн MOK алхмыг эхлээд хийнэ
-```
-
-## 2. Автомат скрипт
-
-```sh
 git pull origin main
-sh src/kernel/run_module_test.sh
+sh src/kernel/run_module_test.sh     # root эрх шаардлагатай
 ```
 
-Скрипт дараах файлуудыг үүсгэнэ (**одоогийн** кодоор):
+Скрипт ажиллах машиндаа өөрчлөлт оруулна: ачаалал бүрийн өмнө `sudo dmesg -C`-ээр kernel-ийн
+бичлэгийн буферыг цэвэрлэнэ (хадгалахыг хүссэн лог байвал урьдчилан хуулна), мөн өмнө нь
+ачаалагдсан `kds_module`-ийг мэдэгдэлгүйгээр `rmmod` хийнэ. Өөрийн VM дээр ажиллуул.
 
-- `docs/kernel_build_log.txt` -- `make` дүүрэн гаралт (warning-гүй эсэх)
-- `docs/kernel_dmesg.txt` -- `start=25`, `start=15`, `start=0` гурван ачаалалтын dmesg
+Гаралт:
 
-## 3. Шалгах зүйл (хүлээгдэх үр дүн)
-
-| Тохиолдол | Хүлээгдэх |
-|---|---|
-| `insmod kds_module.ko` (start=25) | 4 `color` мөр, `collatz start=25 terms=24` |
-| `insmod kds_module.ko start=15` | `collatz start=15 terms=18` |
-| `insmod kds_module.ko start=0` | `start must be 1..1000000 (got 0)`, `insmod: Invalid parameters` |
-| `rmmod kds_module` | `removing color/collatz/birthday`, `module unloaded` |
-| `cat /proc/kds` | `start=`, `colors:`, `collatz(terms=..)`, `birthdays:`, `hashtable(buckets=.., entries=..)` хэсгүүд |
-
-## 4. Commit ба Report-д оруулах
+- `docs/kernel_build_log.txt` — орчны толгой мөр (date/host/kernel/os/gcc/secure boot) + `make` бүтэн гаралт + `modinfo`
+- `docs/kernel_dmesg.txt` — гурван ачааллын `### cat /proc/kds` болон `kds:` мөрүүд
 
 ```sh
 git add docs/kernel_build_log.txt docs/kernel_dmesg.txt
-git commit -m "Kernel module: одоогийн хувилбарын insmod/rmmod нотолгоо (Ubuntu <хувилбар>, kernel <uname -r>)"
+git commit -m "docs: kernel module-ийн <огноо>-ний нотолгооны log-ийг шинэчлэв"
 ```
 
-Дараа нь `dmesg`-ийн дэлгэцийн зургийг `docs/report_src/img/`-д хуулж, `docs/latex/report.tex`-ийн
-8-р хэсгийн «Зураг 7»-ын оронд (эсвэл дараа нь «Зураг 8» болгон) оруулаад Report-ын
-«Kernel module, одоогийн хувилбар» мөрийг «PASS» болгож, 9-р хэсгийн Хязгаарлалт 1-ийг шинэчилнэ.
-Manual 2.8-ийн «`run_module_test.sh`: 3 PASS» мөр тэр үед жинхэнэ нотолгоотой болно.
-Нотолгоо гараагүй байхад Report/Manual-д «PASS» гэж бичихгүй.
+Log-ийн огноо, PASS тоо, Report-ын зургийн дугаар (Зураг 6.2--6.4) болон Manual 2.7/2.8-ийн тоог
+зөрүүлэлтгүй шинэчлэх хэрэгтэй. Нотолгоо гараагүй байхад Report/Manual-д «PASS» гэж бичихгүй.

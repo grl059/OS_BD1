@@ -1,14 +1,15 @@
 # Kernel Data Structures
 
-**F.CSM302 Үйлдлийн систем · БД2 (Final, v1.1.0) · Хуваарилалтын код: V-1-4**
+**F.CSM302 Үйлдлийн систем · БД2 (Final) · Хуваарилалтын код: V-1-4**
 Үзүүлэлт: **Kernel structure graph** · Бүлэг: **3 – Processes** · Сурах бичиг: Silberschatz, Galvin, Gagne, *Operating System Concepts* (Programming Project «Kernel Data Structures», онол нь **Chapter 1 Introduction, 1.9 Kernel Data Structures, p. 36**)
 
 ## Үр дүн ба материал
 | Материал | Холбоос |
 |---|---|
-| GitHub final release | [v1.1.0](https://github.com/grl059/OS_BD1/releases/tag/v1.1.0) |
+| Эцсийн эх код | `main`-ийн сүүлийн commit (сүүлийн release tag: [v1.1.0](https://github.com/grl059/OS_BD1/releases/tag/v1.1.0) — түүнээс хойш II-4-9 шүүмжийн засвар орсон) |
 | Final Report | [`docs/V-1-4_Final_Report.pdf`](docs/V-1-4_Final_Report.pdf) |
 | Manual | [`docs/V-1-4_Manual.pdf`](docs/V-1-4_Manual.pdf) |
+| Шүүмжид хариу | Report-ын 4-р хэсэг: Хүснэгт 4.1 (II-4-13, P1--P10/S1--S4) ба Хүснэгт 4.2 (II-4-9, M1--M3/m1--m5/s1--s4) |
 
 Веб апп (бодит дэлгэцийн зураг). Зүүн талд холбоост жагсаалт, баруун талд хэш хүснэгтийн *collision* гинж, доор *Round Robin* scheduler:
 
@@ -95,19 +96,25 @@ sched  policy fcfs|rr <квант 1..10>  ·  sched tick|print|stats|clear   (st
 | `web/` | Next.js веб апп - `src/app` (хуудсууд, `/api/run`), `src/components`, `src/lib` (`model.ts`, `config.ts`, `levels.ts`, `use-run.ts`), `public/tts/` (Багшийн монгол дуут тайлбар), `scripts/gen-tts.mjs` (дууг дахин үүсгэх), `EVENT_FORMAT.md` - JSON протоколын тодорхойлолт |
 | `examples/` | textbook, all_structures, errors, search, scheduler, scheduler_full, hash_resize, rb_heap |
 | `tests/` | хүлээгдэх гаралт, `run_tests.sh`, `json_check.py`, `fuzz_json.py`, `avl_check.py`, `rb_check.py` (red-black ба heap-ийн инвариант) |
-| `.github/workflows/` | `ci.yml` (C цөм + веб апп build/тест, ubuntu+macos), `release.yml` (CI амжилттай болсон тутамд conventional-commit дүрмээр хувилбар нэмэгдүүлж release гаргадаг) |
+| `.github/workflows/` | `ci.yml` (C цөм + веб апп build/тест, ubuntu+macos), `release.yml` (зөвхөн гараар `workflow_dispatch`-аар ажиллана; CI-ийн дараа автоматаар tag/release гаргадаггүй — Manual-ийн final tag тайлангийн commit-тай зөрөхгүй байхын тулд) |
 | `docs/` | `V-1-4_Final_Report.pdf`, `V-1-4_Manual.pdf`, `KERNEL_EVIDENCE.md` (kernel module-ийн нотолгооны тайлбар); `report_src/img/` – веб UI ба kernel module-ийн бодит дэлгэцийн зураг |
 | `docs/latex/` | Тайлан, Manual-ийн **албан ёсны эх** (report.tex, manual.tex, kds-preamble.tex; XeLaTeX + DejaVu фонт). Build: `sh docs/latex/build_latex.sh` – эцсийн PDF-үүдийг `docs/`-д хуулна. `docs/report_src/` нь HTML нөөц эх (`build_pdf.py`, playwright) |
 
 ## Known issues
-- Kernel module-ийг жинхэнэ Linux дээр build хийнэ (WSL, Docker дээр ачаалагдахгүй). Secure Boot идэвхтэй бол MOK түлхүүрээр гарын үсэг зурна (Manual 2.7).
+- Kernel module-ийг жинхэнэ Linux дээр build хийнэ (WSL, Docker дээр ачаалагдахгүй). Secure Boot идэвхтэй үед MOK түлхүүрээр гарын үсэг зурна (Manual 2.7).
 - Hash map-ийн автомат resize нь анхдагчаар **унтраастай** (`hash auto on`-оор асаана; хуучин жишээнүүдийн гаралт өөрчлөгдөхгүйн тулд). Дээд тал нь 64 bucket; queue, stack, процесс хамгийн ихдээ 8; hash 24 элемент.
 - Вэб UI одоо C цөмийн 9 бүтэц бүрийг (rb улаан-хар мод, heap овоо орно) зурна; `/learn`-д 9 шат бий.
-- Kernel module-ийн одоогийн хувилбар жинхэнэ Linux дээр (Ubuntu 24.04.2, kernel 6.11.0-17-generic, Secure Boot, MOK гарын үсэгтэй) ачаалагдаж `run_module_test.sh` 9 PASS өгсөн; Нотолгоо: Final Report-ын Зураг 6.2--6.4 ба `docs/KERNEL_EVIDENCE.md`. Түүхий log нь `docs/kernel_build_log.txt`, `docs/kernel_dmesg.txt`-д. Өөр kernel хувилбарт дахин build хийнэ.
-- Нэг мөрөнд хамгийн ихдээ 16 үг (команд, үйлдэл + 14 утга); int-ийн муж `-2147483647..2147483647`; `bitmap size` нь бүх битийг цэвэрлэнэ.
+- **Сурах бичгийн Part I (`struct color`) ба Part II (Collatz) веб графаар харагдахгүй** — эдгээр нь kernel module-д хэрэгжиж, жинхэнэ kernel-ийн `dmesg`/`/proc/kds` гаралтаар батлагдсан. Үндэслэлийг Report 7.1 («Part I/II-ийн дүрслэл») ба Хүснэгт 4.2 (M-1)-д бичсэн.
+- Kernel module-ийн одоогийн хувилбар жинхэнэ Linux дээр (Ubuntu 24.04.2, kernel 6.11.0-17-generic, Secure Boot, MOK гарын үсэгтэй) ачаалагдаж `run_module_test.sh` **9 PASS** өгсөн (2026-11-19 04:05 UTC+8); Secure Boot идэвхгүй орчинд `sign` алхам хийгдэхгүй тул **8 PASS** гарна. Нотолгоо: Final Report-ын Зураг 6.2--6.4 ба `docs/KERNEL_EVIDENCE.md` (PASS-уудын задалгаа). Түүхий log нь `docs/kernel_build_log.txt`, `docs/kernel_dmesg.txt`-д. Өөр kernel хувилбарт дахин build хийнэ.
+- Нэг мөрөнд хамгийн ихдээ 16 үг (команд, үйлдэл + 14 утга) ба 1022 тэмдэгт (1023 ба түүнээс урт бол `ERR line too long`); int-ийн муж `-2147483647..2147483647`; `bitmap size` нь бүх битийг цэвэрлэнэ.
 - Scheduler-т бүх процесс `proc new` хийсэн мөчид ирнэ; I/O ба priority байхгүй.
 - Веб апп нь C-г **дахин хэрэгжүүлдэггүй**: дэлгэц дээрх бүх зүйл `kds --json`-ийн гаргасан `state`-ээс шууд ирдэг (`tests/json_check.py`, `web` дотор `node --test` баталгаажуулна).
+- Гишүүдийн git бүртгэлийг `.mailmap`-аар нэгтгэсэн (`git shortlog -sne`). Гэхдээ 6 гишүүний 3 нь тусдаа git бүртгэлгүй хэвээр — бид түүхийг дахин бичээгүй, зөвхөн Report-ын Хавсралт C-д энэ сул талыг бичсэн.
 
 ## Бэлэн код, сан, AI ашиглалт
 - Гадны сан ашиглаагүй. `list_head`-ийн функцуудыг Linux `include/linux/list.h`-ийн семантикаар өөрсдөө бичсэн.
 - **AI хэрэгсэл: Claude (Anthropic)** — тайлангийн ноорог, C програмыг UI-ийн хөдөлгүүртэй нийцүүлэх, тест скрипт, README/Manual засварт ашигласан. Бүх кодыг баг ажиллуулж, тестээр шалгасан.
+
+## Лиценз
+- Бүхэл репозиторь **GPL-2.0-only** (`LICENSE`). Kernel module-ийн `MODULE_LICENSE("GPL")` болон `SPDX-License-Identifier: GPL-2.0` нь үүнтэй ижил.
+- Хичээлийн бие даалтын тайлан, зураг, видео (`docs/`, `web/public/`) нь зөвхөн F.CSM302 сургалтын зорилгоор хийгдсэн материал.
