@@ -90,9 +90,9 @@ def command(r):
 
 def stress_command(r):
     """Adversarial line shapes that the plain generator never makes: 14..40 tokens
-    (the C tokenizer keeps 16), a very long single token, and int-looking tokens
-    that do not fit in an int."""
-    kind = r.choice(['many_args', 'many_args', 'long_token', 'overflow', 'sched_stats'])
+    (the C tokenizer keeps 16), a very long single token, int-looking tokens
+    that do not fit in an int, and raw bytes that are not valid UTF-8."""
+    kind = r.choice(['many_args', 'many_args', 'long_token', 'overflow', 'sched_stats', 'bad_utf8'])
     if kind == 'many_args':
         s = r.choice(['list', 'queue', 'stack', 'bitmap', 'hash', 'tree', 'rb', 'heap', 'proc', 'sched'])
         return f'{s} add_tail ' + ' '.join(str(r.randint(0, 9)) for _ in range(r.randint(12, 38)))
@@ -102,11 +102,19 @@ def stress_command(r):
         return r.choice(['queue push 99999999999', 'stack push -2147483648', 'tree insert 4294967296',
                          'rb insert -99999999999', 'heap push 2147483648', 'bitmap set 99999999999',
                          'list add_tail 1 1 99999999999'])
+    if kind == 'bad_utf8':
+        # Lone surrogates survive str and turn into the raw bytes below through
+        # surrogateescape. They are an unknown structure name, so the ERR line
+        # echoes them back - the only place user bytes reach the JSON output.
+        head = r.choice(['\udcff\udcfe', '\udce0\udc80junk', '\udce0\udca0junk', '\udcf4\udc90junk',
+                         '\udcc0\udc80junk', '\udced\udca0\udcbfjunk', '\udc80junk'])
+        return f'{head} add'
     return 'sched stats'
 
 
 def run(args, script):
-    p = subprocess.run([KDS, *args], input=script, capture_output=True, text=True)
+    p = subprocess.run([KDS, *args], input=script.encode('utf-8', 'surrogateescape'),
+                       capture_output=True)
     return p.returncode, p.stdout, p.stderr
 
 
@@ -125,14 +133,20 @@ def main():
 
         rc_t, out_t, err_t = run([], script)
         rc_j, out_j, err_j = run(['--json'], script)
+        err_t = err_t.decode('utf-8', 'replace')
+        err_j = err_j.decode('utf-8', 'replace')
 
         if err_t.strip() or err_j.strip() or rc_t != 0 or rc_j != 0:
             fail = 1
             print(f'FAIL fuzz_json seed={seed}: rc={rc_t}/{rc_j} stderr_text={err_t[:300]!r} stderr_json={err_j[:300]!r}')
             continue
 
-        text_lines = [l for l in out_t.split('\n') if l != '']
-        json_lines = [l for l in out_j.split('\n') if l != '']
+        # Text output is decoded with 'replace', which is exactly what the C
+        # core does to invalid bytes in --json mode; the JSON side is decoded
+        # strictly (json.loads on bytes), so any raw invalid byte the core
+        # emitted fails here instead of being papered over.
+        text_lines = [l for l in out_t.decode('utf-8', 'replace').split('\n') if l != '']
+        json_lines = [l for l in out_j.split(b'\n') if l != b'']
         events = []
         bad_json = None
         for i, l in enumerate(json_lines[1:-1]):

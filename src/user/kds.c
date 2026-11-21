@@ -867,19 +867,57 @@ static void sched_cmd(const char *op, int na, char **a)
 /* ---------- JSON event mode (--json), additive: text mode above is untouched ---------- */
 static int json_mode;
 
-/* Print s as a JSON string literal, escaping the few bytes that must be
- * escaped. Our own messages never need this (no quotes/backslashes/control
- * bytes in any OK/ERR text), but user-typed args/keys/names could in theory
- * contain anything before validation rejects them, so every string that
- * reaches JSON output goes through here. */
+/* Length of the well-formed UTF-8 sequence starting at p, or 0 when there is
+ * none. On failure *subpart gets the maximal subpart (Unicode 3.9 D92b) - the
+ * bytes a strict decoder collapses into a single U+FFFD - so the escaped
+ * output matches byte-for-byte what Python's json.loads and Node's
+ * TextDecoder produce for the same input. */
+static int utf8_seq(const unsigned char *p, int *subpart)
+{
+	int n;
+	unsigned char lo, hi;
+
+	if (p[0] < 0x80) { *subpart = 1; return 1; }
+	if (p[0] >= 0xC2 && p[0] <= 0xDF) { n = 2; lo = 0x80; hi = 0xBF; }
+	else if (p[0] == 0xE0) { n = 3; lo = 0xA0; hi = 0xBF; }
+	else if (p[0] >= 0xE1 && p[0] <= 0xEC) { n = 3; lo = 0x80; hi = 0xBF; }
+	else if (p[0] == 0xED) { n = 3; lo = 0x80; hi = 0x9F; }
+	else if (p[0] >= 0xEE && p[0] <= 0xEF) { n = 3; lo = 0x80; hi = 0xBF; }
+	else if (p[0] == 0xF0) { n = 4; lo = 0x90; hi = 0xBF; }
+	else if (p[0] >= 0xF1 && p[0] <= 0xF3) { n = 4; lo = 0x80; hi = 0xBF; }
+	else if (p[0] == 0xF4) { n = 4; lo = 0x80; hi = 0x8F; }
+	else { *subpart = 1; return 0; }
+
+	if (p[1] < lo || p[1] > hi) { *subpart = 1; return 0; }
+	for (int i = 2; i < n; i++) {
+		if (p[i] < 0x80 || p[i] > 0xBF) { *subpart = i; return 0; }
+	}
+	*subpart = n;
+	return n;
+}
+
+/* Print s as a JSON string literal. Control bytes, " and \ are escaped, and
+ * every other byte must be part of a well-formed UTF-8 sequence: a raw
+ * invalid byte would make the whole ndjson line unparseable by a strict
+ * parser, so it becomes \ufffd instead. Our own OK/ERR text never needs
+ * this, but user-typed args/keys/names could contain anything before
+ * validation rejects them, so every string that reaches JSON output goes
+ * through here. */
 static void putjs(const char *s)
 {
 	putchar('"');
-	for (; *s; s++) {
-		unsigned char c = (unsigned char)*s;
-		if (c == '"' || c == '\\') { putchar('\\'); putchar((char)c); }
-		else if (c < 0x20) printf("\\u%04x", c);
-		else putchar((char)c);
+	for (const unsigned char *p = (const unsigned char *)s; *p; ) {
+		int sub = 1;
+		int len = utf8_seq(p, &sub);
+		if (*p == '"' || *p == '\\') { putchar('\\'); putchar((char)*p); p++; }
+		else if (*p < 0x20) { printf("\\u%04x", *p); p++; }
+		else if (len > 0) {
+			for (int i = 0; i < len; i++) putchar((char)p[i]);
+			p += len;
+		} else {
+			printf("\\ufffd");
+			p += sub;   /* the maximal subpart collapses into one U+FFFD */
+		}
 	}
 	putchar('"');
 }
